@@ -22,6 +22,7 @@ header {
     left: 0;
     width: 100%;
     z-index: 1050;
+    box-shadow: #000000ac 0px 0px 4px 0px;
 }
 
 .navbar {
@@ -29,61 +30,8 @@ header {
 }
 
 .brand img {
-    height: 48px;
+    height: 50px;
     object-fit: contain;
-}
-
-.iconbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    flex: 1;
-}
-
-.iconbar i {
-    font-size: var(--icon-size);
-    color: #000;
-    cursor: pointer;
-    transition: transform .2s;
-}
-
-.iconbar i:hover {
-    transform: scale(1.1);
-}
-
-.hamburguer {
-    font-size: var(--icon-size);
-    border: none;
-    background: transparent;
-    cursor: pointer;
-}
-
-@media (max-width: 768px) {
-    .iconbar {
-        gap: 18px;
-    }
-
-    .iconbar i {
-        font-size: 28px;
-    }
-}
-
-@media (max-width: 480px) {
-    .iconbar {
-        gap: 14px;
-    }
-
-    .iconbar i {
-        font-size: 26px;
-    }
-
-    .brand img {
-        height: 40px;
-    }
 }
 
 .offcanvas .list-unstyled li {
@@ -99,7 +47,7 @@ header {
 }
 
 main {
-    margin-top: 130px;
+    margin-top: 100px;
 }
 
 .login-section {
@@ -119,7 +67,7 @@ main {
 }
 
 .logo-login img {
-    width: 300px;
+    width: 350px;
 }
 
 #inicio {
