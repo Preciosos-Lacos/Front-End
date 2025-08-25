@@ -430,3 +430,222 @@ main {
         max-width:100%;
     }
 }
+
+
+
+/* Responsividade para mobile (até 600px) */
+@media (max-width: 600px) {
+    .finalizar-compra {
+        margin-top: 16px;
+        padding: 0 4px;
+    }
+
+    .hub {
+        flex-direction: column;
+        gap: 20px;
+        padding: 0;
+        box-shadow: none;
+        background: transparent;
+        max-width: 100%;
+    }
+
+    .itens {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+    }
+
+    .cabecalho-lista {
+        display: none;
+    }
+
+    .item-produto {
+        flex-direction: column;
+        align-items: flex-start;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px #0002;
+        margin-bottom: 18px;
+        padding: 18px 16px 10px 16px;
+        border: none;
+        gap: 0;
+    }
+
+    .item-produto .produto {
+        font-size: 1rem;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #222;
+    }
+    .item-produto .quantidade,
+    .item-produto .preco {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 0;
+        text-align: right;
+        width: 100%;
+    }
+    .item-produto .preco {
+        margin-top: 2px;
+    }
+
+    .imagem-carrossel,
+    .paginacao-carrossel,
+    .rodape-links {
+        display: none;
+    }
+
+    .coluna-lateral {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+        gap: 18px;
+    }
+
+    .endereco,
+    .pagamento,
+    .resumo {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px #0002;
+        padding: 18px 16px;
+        margin-bottom: 18px;
+        border: none;
+    }
+
+    .cabecalho-endereco {
+        font-size: 1.07rem;
+        margin-bottom: 6px;
+    }
+    .cabecalho-endereco span {
+        font-weight: 700;
+    }
+    .editar-endereco {
+        font-size: 1rem;
+        color: #d16b9b;
+        font-weight: 600;
+        padding: 0 0 0 8px;
+    }
+
+    .info-endereco {
+        font-size: 1rem;
+        color: #222;
+        margin-top: 2px;
+        line-height: 1.3;
+    }
+
+    .titulo-pagamento {
+        font-size: 1.08rem;
+        font-weight: 600;
+        margin-bottom: 14px;
+        text-align: center;
+    }
+
+    .botoes-pagamento {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .botoes-pagamento button {
+        width: 100%;
+        border-radius: 22px;
+        background: #f9d2e3;
+        color: #222;
+        font-weight: 600;
+        font-size: 1.08rem;
+        border: none;
+        padding: 12px 0;
+        margin-bottom: 0;
+        box-shadow: none;
+        transition: background 0.2s, color 0.2s;
+    }
+    .botoes-pagamento button:hover,
+    .botoes-pagamento button:focus {
+        background: #f29dc3;
+        color: #fff;
+    }
+
+    /* Simulação de radio ao lado dos botões de pagamento */
+    .botoes-pagamento {
+        position: relative;
+    }
+    .botoes-pagamento button {
+        position: relative;
+        text-align: left;
+        padding-left: 24px;
+    }
+    .botoes-pagamento button::after {
+        content: '';
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #d16b9b;
+        background: #fff;
+    }
+    .botoes-pagamento button.selected::after {
+        background: #fff;
+        box-shadow: 0 0 0 4px #f9d2e3;
+    }
+    .botoes-pagamento button.selected::before {
+        content: '';
+        position: absolute;
+        right: 21px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #d16b9b;
+        z-index: 2;
+    }
+
+    .resumo {
+        border: 2px solid #4faaff;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: none;
+        padding: 18px 16px;
+        margin-bottom: 18px;
+    }
+    .titulo-resumo {
+        display: none;
+    }
+    .linha-resumo,
+    .linha-total {
+        font-size: 1.08rem;
+        margin-bottom: 8px;
+        font-weight: 400;
+        color: #222;
+    }
+    .linha-total {
+        font-weight: 700;
+        margin-top: 8px;
+        color: #000;
+    }
+
+    .btn-finalizar {
+        width: 100%;
+        background: #4fd17c;
+        color: #222;
+        border-radius: 8px;
+        font-size: 1.08rem;
+        font-weight: 600;
+        padding: 14px 0;
+        margin-bottom: 24px;
+        border: none;
+        box-shadow: 0 2px 8px #0001;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-finalizar:hover,
+    .btn-finalizar:focus {
+        background: #3bbf68;
+        color: #fff;
+    }
+}
