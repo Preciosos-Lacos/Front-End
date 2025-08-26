@@ -370,8 +370,8 @@ main {
 }
 
 .botoes-pagamento button:hover {
-    border: 1.5px solid var(--rosa, #F29DC3);
-    background: #f9f2f6;
+    border: 1.5px solid var(--rosa, #d16b9b);
+    background: #F29DC3;
 }
 
 .resumo {
@@ -404,7 +404,7 @@ main {
 
 .btn-finalizar {
     width: 100%;
-    background: #444;
+    background: #3bbf68;
     color: #fff;
     border: none;
     border-radius: 8px;
