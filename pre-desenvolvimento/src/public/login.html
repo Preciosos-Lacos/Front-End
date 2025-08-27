@@ -14,60 +14,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 </head>
- 
+
 <body>
 
     <header>
-        <div class="container-fluid">
-            <div class="d-flex align-items-center justify-content-between navbar">
-                <a href="#" class="brand">
-                    <img src="./assets/logo_preciosos_lacos.png" alt="Preciosos Laços">
-                </a>
-            </div>
+        <a href="#"><i class="bi bi-house-door"></i></a>
     </header>
-
-    <main>
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
-            </div>
-            <div class="offcanvas-body">
-                <ul class="list-unstyled mb-4">
-                    <li><i class="bi bi-person-fill"></i> Perfil</li>
-                    <li><i class="bi bi-bag"></i> Minhas Compras</li>
-                    <li><i class="bi bi-heart"></i> Favoritos</li>
-                    <li><i class="bi bi-cart"></i> Carrinho</li>
-                </ul>
-                <hr>
-                <ul class="list-unstyled">
-                    <li><i class="bi bi-house-door"></i> Home</li>
-                    <li><i class="bi bi-grid"></i> Catálogo</li>
-                    <li><i class="bi bi-stars"></i> Promoções</li>
-                </ul>
-            </div>
-        </div>
-    </main>
 
     <section class="login-section">
         <div class="logo-login">
-            <img src="./assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços">
+            <img src="./assets/logo_preciosos_lacos_escuro.png" alt="Logo Preciosos Laços">
         </div>
 
         <div class="form-login">
             <div class="incio">
                 <h2 id="inicio">Olá novamente!</h2>
-                <p>Que tal encontrar o laço perfeito hoje?</p>
+                <p id="p-inicio">Que tal encontrar o laço perfeito hoje?</p>
             </div>
             <div class="login">
                 <input type="text" id="email" placeholder="E-mail:">
 
-                <input type="text" id="senha" placeholder="Senha:">
+                <div class="input-group">
+                    <input type="password" id="senha" placeholder="Senha:" class="form-control">
+                    <span class="input-group-text">
+                        <i class="bi bi-eye" id="togglePassword"></i>
+                    </span>
+                </div>
 
                 <button id="login">Login</button>
 
                 <p class="link-container">
-                    Não tem conta? <a href="#">Cadastre-se aqui.</a>
+                    Não tem conta? <a href="../cadastros/cadastroUsuario.html">Cadastre-se aqui.</a>
                 </p>
 
             </div>
@@ -77,3 +54,15 @@
 </body>
 
 </html>
+
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('senha');
+
+    togglePassword.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        togglePassword.classList.toggle('bi-eye');
+        togglePassword.classList.toggle('bi-eye-slash');
+    });
+</script>
