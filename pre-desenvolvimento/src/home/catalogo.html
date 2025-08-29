@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="./assets/iconeWeb.ico">
+    <title>Preciosos Laços | Catálogo</title> 
+    <link    rel="stylesheet" href="./css/catalogo.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between navbar"> <a href="#" class="brand"> <img
+                        src="./assets/logo_preciosos_lacos.png" alt="Preciosos Laços"> </a>
+                <ul class="iconbar">
+                    <li><i class="bi bi-person-fill"></i></li>
+                    <li><i class="bi bi-bag"></i></li>
+                    <li><i class="bi bi-heart"></i></li>
+                    <li><i class="bi bi-cart"></i></li>
+                </ul> <button class="hamburguer" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu"> <i class="bi bi-list"></i> </button>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5> <button type="button" class="btn-close"
+                    data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="list-unstyled mb-4">
+                    <li><i class="bi bi-person-fill"></i> Perfil</li>
+                    <li><i class="bi bi-bag"></i> Minhas Compras</li>
+                    <li><i class="bi bi-heart"></i> Favoritos</li>
+                    <li><i class="bi bi-cart"></i> Carrinho</li>
+                </ul>
+                <hr>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-house-door"></i> Home</li>
+                    <li><i class="bi bi-grid"></i> Catálogo</li>
+                    <li><i class="bi bi-stars"></i> Promoções</li>
+                </ul>
+            </div>
+        </div>
+        <section class="promo-section">
+            <h2>Promoções atuais</h2>
+            <div id="promoCarousel" class="carousel slide promo-carousel" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="row g-3 justify-content-center">
+                            <div class="col-12 col-sm-6 col-md-4"> <img src="./assets/laco-panda.webp"
+                                    class="d-block rounded" alt="Laço Panda">
+                                <p class="promo-caption text-center">Laço Panda em promoção!</p>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block"> <img
+                                    src="./assets/laco-unicornio.webp" class="d-block rounded"
+                                    alt="Laço Unicórnio">
+                                <p class="promo-caption text-center">Laço Unicórnio especial!</p>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 d-none d-md-block"> <img src="./assets/laco-jeans.webp"
+                                    class="d-block rounded" alt="Laço Jeans">
+                                <p class="promo-caption text-center">Laço Jeans tendência!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row g-3 justify-content-center">
+                            <div class="col-12 col-sm-6 col-md-4"> <img src="./assets/laco-pink.webp"
+                                    class="d-block rounded" alt="Laço Pink">
+                                <p class="promo-caption text-center">Laço Pink especial!</p>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block"> <img src="./assets/laco-azul.webp"
+                                    class="d-block rounded" alt="Laço Azul">
+                                <p class="promo-caption text-center">Laço Azul tendência!</p>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 d-none d-md-block"> <img
+                                    src="./assets/laco-neon-verde.webp" class="d-block rounded"
+                                    alt="Laço Neon Verde">
+                                <p class="promo-caption text-center">Laço Neon Verde promoção!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div> <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel"
+                    data-bs-slide="prev"> <span class="carousel-control-prev-icon"></span> </button> <button
+                    class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span> </button>
+            </div>
+        </section>
+        <section class="catalogo">
+
+
+
+            <div class="container my-3">
+                <div class="filter-bar d-none d-md-flex">
+                    <div class="filter-selects">
+                        <select id="filter-category" class="form-select">
+                            <option value="">Categoria</option>
+                            <option value="laços">Laços</option>
+                            <option value="tiara">Tiara</option>
+                        </select>
+                        <select id="filter-color" class="form-select">
+                            <option value="">Cor</option>
+                            <option value="vermelho">Vermelho</option>
+                            <option value="azul">Azul</option>
+                        </select>
+                        <select id="filter-price" class="form-select">
+                            <option value="">Preço</option>
+                            <option value="20">Até R$20</option>
+                            <option value="20-50">R$20 - R$50</option>
+                            <option value="50+">Acima de R$50</option>
+                        </select>
+                    </div>
+
+
+                    <div class="search-box">
+                        <input type="text" id="form-control" placeholder="Buscar produtos...">
+                        <button id="btn-search" class="btn btn-light"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="search-box d-flex d-md-none">
+                    <input type="text" id="form-control" placeholder="Buscar produtos...">
+                    <button id="btn-search" class="btn btn-light"><i class="bi bi-search"></i></button>
+                </div>
+
+                <div class="filter-mobile-btn d-md-none">
+                    <button class="btn btn-dark w-100" data-bs-toggle="offcanvas" data-bs-target="#mobileFilters">
+                        <i class="bi bi-funnel"></i> Filtros
+                    </button>
+                </div>
+
+                <div class="offcanvas offcanvas-bottom" tabindex="-1" id="mobileFilters" data-bs-backdrop="true">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title">Filtros</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <select id="mobile-filter-category" class="form-select mb-3">
+                            <option value="">Categoria</option>
+                            <option value="laços">Laços</option>
+                            <option value="tiara">Tiara</option>
+                        </select>
+                        <select id="mobile-filter-color" class="form-select mb-3">
+                            <option value="">Cor</option>
+                            <option value="vermelho">Vermelho</option>
+                            <option value="azul">Azul</option>
+                        </select>
+                        <select id="mobile-filter-price" class="form-select mb-3">
+                            <option value="">Preço</option>
+                            <option value="20">Até R$20</option>
+                            <option value="20-50">R$20 - R$50</option>
+                            <option value="50+">Acima de R$50</option>
+                        </select>
+                        <button id="apply-filters" class="btn btn-primary w-100" data-bs-dismiss="offcanvas"
+                            onclick="filterProducts()">Aplicar</button>
+                    </div>
+
+                </div>
+
+
+                <div id="linha"></div>
+                <h3 id="catalogo">CATÁLOGO</h3>
+                <div id="linha"></div>
+                <div id="catalogoCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <h2 id="carrossel-catalogo">Mais Vendidos</h2>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row g-3">
+                                <div class="col-12 col-sm-6 col-md-4">
+                                    <div class="produto-card"> <img src="./assets/laco-panda.webp" alt="Produto">
+                                        <div class="produto-info">
+                                            <p>Laço Panda - Coleção Tradicionais</p>
+                                            <p class="produto-preco">R$14,99</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block">
+                                    <div class="produto-card"> <img src="./assets/laco-unicornio.webp" alt="Produto">
+                                        <div class="produto-info">
+                                            <p>Laço Unicórnio - Coleção Especial</p>
+                                            <p class="produto-preco">R$19,99</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 d-none d-md-block">
+                                    <div class="produto-card"> <img src="./assets/laco-jeans.webp" alt="Produto">
+                                        <div class="produto-info">
+                                            <p>Laço Jeans - Tendência</p>
+                                            <p class="produto-preco">R$16,99</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="carousel-item">
+                            <div class="row g-3">
+                                <div class="col-12 col-sm-6 col-md-4">
+                                    <div class="produto-card"> <img src="./assets/laco-pink.webp" alt="Produto">
+                                        <div class="produto-info">
+                                            <p>Laço Pink - Coleção Fashion</p>
+                                            <p class="produto-preco">R$17,99</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block">
+                                    <div class="produto-card"> <img src="./assets/laco-azul.webp" alt="Produto">
+                                        <div class="produto-info">
+                                            <p>Laço Azul - Coleção Clássica</p>
+                                            <p class="produto-preco">R$12,99</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 d-none d-md-block">
+                                    <div class="produto-card"> <img src="./assets/laco-neon-verde.webp" alt="Produto">
+                                        <div class="produto-info">
+                                            <p>Laço Roxo - Coleção Brilho</p>
+                                            <p class="produto-preco">R$15,99</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#catalogoCarousel"
+                        data-bs-slide="prev"> <span class="carousel-control-prev-icon"></span> </button> <button
+                        class="carousel-control-next" type="button" data-bs-target="#catalogoCarousel"
+                        data-bs-slide="next"> <span class="carousel-control-next-icon"></span> </button>
+                </div>
+                <div class="card-container">
+                    <div class="product-card"> <img src="./assets/laco-bolinha.webp" alt="Laço Bolinha">
+                        <div class="card-info">
+                            <p class="product-name">Laço Bolinha - <span class="collection">COLEÇÃO TRADICIONAIS</span>
+                            </p>
+                            <p class="price">R$44,97</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-bolinha.webp" alt="Laço Bolinha">
+                        <div class="card-info">
+                            <p class="product-name">Laço Bolinha - <span class="collection">COLEÇÃO TRADICIONAIS</span>
+                            </p>
+                            <p class="price">R$44,97</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-flor.webp" alt="Laço Flor">
+                        <div class="card-info">
+                            <p class="product-name">Laço Flor - <span class="collection">COLEÇÃO ESPECIAIS</span></p>
+                            <p class="price">R$39,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-branco.webp" alt="Laço Vermelho">
+                        <div class="card-info">
+                            <p class="product-name">Laço Neon Branco - <span class="collection">COLEÇÃO FESTAS</span>
+                            </p>
+                            <p class="price">R$49,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-frutinhas.webp" alt="Laço Flor">
+                        <div class="card-info">
+                            <p class="product-name">Laço Flor - <span class="collection">COLEÇÃO ESPECIAIS</span></p>
+                            <p class="price">R$39,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-cinza.webp" alt="Laço Vermelho">
+                        <div class="card-info">
+                            <p class="product-name">Laço Neon Branco - <span class="collection">COLEÇÃO FESTAS</span>
+                            </p>
+                            <p class="price">R$49,90</p>
+                        </div>
+                    </div>
+
+                    <div class="product-card"> <img src="./assets/laco-bolinha.webp" alt="Laço Bolinha">
+                        <div class="card-info">
+                            <p class="product-name">Laço Bolinha - <span class="collection">COLEÇÃO TRADICIONAIS</span>
+                            </p>
+                            <p class="price">R$44,97</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-bolinha.webp" alt="Laço Bolinha">
+                        <div class="card-info">
+                            <p class="product-name">Laço Bolinha - <span class="collection">COLEÇÃO TRADICIONAIS</span>
+                            </p>
+                            <p class="price">R$44,97</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-flor.webp" alt="Laço Flor">
+                        <div class="card-info">
+                            <p class="product-name">Laço Flor - <span class="collection">COLEÇÃO ESPECIAIS</span></p>
+                            <p class="price">R$39,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-branco.webp" alt="Laço Vermelho">
+                        <div class="card-info">
+                            <p class="product-name">Laço Neon Branco - <span class="collection">COLEÇÃO FESTAS</span>
+                            </p>
+                            <p class="price">R$49,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-frutinhas.webp" alt="Laço Flor">
+                        <div class="card-info">
+                            <p class="product-name">Laço Flor - <span class="collection">COLEÇÃO ESPECIAIS</span></p>
+                            <p class="price">R$39,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-cinza.webp" alt="Laço Vermelho">
+                        <div class="card-info">
+                            <p class="product-name">Laço Neon Branco - <span class="collection">COLEÇÃO FESTAS</span>
+                            </p>
+                            <p class="price">R$49,90</p>
+                        </div>
+                    </div>
+
+                    <div class="product-card"> <img src="./assets/laco-bolinha.webp" alt="Laço Bolinha">
+                        <div class="card-info">
+                            <p class="product-name">Laço Bolinha - <span class="collection">COLEÇÃO TRADICIONAIS</span>
+                            </p>
+                            <p class="price">R$44,97</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-bolinha.webp" alt="Laço Bolinha">
+                        <div class="card-info">
+                            <p class="product-name">Laço Bolinha - <span class="collection">COLEÇÃO TRADICIONAIS</span>
+                            </p>
+                            <p class="price">R$44,97</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-flor.webp" alt="Laço Flor">
+                        <div class="card-info">
+                            <p class="product-name">Laço Flor - <span class="collection">COLEÇÃO ESPECIAIS</span></p>
+                            <p class="price">R$39,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-branco.webp" alt="Laço Vermelho">
+                        <div class="card-info">
+                            <p class="product-name">Laço Neon Branco - <span class="collection">COLEÇÃO FESTAS</span>
+                            </p>
+                            <p class="price">R$49,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-frutinhas.webp" alt="Laço Flor">
+                        <div class="card-info">
+                            <p class="product-name">Laço Flor - <span class="collection">COLEÇÃO ESPECIAIS</span></p>
+                            <p class="price">R$39,90</p>
+                        </div>
+                    </div>
+                    <div class="product-card"> <img src="./assets/laco-neon-cinza.webp" alt="Laço Vermelho">
+                        <div class="card-info">
+                            <p class="product-name">Laço Neon Branco - <span class="collection">COLEÇÃO FESTAS</span>
+                            </p>
+                            <p class="price">R$49,90</p>
+                        </div>
+                    </div>
+                </div>
+        </section>
+    </main>
+</body>
+
+</html>
+
+<script>
+    function filterProducts() {
+        const category = (categoryFilter && categoryFilter.value) || (mobileCategoryFilter && mobileCategoryFilter.value) || "";
+        const color = (colorFilter && colorFilter.value) || (mobileColorFilter && mobileColorFilter.value) || "";
+        const price = (priceFilter && priceFilter.value) || (mobilePriceFilter && mobilePriceFilter.value) || "";
+
+        products.forEach(product => {
+            const name = product.querySelector('.product-name').innerText.toLowerCase();
+            const priceText = product.querySelector('.price').innerText.replace('R$', '').replace(',', '.');
+            const priceValue = parseFloat(priceText);
+
+            let show = true;
+
+            if (category && !name.includes(category.toLowerCase())) show = false;
+            if (color && !name.includes(color.toLowerCase())) show = false;
+
+            if (price) {
+                if (price === "20" && priceValue > 20) show = false;
+                if (price === "20-50" && (priceValue < 20 || priceValue > 50)) show = false;
+                if (price === "50+" && priceValue < 50) show = false;
+            }
+
+            product.style.display = show ? "block" : "none";
+        });
+    }
+</script> 
