@@ -27,7 +27,7 @@ body {
   justify-content: space-between;
   align-items: center;
   transition: width 0.3s, box-shadow 0.3s;
-  z-index: 1200;
+  z-index: 1055;
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
@@ -99,7 +99,7 @@ body {
 
 header {
   width: 100%;
-  height: 100px;
+  height: 75px;
   background: var(--header-bg);
   color: var(--rosa);
   font-family: 'Alex Brush', cursive;
@@ -111,7 +111,7 @@ header {
   justify-content: center;
   position: sticky;
   top: 0;
-  z-index: 1100;
+  z-index: 1050;
 }
 
 .content {
@@ -150,29 +150,30 @@ header {
   position: fixed;
   background: var(--header-bg);
   width: 100%;
-  height: 51px;
+  height: 60px;
   padding-left: 120px;
   padding-right: 70px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.68);
   z-index: 1000;
 }
 
-.search-wrapper {
+.nav-pesquisa .nav-search-wrapper {
   position: relative;
   flex: 1;
   max-width: 300px;
 }
 
-.search-box {
+.nav-search-box {
   width: 100%;
   padding: 8px 40px 8px 16px;
+  margin-right: 15px;
   border-radius: 50px;
   border: none;
   background: var(--rosa);
   color: #3a3a3a;
 }
 
-.search-box::placeholder {
+.nav-search-box::placeholder {
   color: #3a3a3a;
 }
 
@@ -278,6 +279,195 @@ header {
   padding-top: 90px;
 }
 
+/* pop-up */
+.modal {
+  display: none;
+  /* inicia escondido */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  /* fundo escuro transparente */
+  z-index: 9999;
+  /* valor bem alto para sobrepor tudo */
+
+  /* centraliza o conteúdo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Conteúdo do modal */
+.modal .modal-content {
+  background: #F29DC3;
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Botão de fechar (X) */
+.modal .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 35px;
+  cursor: pointer;
+}
+
+/* Caixa de busca */
+.modal-search-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px 10px;
+  margin: 10px 0;
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.modal-search-wrapper i {
+  color: #666;
+  cursor: pointer;
+}
+
+/* Lista de checkboxes com rolagem */
+.modal .checkboxList {
+  max-height: 120px;
+  overflow-y: auto;
+  margin: 10px 0;
+  padding: 8px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.modal .checkboxList label {
+  margin-left: 5px;
+}
+
+/* Estilizando o scrollbar */
+.modal .checkboxList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal .checkboxList::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 12px;
+  /* arredonda o track */
+}
+
+.modal .checkboxList::-webkit-scrollbar-thumb {
+  background: #F29DC3;
+  border-radius: 12px;
+  /* arredonda o thumb */
+  border: 2px solid #f0f0f0;
+  /* "cria espaço" para o thumb ficar mais suave */
+}
+
+.modal .checkboxList::-webkit-scrollbar-thumb:hover {
+  background: #e187ae;
+}
+
+/* Bloco da cor escolhida */
+.modal .color-block {
+  width: 100%;
+  height: 60px;
+  border-radius: 8px;
+  margin: 10px 0;
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #000;
+  background: linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet);
+}
+
+.modal .titulo {
+  margin: 3px 0 3px 0px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal .tituloPopUp {
+  margin: 3px 0px 12px 0px;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.modal input[type="color"] {
+  margin: 3px 0;
+  width: 100%;
+  height: 40px;
+  border: 2.5px solid white;
+  cursor: pointer;
+  border-radius: 6px;
+  background: rgb(255, 255, 255);
+}
+
+.modal #fecharModal {
+  font-weight: 500;
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 8px 15px;
+  margin-top: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal #fecharModal:hover {
+  background: #939393;
+  color: #fff;
+}
+
+
+.modal #fecharModalExcluir {
+  font-weight: 500;
+  background: #00ff1ee7;
+  color: #000000;
+  border: none;
+  padding: 8px 15px;
+  margin: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal #fecharModalExcluir:hover {
+  background: #00ff1ea1;
+}
+
+
+.modal #fecharModalCancelar {
+  font-weight: 500;
+  background: #ff0000ea;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  margin: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal #fecharModalCancelar:hover {
+  background: #ff00009c;
+}
+
 @media (max-width: 992px) {
   .toggle-btn {
     display: flex;
@@ -328,5 +518,15 @@ header {
 @media (min-width: 993px) {
   .content {
     margin-left: 0;
+  }
+}
+
+@media (mmax-width: 490px) {
+  .content {
+    margin-left: 0;
+  }
+  .nav-search-box{
+    width: 80%;
+    margin-right: 15px;
   }
 }

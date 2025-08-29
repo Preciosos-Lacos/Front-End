@@ -37,11 +37,12 @@
   <header>Preciosos Laços</header>
 
   <div class="nav-pesquisa">
-    <div class="search-wrapper">
-      <input type="text" class="search-box" placeholder="Pesquisar Cor" aria-label="Pesquisar Cor">
+    <div class="nav-search-wrapper">
+      <input type="text" class="nav-search-box" placeholder="Pesquisar Cor" aria-label="Pesquisar Cor">
       <i class="bi bi-search" id="lupa-search"></i>
     </div>
-    <a href="#" class="btn-cadastrar"><i class="bi bi-patch-plus"></i><span> Cadastrar Cores</span></a>
+    <a class="btn-cadastrar" onclick="document.getElementById('cadastrar').style.display='flex'"><i
+        class="bi bi-patch-plus"></i><span> Cadastrar Cores</span></a>
   </div>
 
 
@@ -65,8 +66,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -86,8 +87,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -107,8 +108,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -128,8 +129,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -149,8 +150,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -170,8 +171,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -191,8 +192,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -212,8 +213,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -233,8 +234,8 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
@@ -254,13 +255,96 @@
         </div>
         <p class="mt-2">Valor: R$ 6,00</p>
         <div class="icons">
-          <i class="bi bi-pencil"></i>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
         </div>
       </div>
 
     </div>
   </div>
+
+  <div id="cadastrar" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fechar()">&times;</span>
+      <h2 class="tituloPopUp">Cadastro de Cor</h2>
+
+      <input type="text" id="nomeCor" placeholder="Nome da cor: Verde-Água"
+        style="width: 100%; padding: 8px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc;">
+
+      <h3 class="titulo">Clique para escolher a cor:</h3>
+      <input type="color" id="colorPicker" value="#F29DC3">
+      <div class="color-block" id="colorBlock"></div>
+
+      <h3 class="titulo">
+        Associar modelo:
+        <i class="bi bi-bookmark-plus-fill" style="color: #000000; margin-left: 5px;"></i>
+      </h3>
+
+      <div class="modal-search-wrapper">
+        <input type="text" class="searchInput" id="searchModelo" class="search-box" placeholder="Pesquisar modelo">
+        <i class="bi bi-search"></i>
+      </div>
+
+      <div class="checkboxList">
+        <div><input type="checkbox" id="modelo1"><label for="modelo1">Laço Padrão</label></div>
+        <div><input type="checkbox" id="modelo2"><label for="modelo2">Laço de Piscina</label></div>
+        <div><input type="checkbox" id="modelo3"><label for="modelo3">Laço de Festa</label></div>
+        <div><input type="checkbox" id="modelo4"><label for="modelo4">Laço Infantil</label></div>
+        <div><input type="checkbox" id="modelo5"><label for="modelo5">Laço Escolar</label></div>
+        <div><input type="checkbox" id="modelo6"><label for="modelo6">Laço de Gala</label></div>
+        <div><input type="checkbox" id="modelo7"><label for="modelo7">Laço Esportivo</label></div>
+        <div><input type="checkbox" id="modelo8"><label for="modelo8">Laço Casual</label></div>
+      </div>
+
+      <button id="fecharModal"
+        onclick="document.getElementById('cadastrar').style.display='none'; cadastroConfirmado()">Cadastrar cor</button>
+    </div>
+  </div>
+
+  <div id="editar" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharEditar()">&times;</span>
+      <h2 class="tituloPopUp">Editar Cor</h2>
+
+      <input type="text" placeholder="Vermelho"
+        style="width: 100%; padding: 8px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc;" readonly>
+
+      <h3 class="titulo">
+        Modelos Associados:
+        <i class="bi bi-bookmark-plus-fill" style="color: #000000; margin-left: 5px;"></i>
+      </h3>
+
+      <div class="modal-search-wrapper">
+        <input type="text" class="searchInput" id="searchModeloEditar" class="modal-search-box"
+          placeholder="Pesquisar modelo">
+        <i class="bi bi-search"></i>
+      </div>
+
+      <div class="checkboxList">
+        <div><input type="checkbox" id="modelo1" checked><label for="modelo1">Laço Padrão</label></div>
+        <div><input type="checkbox" id="modelo2"><label for="modelo2">Laço de Piscina</label></div>
+        <div><input type="checkbox" id="modelo3"><label for="modelo3">Laço de Festa</label></div>
+        <div><input type="checkbox" id="modelo4" checked><label for="modelo4">Laço Infantil</label></div>
+        <div><input type="checkbox" id="modelo5"><label for="modelo5">Laço Escolar</label></div>
+        <div><input type="checkbox" id="modelo6" checked><label for="modelo6">Laço de Gala</label></div>
+        <div><input type="checkbox" id="modelo7"><label for="modelo7">Laço Esportivo</label></div>
+        <div><input type="checkbox" id="modelo8"><label for="modelo8">Laço Casual</label></div>
+      </div>
+
+      <button id="fecharModal" onclick="AtualizarCor()">Atualizar cor</button>
+    </div>
+  </div>
+
+  <div id="excluir" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fechar()">&times;</span>
+      <h2 class="tituloPopUp">Você Deseja Deletar: “Vermelho”?</h2>
+
+      <button id="fecharModalExcluir" onclick="ExcluirCor()">Deletar cor</button>
+      <button id="fecharModalCancelar" onclick="fechar()">Cancelar</button>
+    </div>
+  </div>
+
 </body>
 
 </html>
@@ -290,4 +374,84 @@
       }
     }
   });
+
+  document.querySelectorAll(".searchInput").forEach((input) => {
+    input.addEventListener("keyup", function () {
+      let filter = this.value.toLowerCase();
+      let checkboxList = this.closest(".modal-content").querySelector(".checkboxList");
+      let items = checkboxList.getElementsByTagName("div");
+
+      for (let i = 0; i < items.length; i++) {
+        let label = items[i].textContent.toLowerCase();
+        items[i].style.display = label.includes(filter) ? "" : "none";
+      }
+    });
+  });
+
+
+  const colorPicker = document.getElementById("colorPicker");
+  const colorBlock = document.getElementById("colorBlock");
+
+  colorPicker.addEventListener("input", function () {
+    colorBlock.style.background = this.value;
+    colorBlock.textContent = this.value;
+    colorBlock.style.color = "#fff";
+  });
+
+  function cadastroConfirmado() {
+    alert("Cadastro de cor realizado com sucesso!");
+
+    document.getElementById('cadastrar').style.display = 'none';
+
+    colorPicker.value = "#F29DC3";
+    colorBlock.style.background = "linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet)";
+    colorBlock.textContent = "";
+    colorBlock.style.color = "#000";
+
+    document.getElementById("nomeCor").value = "";
+    document.getElementById("searchModelo").value = "";
+
+    const checkboxes = document.querySelectorAll(".checkboxList input[type='checkbox']");
+    checkboxes.forEach(cb => cb.checked = false);
+  }
+
+  function AtualizarCor() {
+    alert("Atualização de cor realizada com sucesso!");
+
+    document.getElementById("searchModeloEditar").value = null;
+    const checkboxes = document.querySelectorAll(".checkboxList input[type='checkbox']");
+    checkboxes.forEach(cb => cb.checked = false);
+
+    document.getElementById('editar').style.display = 'none';
+  }
+
+  function ExcluirCor() {
+    alert(`Cor "Vermelho" excluída com sucesso!`);
+
+    document.getElementById('excluir').style.display = 'none';
+  }
+
+  function fechar() {
+    colorPicker.value = "#F29DC3";
+    colorBlock.style.background = "linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet)";
+    colorBlock.textContent = "";
+    colorBlock.style.color = "#000";
+
+    document.getElementById("nomeCor").value = null;
+    document.getElementById("searchModelo").value = null;
+    document.getElementById("searchModeloEditar").value = null;
+
+    const checkboxes = document.querySelectorAll(".checkboxList input[type='checkbox']");
+    checkboxes.forEach(cb => cb.checked = false);
+
+    document.getElementById('cadastrar').style.display = 'none';
+    document.getElementById('editar').style.display = 'none';
+    document.getElementById('excluir').style.display = 'none';
+  }
+
+    function fecharEditar() {
+    document.getElementById("searchModeloEditar").value = null;
+
+    document.getElementById('editar').style.display = 'none';
+  }
 </script>
