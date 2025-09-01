@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Preciosos Laços</title>
+
+    <link rel="icon" type="image/png" href="../public/assets/logo_preciosos_lacos.png">
+    <link rel="stylesheet" href="../public/css/FinalizarCompra.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    
+</head>
+
+<body>
+
+    <header>
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between navbar">
+                <a href="#" class="brand">
+                    <img src="../public/assets/logo_preciosos_lacos.png" alt="Preciosos Laços">
+                </a>
+                <ul class="iconbar">
+                    <li><i class="bi bi-person-fill"></i></li>
+                    <li><i class="bi bi-bag"></i></li>
+                    <li><i class="bi bi-heart"></i></li>
+                    <li><i class="bi bi-cart"></i></li>
+                </ul>
+                <button class="hamburguer" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+                    aria-controls="offcanvasMenu">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="list-unstyled mb-4">
+                    <li><i class="bi bi-person-fill"></i> Perfil</li>
+                    <li><i class="bi bi-bag"></i> Minhas Compras</li>
+                    <li><i class="bi bi-heart"></i> Favoritos</li>
+                    <li><i class="bi bi-cart"></i> Carrinho</li>
+                </ul>
+                <hr>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-house-door"></i> Home</li>
+                    <li><i class="bi bi-grid"></i> Catálogo</li>
+                    <li><i class="bi bi-stars"></i> Promoções</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    
+
+
+<!-- apenas edite daqui para baixo!!! -->
+
+<!-- apenas edite daqui para baixo!!! -->
+
+<section class="finalizar-compra">
+    <div class="hub">
+        <!-- Coluna da lista de produtos -->
+        <div class="itens">
+            <div class="cabecalho-lista">
+                <div class="produto">Produto</div>
+                <div class="quantidade">Quantidade</div>
+                <div class="preco">Preço</div>
+            </div>
+            <!-- Produto 1 -->
+            <div class="item-produto">
+                <div class="produto">
+                    Laço Bolinha - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)
+                </div>
+                <div class="quantidade">1</div>
+                <div class="preco">R$14,99</div>
+            </div>
+            <!-- Produto 2 -->
+            <div class="item-produto">
+                <div class="produto">
+                    Laço vermelho - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)
+                </div>
+                <div class="quantidade">1</div>
+                <div class="preco">R$14,99</div>
+            </div>
+            <!-- Produto 3 -->
+            <div class="item-produto">
+                <div class="produto">
+                    Laço vermelho - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)
+                </div>
+                <div class="quantidade">1</div>
+                <div class="preco">R$14,99</div>
+            </div>
+           
+        </div>
+
+        <!-- Coluna lateral: Endereço, pagamento, resumo -->
+        <div class="coluna-lateral">
+            <!-- Endereço -->
+            <div class="endereco">
+                <div class="cabecalho-endereco">
+                    <span>Endereço</span>
+                    <button class="editar-endereco">Editar</button>
+                </div>
+                <div class="info-endereco">
+                    Rentlum: Lemo<br>
+                    Rza Frez|52-6330<br>
+                    Nova Esperançho: Cha-a<br>
+                    Fra -Santana, Banásia
+                </div>
+            </div>
+            <!-- Pagamento -->
+            <div class="pagamento">
+                <div class="titulo-pagamento">Formato de pagamento</div>
+                <div class="botoes-pagamento">
+                    <button>PIX</button>
+                    <button>Cartão de crédito</button>
+                    <button>Boleto bancário</button>
+                </div>
+            </div>
+            <!-- Resumo -->
+            <div class="resumo">
+                <div class="titulo-resumo">Resumo</div>
+                <div class="linha-resumo">
+                    <span>Subtotal</span>
+                    <span>R$44,97</span>
+                </div>
+                <div class="linha-resumo">
+                    <span>Custo de frete</span>
+                    <span>R$15,00</span>
+                </div>
+                <div class="linha-total">
+                    <span>Total</span>
+                    <span>R$59,97</span>
+                </div>
+            </div>
+            <!-- Botão finalizar -->
+            <button class="btn-finalizar">Finalizar compra</button>
+  
+
+</body>
+
+</html>
