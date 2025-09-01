@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="./assets/iconeWeb.ico">
+  <title>Preciosos Laços | Cadastro de Cores</title>
+
+  <link rel="stylesheet" href="./css/cadastro_cor.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+  <button class="toggle-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+
+  <div class="sidebar" id="sidebar">
+    <img src="./assets/logo_preciosos_lacos.png" alt="Logo">
+    <ul>
+      <li><a href="#"><i class="bi bi-box"></i> <span>Pedidos</span></a></li>
+      <li><a href="#"><i class="bi bi-card-list"></i> <span>Cadastro</span></a></li>
+      <li><a href="#"><i class="bi bi-tag"></i> <span>Modelos</span></a></li>
+      <li><a href="./cadastro_cor.html"><i class="bi bi-palette"></i> <span>Cores</span></a></li>
+      <li><a href="#"><i class="bi bi-archive"></i> <span>Coleções</span></a></li>
+      <li><a href="#"><i class="bi bi-scissors"></i> <span>Tipos de Laço</span></a></li>
+      <li><a href="#"><i class="bi bi-bar-chart"></i> <span>Dashboard</span></a></li>
+    </ul>
+    <ul>
+      <li><a href="#"><i class="bi bi-box-arrow-right"></i> <span>Sair</span></a></li>
+    </ul>
+  </div>
+
+  <header>Preciosos Laços</header>
+
+  <div class="nav-pesquisa">
+    <div class="nav-search-wrapper">
+      <input type="text" class="nav-search-box" placeholder="Pesquisar Cor" aria-label="Pesquisar Cor">
+      <i class="bi bi-search" id="lupa-search"></i>
+    </div>
+    <a class="btn-cadastrar" onclick="document.getElementById('cadastrar').style.display='flex'"><i
+        class="bi bi-patch-plus"></i><span> Cadastrar Cores</span></a>
+  </div>
+
+
+  <div class="content">
+
+
+    <div class="card-container">
+      <div class="card-custom">
+        <h5>Vermelho</h5>
+        <div class="color-box" style="background:#f44336"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Rosa</h5>
+        <div class="color-box" style="background:#f8b2cc"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Lilas</h5>
+        <div class="color-box" style="background: #dda0dd"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Azul claro</h5>
+        <div class="color-box" style="background: lightskyblue"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Lavanda</h5>
+        <div class="color-box" style="background: #cac1fe;"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Amarelo</h5>
+        <div class="color-box" style="background: #fdfd96;"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Verde</h5>
+        <div class="color-box" style="background: #98fb98;"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Marrom</h5>
+        <div class="color-box" style="background: #d2b48c;"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Preto</h5>
+        <div class="color-box" style="background: #000000;"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <h5>Branco</h5>
+        <div class="color-box" style="background: #ffffff;"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>
+            <li>Laço Padrão</li>
+            <li>Laço de Festa</li>
+            <li>Laço Infantil</li>
+            <li>Laço Princesa</li>
+            <li>Laço Piscina</li>
+            <li>Laço Silicone</li>
+          </ul>
+        </div>
+        <p class="mt-2">Valor: R$ 6,00</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="document.getElementById('editar').style.display='flex'"></i>
+          <i class="bi bi-trash" onclick="document.getElementById('excluir').style.display='flex'"></i>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="cadastrar" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fechar()">&times;</span>
+      <h2 class="tituloPopUp">Cadastro de Cor</h2>
+
+      <input type="text" id="nomeCor" placeholder="Nome da cor: Verde-Água"
+        style="width: 100%; padding: 8px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc;">
+
+      <h3 class="titulo">Clique para escolher a cor:</h3>
+      <input type="color" id="colorPicker" value="#F29DC3">
+      <div class="color-block" id="colorBlock"></div>
+
+      <h3 class="titulo">
+        Associar modelo:
+        <i class="bi bi-bookmark-plus-fill" style="color: #000000; margin-left: 5px;"></i>
+      </h3>
+
+      <div class="modal-search-wrapper">
+        <input type="text" class="searchInput" id="searchModelo" class="search-box" placeholder="Pesquisar modelo">
+        <i class="bi bi-search"></i>
+      </div>
+
+      <div class="checkboxList">
+        <div><input type="checkbox" id="modelo1"><label for="modelo1">Laço Padrão</label></div>
+        <div><input type="checkbox" id="modelo2"><label for="modelo2">Laço de Piscina</label></div>
+        <div><input type="checkbox" id="modelo3"><label for="modelo3">Laço de Festa</label></div>
+        <div><input type="checkbox" id="modelo4"><label for="modelo4">Laço Infantil</label></div>
+        <div><input type="checkbox" id="modelo5"><label for="modelo5">Laço Escolar</label></div>
+        <div><input type="checkbox" id="modelo6"><label for="modelo6">Laço de Gala</label></div>
+        <div><input type="checkbox" id="modelo7"><label for="modelo7">Laço Esportivo</label></div>
+        <div><input type="checkbox" id="modelo8"><label for="modelo8">Laço Casual</label></div>
+      </div>
+
+      <button id="fecharModal"
+        onclick="document.getElementById('cadastrar').style.display='none'; cadastroConfirmado()">Cadastrar cor</button>
+    </div>
+  </div>
+
+  <div id="editar" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharEditar()">&times;</span>
+      <h2 class="tituloPopUp">Editar Cor</h2>
+
+      <input type="text" placeholder="Vermelho"
+        style="width: 100%; padding: 8px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc;" readonly>
+
+      <h3 class="titulo">
+        Modelos Associados:
+        <i class="bi bi-bookmark-plus-fill" style="color: #000000; margin-left: 5px;"></i>
+      </h3>
+
+      <div class="modal-search-wrapper">
+        <input type="text" class="searchInput" id="searchModeloEditar" class="modal-search-box"
+          placeholder="Pesquisar modelo">
+        <i class="bi bi-search"></i>
+      </div>
+
+      <div class="checkboxList">
+        <div><input type="checkbox" id="modelo1" checked><label for="modelo1">Laço Padrão</label></div>
+        <div><input type="checkbox" id="modelo2"><label for="modelo2">Laço de Piscina</label></div>
+        <div><input type="checkbox" id="modelo3"><label for="modelo3">Laço de Festa</label></div>
+        <div><input type="checkbox" id="modelo4" checked><label for="modelo4">Laço Infantil</label></div>
+        <div><input type="checkbox" id="modelo5"><label for="modelo5">Laço Escolar</label></div>
+        <div><input type="checkbox" id="modelo6" checked><label for="modelo6">Laço de Gala</label></div>
+        <div><input type="checkbox" id="modelo7"><label for="modelo7">Laço Esportivo</label></div>
+        <div><input type="checkbox" id="modelo8"><label for="modelo8">Laço Casual</label></div>
+      </div>
+
+      <button id="fecharModal" onclick="AtualizarCor()">Atualizar cor</button>
+    </div>
+  </div>
+
+  <div id="excluir" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fechar()">&times;</span>
+      <h2 class="tituloPopUp">Você Deseja Deletar: “Vermelho”?</h2>
+
+      <button id="fecharModalExcluir" onclick="ExcluirCor()">Deletar cor</button>
+      <button id="fecharModalCancelar" onclick="fechar()">Cancelar</button>
+    </div>
+  </div>
+
+</body>
+
+</html>
+
+<script>
+  const toggleBtn = document.getElementById("toggleSidebar");
+  const sidebar = document.getElementById("sidebar");
+
+  toggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    sidebar.classList.toggle("active");
+  });
+
+  const items = sidebar.querySelectorAll("li");
+  items.forEach(item => {
+    item.addEventListener("click", () => {
+      if (window.innerWidth <= 992) {
+        sidebar.classList.remove("active");
+      }
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (window.innerWidth <= 992) {
+      if (sidebar.classList.contains("active") && !sidebar.contains(e.target) && e.target !== toggleBtn) {
+        sidebar.classList.remove("active");
+      }
+    }
+  });
+
+  document.querySelectorAll(".searchInput").forEach((input) => {
+    input.addEventListener("keyup", function () {
+      let filter = this.value.toLowerCase();
+      let checkboxList = this.closest(".modal-content").querySelector(".checkboxList");
+      let items = checkboxList.getElementsByTagName("div");
+
+      for (let i = 0; i < items.length; i++) {
+        let label = items[i].textContent.toLowerCase();
+        items[i].style.display = label.includes(filter) ? "" : "none";
+      }
+    });
+  });
+
+
+  const colorPicker = document.getElementById("colorPicker");
+  const colorBlock = document.getElementById("colorBlock");
+
+  colorPicker.addEventListener("input", function () {
+    colorBlock.style.background = this.value;
+    colorBlock.textContent = this.value;
+    colorBlock.style.color = "#fff";
+  });
+
+  function cadastroConfirmado() {
+    alert("Cadastro de cor realizado com sucesso!");
+
+    document.getElementById('cadastrar').style.display = 'none';
+
+    colorPicker.value = "#F29DC3";
+    colorBlock.style.background = "linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet)";
+    colorBlock.textContent = "";
+    colorBlock.style.color = "#000";
+
+    document.getElementById("nomeCor").value = "";
+    document.getElementById("searchModelo").value = "";
+
+    const checkboxes = document.querySelectorAll(".checkboxList input[type='checkbox']");
+    checkboxes.forEach(cb => cb.checked = false);
+  }
+
+  function AtualizarCor() {
+    alert("Atualização de cor realizada com sucesso!");
+
+    document.getElementById("searchModeloEditar").value = null;
+    const checkboxes = document.querySelectorAll(".checkboxList input[type='checkbox']");
+    checkboxes.forEach(cb => cb.checked = false);
+
+    document.getElementById('editar').style.display = 'none';
+  }
+
+  function ExcluirCor() {
+    alert(`Cor "Vermelho" excluída com sucesso!`);
+
+    document.getElementById('excluir').style.display = 'none';
+  }
+
+  function fechar() {
+    colorPicker.value = "#F29DC3";
+    colorBlock.style.background = "linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet)";
+    colorBlock.textContent = "";
+    colorBlock.style.color = "#000";
+
+    document.getElementById("nomeCor").value = null;
+    document.getElementById("searchModelo").value = null;
+    document.getElementById("searchModeloEditar").value = null;
+
+    const checkboxes = document.querySelectorAll(".checkboxList input[type='checkbox']");
+    checkboxes.forEach(cb => cb.checked = false);
+
+    document.getElementById('cadastrar').style.display = 'none';
+    document.getElementById('editar').style.display = 'none';
+    document.getElementById('excluir').style.display = 'none';
+  }
+
+    function fecharEditar() {
+    document.getElementById("searchModeloEditar").value = null;
+
+    document.getElementById('editar').style.display = 'none';
+  }
+</script>
