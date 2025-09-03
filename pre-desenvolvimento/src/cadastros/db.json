@@ -1,0 +1,23 @@
+{
+  "cores": [
+    {
+      "id": 1,
+      "nome": "Azul",
+      "hex": "#0008ff",
+      "valor": 8,
+      "modelos": [
+        "Laço Padrão",
+        "Laço de Piscina"
+      ]
+    },
+    {
+      "id": 2,
+      "nome": "Rosa",
+      "hex": "#f29dc3",
+      "valor": 6,
+      "modelos": [
+        "Laço Princesa"
+      ]
+    }
+  ]
+}
