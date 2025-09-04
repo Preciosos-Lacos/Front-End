@@ -47,6 +47,10 @@
                     Não tem conta? <a href="../cadastros/cadastroUsuario.html">Cadastre-se aqui.</a>
                 </p>
 
+                <p class="link-container">
+                    <a href="../cadastros/cadastroUsuario.html">Esqueci minha senha</a>
+                </p>
+
             </div>
         </div>
     </section>
@@ -65,4 +69,49 @@
         togglePassword.classList.toggle('bi-eye');
         togglePassword.classList.toggle('bi-eye-slash');
     });
+
+   
+
+document.getElementById("login").addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+
+    // Validação básica (campos não vazios)
+    if (!email || !senha) {
+        alert("Por favor, preencha o e-mail e a senha.");
+        return;
+    }
+
+    try {
+        // Constrói a URL com os parâmetros de filtro
+        const url = `http://localhost:3000/users?email=${encodeURIComponent(email )}&senha=${encodeURIComponent(senha)}`;
+        
+        const response = await fetch(url);
+
+        if (response.ok) {
+            const users = await response.json();
+
+            if (users.length > 0) {
+                // Usuário encontrado - Login bem-sucedido
+                const usuarioLogado = users[0];
+                alert("Login bem-sucedido! Bem-vindo(a), " + usuarioLogado.nome_completo + "!");
+                console.log("Usuário logado:", usuarioLogado);
+                
+                // Opcional: Redirecionar para uma página pós-login (ex: dashboard)
+                // window.location.href = "../public/dashboard.html"; 
+
+            } else {
+                // Nenhum usuário encontrado com essas credenciais
+                alert("E-mail ou senha incorretos. Tente novamente.");
+            }
+        } else {
+            alert("Erro ao tentar fazer login. Verifique o console para mais detalhes.");
+            console.error("Erro na resposta do servidor:", response.status, response.statusText);
+        }
+    } catch (error) {
+        console.error("Erro na requisição fetch:", error);
+        alert("Não foi possível conectar ao servidor. Verifique se o JSON Server está rodando.");
+    }
+});
+
 </script>

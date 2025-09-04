@@ -19,5 +19,43 @@
         "Laço Princesa"
       ]
     }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "nome_completo": "Ana Silva",
+      "email": "ana.silva@example.com",
+      "senha": "123456",
+      "cpf": "123.456.789-00",
+      "telefone": "(11) 98765-4321",
+      "data_cadastro": "2025-01-10"
+    },
+    {
+      "nome_completo": "Ruan",
+      "telefone": "11959847881",
+      "cpf": "54971358897",
+      "email": "ruangamer@gmail.com",
+      "senha": "ruan1",
+      "data_cadastro": "2025-09-04",
+      "id": 2
+    },
+    {
+      "nome_completo": "Ruan",
+      "telefone": "11959847881",
+      "cpf": "54971358897",
+      "email": "ruangamer@gmail.com",
+      "senha": "ruan1",
+      "data_cadastro": "2025-09-04",
+      "id": 3
+    },
+    {
+      "nome_completo": "aaaaaaa",
+      "telefone": "11968478443",
+      "cpf": "45678909976",
+      "email": "crfsruan01@gmail.com",
+      "senha": "123",
+      "data_cadastro": "2025-09-04",
+      "id": 4
+    }
   ]
 }
