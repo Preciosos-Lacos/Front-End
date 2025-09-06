@@ -1,7 +1,7 @@
 {
   "cores": [
     {
-      "id": 5,
+      "id": "5",
       "nome": "Verde",
       "cor": "#11ff00",
       "valor": "8.00",
@@ -11,7 +11,7 @@
       ]
     },
     {
-      "id": 6,
+      "id": "6",
       "nome": "Azul",
       "cor": "#0011ff",
       "valor": "8.00",
@@ -25,6 +25,44 @@
         "Laço Esportivo",
         "Laço Casual"
       ]
+    }
+  ],
+  "enderecos": [
+    {
+      "id": 1,
+      "id_usuario": 4,
+      "cep": "08280630",
+      "uf": "SP",
+      "cidade": "São Paulo",
+      "bairro": "Cidade Líder",
+      "rua": "Rua Morubixaba",
+      "numero": "198",
+      "complemento": "ap 01 bloco 6",
+      "padrao": true
+    },
+    {
+      "id": 2,
+      "id_usuario": 4,
+      "cep": "01101010",
+      "uf": "SP",
+      "cidade": "São Paulo",
+      "bairro": "Luz",
+      "rua": "Avenida Tiradentes",
+      "numero": "123",
+      "complemento": "",
+      "padrao": true
+    },
+    {
+      "id": 3,
+      "id_usuario": 4,
+      "cep": "09230210",
+      "uf": "SP",
+      "cidade": "Santo André",
+      "bairro": "Vila Camilópolis",
+      "rua": "Rua Cosenza",
+      "numero": "26",
+      "complemento": "02",
+      "padrao": true
     }
   ]
 }

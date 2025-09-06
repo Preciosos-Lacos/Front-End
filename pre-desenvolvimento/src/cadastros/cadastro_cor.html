@@ -424,7 +424,6 @@
 
       const res = await fetch(API_URL);
       const cores = await res.json();
-      // Garante que o novo ID é sempre numérico
       const novoId = cores.length > 0
         ? Math.max(...cores.map(c => Number(c.id) || 0)) + 1
         : 1;
@@ -433,7 +432,7 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id: novoId, // <-- sempre número!
+          id: novoId, 
           nome,
           cor: corHex,
           valor: valor || "0.00",
@@ -459,7 +458,6 @@
           const modal = document.querySelector("#editar .modal-content");
           modal.querySelector("input[type='text']").value = cor.nome;
           modal.querySelector("#valorLaco").value = cor.valor;
-          // Preenche os checkboxes dos modelos
           document.querySelectorAll("#editar .checkboxList input").forEach(cb => {
             cb.checked = cor.modelos && cor.modelos.includes(cb.nextElementSibling.textContent);
           });
@@ -477,7 +475,6 @@
       const modelos = Array.from(document.querySelectorAll("#editar .checkboxList input:checked"))
         .map(cb => cb.nextElementSibling.textContent);
 
-      // Recupera a cor original para não perder o valor
       let corHex = "#ffffff";
       try {
         const res = await fetch(`${API_URL}/${window.corEditandoId}`);
