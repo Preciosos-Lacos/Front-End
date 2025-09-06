@@ -148,25 +148,25 @@ main {
 }
 
 .cadastro #CEP,
-.cadastro #uf, 
+.cadastro #uf,
 .cadastro #cidade,
 .cadastro #bairro,
 .cadastro #numero,
 .cadastro #complemento,
-.cadastro #rua{
+.cadastro #rua {
     width: 260px;
     height: 40px;
     padding: 10px;
     border: 1.5px solid var(--rosa);
     border-radius: 12px;
-    margin: 12px;
+    margin: 6px;
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
     outline: none;
 }
 
 .cadastro #CEP:focus,
-.cadastro #uf:focus, 
+.cadastro #uf:focus,
 .cadastro #cidade:focus,
 .cadastro #bairro:focus,
 .cadastro #numero:focus,
@@ -175,29 +175,37 @@ main {
     border-color: #BB6686;
 }
 
-#padrao{
+#checkbox-padrao {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+}
+
+#padrao {
     appearance: none;
     width: 20px;
     height: 20px;
-    border: 2px solid #BB6686; 
+    border: 2px solid #BB6686;
     border-radius: 4px;
     background-color: white;
+    margin: 5px;
     cursor: pointer;
     position: relative;
 
 }
 
-#padrao:checked{
-    background-color:#BB6686;
+#padrao:checked {
+    background-color: #BB6686;
 }
 
-#padrao:checked::after{
-     content: "✔";
+#padrao:checked::after {
+    content: "✔";
     color: white;
-    font-size: 14px;
+    font-size: 15px;
     position: relative;
-    top: 1px;
-    left: 4px;
+    top: -6px;
+    left: -1px;
 }
 
 .cadastro #cadastrar-endereco {
