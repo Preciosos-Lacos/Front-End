@@ -50,18 +50,69 @@
             </div>
     </section>
 
+    <div class="modal fade" id="modalAviso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle"></i> Aviso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalAvisoMsg"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-warning" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalErro" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-x-circle"></i> Erro</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalErroMsg"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSucesso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="bi bi-check-circle"></i> Sucesso</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalSucessoMsg"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         var id_usuario = sessionStorage.id_usuario = 4;
 
         const API_CEP = 'https://viacep.com.br/ws/';
         const API_URL = 'http://localhost:3000/enderecos';
 
+        function abrirModal(id, msg) {
+            document.getElementById(id + "Msg").innerText = msg;
+            const modal = new bootstrap.Modal(document.getElementById(id));
+            modal.show();
+        }
+
         document.getElementById('CEP').addEventListener('blur', function () {
             const cep = this.value.replace(/\D/g, '');
             if (cep.length === 8) {
                 preencherCamposEndereco(cep);
             } else if (cep.length > 0) {
-                alert('CEP inválido. Por favor, insira um CEP com 8 dígitos.');
+                abrirModal("modalAviso", "CEP inválido. Por favor, insira um CEP com 8 dígitos.");
                 document.getElementById('CEP').value = "";
             }
         });
@@ -82,12 +133,12 @@
                         document.getElementById('bairro').value = data.bairro;
                         document.getElementById('rua').value = data.logradouro;
                     } else {
-                        alert('CEP não encontrado. Por favor, verifique e tente novamente.');
+                        abrirModal("modalAviso", "CEP não encontrado. Por favor, verifique e tente novamente.");
                     }
                 })
                 .catch(error => {
                     console.error('Erro ao buscar o CEP:', error);
-                    alert('Erro ao buscar o CEP. Tente novamente mais tarde.');
+                    abrirModal("modalErro", "Erro ao buscar o CEP. Tente novamente mais tarde.");
                 });
         }
 
@@ -110,11 +161,11 @@
             const padrao = document.getElementById('padrao').checked;
 
             if (!cep || !uf || !cidade || !bairro || !rua || !numero) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
+                abrirModal("modalAviso", "Por favor, preencha todos os campos obrigatórios.");
                 return;
             }
 
-            const id = await getNextId(); // força ID numérico incremental
+            const id = await getNextId();
 
             const novoEndereco = {
                 id: Number(id),
@@ -132,14 +183,12 @@
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(novoEndereco)
                 });
 
                 if (response.ok) {
-                    alert('Endereço cadastrado com sucesso!');
+                    abrirModal("modalSucesso", "Endereço cadastrado com sucesso!");
                     document.getElementById('CEP').value = '';
                     document.getElementById('uf').value = '';
                     document.getElementById('cidade').value = '';
@@ -149,11 +198,11 @@
                     document.getElementById('complemento').value = '';
                     document.getElementById('padrao').checked = false;
                 } else {
-                    alert('Erro ao cadastrar endereço. Tente novamente.');
+                    abrirModal("modalErro", "Erro ao cadastrar endereço. Tente novamente.");
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                alert('Erro ao conectar com o servidor. Tente novamente mais tarde.');
+                abrirModal("modalErro", "Erro ao conectar com o servidor. Tente novamente mais tarde.");
             }
         });
     </script>

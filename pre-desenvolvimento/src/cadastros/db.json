@@ -29,7 +29,7 @@
   ],
   "enderecos": [
     {
-      "id": 1,
+      "id": "1",
       "id_usuario": 4,
       "cep": "08280630",
       "uf": "SP",
@@ -41,7 +41,7 @@
       "padrao": true
     },
     {
-      "id": 2,
+      "id": "2",
       "id_usuario": 4,
       "cep": "01101010",
       "uf": "SP",
@@ -53,7 +53,7 @@
       "padrao": true
     },
     {
-      "id": 3,
+      "id": "3",
       "id_usuario": 4,
       "cep": "09230210",
       "uf": "SP",
@@ -62,6 +62,18 @@
       "rua": "Rua Cosenza",
       "numero": "26",
       "complemento": "02",
+      "padrao": true
+    },
+    {
+      "id": 4,
+      "id_usuario": 4,
+      "cep": "08280650",
+      "uf": "SP",
+      "cidade": "São Paulo",
+      "bairro": "Cidade Líder",
+      "rua": "Rua Orlando Pellicci",
+      "numero": "2299",
+      "complemento": "1512",
       "padrao": true
     }
   ]
