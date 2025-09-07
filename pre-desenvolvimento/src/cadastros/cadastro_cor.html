@@ -352,179 +352,233 @@
   </div>
 
 
+  <div id="customAlert" class="custom-alert">
+    <div class="alert-box">
+      <h3 id="alertTitle">Alerta</h3>
+      <p id="alertMessage">Mensagem aqui</p>
+      <button onclick="fecharAlerta()">OK</button>
+    </div>
+  </div>
 
-  <script>
-    const API_URL = "http://localhost:3000/cores";
 
-    const toggleBtn = document.getElementById("toggleSidebar");
-    const sidebar = document.getElementById("sidebar");
+<script>
+const API_URL = "http://localhost:3000/cores";
 
-    toggleBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      sidebar.classList.toggle("active");
+const toggleBtn = document.getElementById("toggleSidebar");
+const sidebar = document.getElementById("sidebar");
+
+toggleBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  sidebar.classList.toggle("active");
+});
+
+const items = sidebar.querySelectorAll("li");
+items.forEach(item => {
+  item.addEventListener("click", () => {
+    if (window.innerWidth <= 992) {
+      sidebar.classList.remove("active");
+    }
+  });
+});
+
+document.addEventListener("click", (e) => {
+  if (window.innerWidth <= 992) {
+    if (sidebar.classList.contains("active") && !sidebar.contains(e.target) && e.target !== toggleBtn) {
+      sidebar.classList.remove("active");
+    }
+  }
+});
+
+function showAlert(tipo, mensagem) {
+  let bgColor = "#f0f0f0";
+  if(tipo === "sucesso") bgColor = "#28a745";
+  else if(tipo === "erro") bgColor = "#dc3545";
+  else if(tipo === "aviso") bgColor = "#ffc107";
+
+  const alertDiv = document.createElement("div");
+  alertDiv.style.position = "fixed";
+  alertDiv.style.top = "20px";
+  alertDiv.style.right = "20px";
+  alertDiv.style.padding = "15px 20px";
+  alertDiv.style.color = "#fff";
+  alertDiv.style.backgroundColor = bgColor;
+  alertDiv.style.borderRadius = "8px";
+  alertDiv.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
+  alertDiv.style.zIndex = "9999";
+  alertDiv.textContent = mensagem;
+
+  document.body.appendChild(alertDiv);
+  setTimeout(() => alertDiv.remove(), 3000);
+}
+
+async function listarCores() {
+  try {
+    const res = await fetch(API_URL);
+    const cores = await res.json();
+
+    const container = document.querySelector(".card-container");
+    container.innerHTML = "";
+
+    cores.forEach(cor => {
+      const modelos = Array.isArray(cor.modelos) ? cor.modelos : [];
+      const valor = cor.valor ? Number(cor.valor).toFixed(2) : "0.00";
+      const card = document.createElement("div");
+      card.classList.add("card-custom");
+      card.innerHTML = `
+        <h5>${cor.nome}</h5>
+        <div class="color-box" style="background:${cor.cor}"></div>
+        <p><strong>Modelos Associados:</strong></p>
+        <div class="list-associates">
+          <ul>${modelos.map(m => `<li>${m}</li>`).join("")}</ul>
+        </div>
+        <p class="mt-2">Valor: R$ ${valor}</p>
+        <div class="icons">
+          <i class="bi bi-pencil" onclick="abrirEditar(${cor.id})"></i>
+          <i class="bi bi-trash" onclick="abrirExcluir(${cor.id}, '${cor.nome}')"></i>
+        </div>
+      `;
+      container.appendChild(card);
     });
+  } catch {
+    showAlert("erro", "Erro ao carregar as cores!");
+  }
+}
 
-    const items = sidebar.querySelectorAll("li");
-    items.forEach(item => {
-      item.addEventListener("click", () => {
-        if (window.innerWidth <= 992) {
-          sidebar.classList.remove("active");
-        }
+async function cadastrarCor() {
+  const nome = document.getElementById("nomeCor").value.trim();
+  const corHex = document.getElementById("colorPicker").value;
+  const valor = document.getElementById("valorCor").value.replace("R$ ", "").replace(",", ".").trim();
+  const modelosSelecionados = Array.from(document.querySelectorAll("#cadastrar .checkboxList input:checked"))
+    .map(cb => cb.nextElementSibling.textContent);
+
+  if (!nome || !corHex) {
+    showAlert("erro", "Preencha o nome e a cor!");
+    return;
+  }
+
+  if(!valor){
+    showAlert("aviso","Preencha o Valor!")
+    return
+  }
+
+  if(modelosSelecionados.length === 0){
+    showAlert("aviso", "Selecione pelo menos um modelo!");
+    return;
+  }
+
+  const res = await fetch(API_URL);
+  const cores = await res.json();
+  const novoId = cores.length > 0
+    ? Math.max(...cores.map(c => Number(c.id) || 0)) + 1
+    : 1;
+
+  await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: novoId,
+      nome,
+      cor: corHex,
+      valor: valor || "0.00",
+      modelos: modelosSelecionados
+    })
+  });
+
+  showAlert("sucesso", "Cor cadastrada com sucesso!");
+
+  document.getElementById("nomeCor").value = "";
+  document.getElementById("colorPicker").value = "#F29DC3";
+  document.getElementById("valorCor").value = "";
+  document.querySelectorAll("#cadastrar .checkboxList input").forEach(cb => cb.checked = false);
+  document.getElementById('cadastrar').style.display = 'none';
+  listarCores();
+}
+
+function abrirEditar(id) {
+  fetch(`${API_URL}/${id}`)
+    .then(res => {
+      if (!res.ok) throw new Error("Cor não encontrada");
+      return res.json();
+    })
+    .then(cor => {
+      document.getElementById('editar').style.display = 'flex';
+      const modal = document.querySelector("#editar .modal-content");
+      modal.querySelector("input[type='text']").value = cor.nome;
+      modal.querySelector("#valorLaco").value = cor.valor;
+      document.querySelectorAll("#editar .checkboxList input").forEach(cb => {
+        cb.checked = cor.modelos && cor.modelos.includes(cb.nextElementSibling.textContent);
       });
+    })
+    .catch(() => {
+      showAlert("erro", "Cor não encontrada!");
+      fechar();
     });
+  window.corEditandoId = id;
+}
 
-    document.addEventListener("click", (e) => {
-      if (window.innerWidth <= 992) {
-        if (sidebar.classList.contains("active") && !sidebar.contains(e.target) && e.target !== toggleBtn) {
-          sidebar.classList.remove("active");
-        }
-      }
-    });
+async function AtualizarCor() {
+  const nome = document.querySelector("#editar input[type='text']").value.trim();
+  const valor = document.getElementById("valorLaco").value.trim();
+  const modelosSelecionados = Array.from(document.querySelectorAll("#editar .checkboxList input:checked"))
+    .map(cb => cb.nextElementSibling.textContent);
 
-    async function listarCores() {
-      const res = await fetch(API_URL);
-      const cores = await res.json();
+  if(modelosSelecionados.length === 0){
+    showAlert("aviso", "Selecione pelo menos um modelo!");
+    return;
+  }
 
-      const container = document.querySelector(".card-container");
-      container.innerHTML = "";
-
-      cores.forEach(cor => {
-        const modelos = Array.isArray(cor.modelos) ? cor.modelos : [];
-        const valor = cor.valor ? Number(cor.valor).toFixed(2) : "0.00";
-        const card = document.createElement("div");
-        card.classList.add("card-custom");
-        card.innerHTML = `
-      <h5>${cor.nome}</h5>
-      <div class="color-box" style="background:${cor.cor}"></div>
-      <p><strong>Modelos Associados:</strong></p>
-      <div class="list-associates">
-        <ul>${modelos.map(m => `<li>${m}</li>`).join("")}</ul>
-      </div>
-      <p class="mt-2">Valor: R$ ${valor}</p>
-      <div class="icons">
-        <i class="bi bi-pencil" onclick="abrirEditar(${cor.id})"></i>
-        <i class="bi bi-trash" onclick="abrirExcluir(${cor.id}, '${cor.nome}')"></i>
-      </div>
-    `;
-        container.appendChild(card);
-      });
+  let corHex = "#ffffff";
+  try {
+    const res = await fetch(`${API_URL}/${window.corEditandoId}`);
+    if (res.ok) {
+      const corObj = await res.json();
+      corHex = corObj.cor || corHex;
     }
+  } catch {}
 
-    async function cadastrarCor() {
-      const nome = document.getElementById("nomeCor").value;
-      const corHex = document.getElementById("colorPicker").value;
-      const valor = document.getElementById("valorCor").value.replace("R$ ", "").replace(",", ".");
-      const modelos = Array.from(document.querySelectorAll("#cadastrar .checkboxList input:checked"))
-        .map(cb => cb.nextElementSibling.textContent);
+  await fetch(`${API_URL}/${window.corEditandoId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: window.corEditandoId,
+      nome,
+      cor: corHex,
+      valor,
+      modelos: modelosSelecionados
+    })
+  });
 
-      if (!nome || !corHex) {
-        alert("Preencha todos os campos!");
-        return;
-      }
+  showAlert("sucesso", "Cor atualizada com sucesso!");
+  document.getElementById('editar').style.display = 'none';
+  listarCores();
+}
 
-      const res = await fetch(API_URL);
-      const cores = await res.json();
-      const novoId = cores.length > 0
-        ? Math.max(...cores.map(c => Number(c.id) || 0)) + 1
-        : 1;
+function abrirExcluir(id, nome) {
+  document.getElementById('excluir').style.display = 'flex';
+  document.querySelector("#excluir .tituloPopUp").textContent = `Você Deseja Deletar: “${nome}”?`;
+  window.corExcluindoId = id;
+}
 
-      await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: novoId, 
-          nome,
-          cor: corHex,
-          valor: valor || "0.00",
-          modelos
-        })
-      });
-      document.getElementById("nomeCor").value = "";
-      document.getElementById("colorPicker").value = "#F29DC3";
-      document.getElementById("valorCor").value = "";
-      document.querySelectorAll("#cadastrar .checkboxList input").forEach(cb => cb.checked = false);
-      document.getElementById('cadastrar').style.display = 'none';
-      listarCores();
-    }
+async function ExcluirCor() {
+  try {
+    const res = await fetch(`${API_URL}/${window.corExcluindoId}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("Erro ao excluir");
+    showAlert("sucesso", "Cor excluída com sucesso!");
+  } catch {
+    showAlert("erro", "Cor não encontrada ou já excluída!");
+  }
+  document.getElementById('excluir').style.display = 'none';
+  listarCores();
+}
 
-    function abrirEditar(id) {
-      fetch(`${API_URL}/${id}`)
-        .then(res => {
-          if (!res.ok) throw new Error("Cor não encontrada");
-          return res.json();
-        })
-        .then(cor => {
-          document.getElementById('editar').style.display = 'flex';
-          const modal = document.querySelector("#editar .modal-content");
-          modal.querySelector("input[type='text']").value = cor.nome;
-          modal.querySelector("#valorLaco").value = cor.valor;
-          document.querySelectorAll("#editar .checkboxList input").forEach(cb => {
-            cb.checked = cor.modelos && cor.modelos.includes(cb.nextElementSibling.textContent);
-          });
-        })
-        .catch(err => {
-          alert("Cor não encontrada!");
-          fechar();
-        });
-      window.corEditandoId = id;
-    }
+function fechar() {
+  document.getElementById('cadastrar').style.display = 'none';
+  document.getElementById('editar').style.display = 'none';
+  document.getElementById('excluir').style.display = 'none';
+}
 
-    async function AtualizarCor() {
-      const nome = document.querySelector("#editar input[type='text']").value;
-      const valor = document.getElementById("valorLaco").value;
-      const modelos = Array.from(document.querySelectorAll("#editar .checkboxList input:checked"))
-        .map(cb => cb.nextElementSibling.textContent);
-
-      let corHex = "#ffffff";
-      try {
-        const res = await fetch(`${API_URL}/${window.corEditandoId}`);
-        if (res.ok) {
-          const corObj = await res.json();
-          corHex = corObj.cor || corHex;
-        }
-      } catch {}
-
-      await fetch(`${API_URL}/${window.corEditandoId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: window.corEditandoId,
-          nome,
-          cor: corHex,
-          valor,
-          modelos
-        })
-      });
-      document.getElementById('editar').style.display = 'none';
-      listarCores();
-    }
-
-    function abrirExcluir(id, nome) {
-      document.getElementById('excluir').style.display = 'flex';
-      document.querySelector("#excluir .tituloPopUp").textContent = `Você Deseja Deletar: “${nome}”?`;
-      window.corExcluindoId = id;
-    }
-
-    async function ExcluirCor() {
-      try {
-        const res = await fetch(`${API_URL}/${window.corExcluindoId}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("Cor não encontrada para exclusão.");
-      } catch (err) {
-        alert("Cor não encontrada ou já excluída!");
-      }
-      document.getElementById('excluir').style.display = 'none';
-      listarCores();
-    }
-
-    function fechar() {
-      document.getElementById('cadastrar').style.display = 'none';
-      document.getElementById('editar').style.display = 'none';
-      document.getElementById('excluir').style.display = 'none';
-    }
-
-    window.onload = listarCores;
-
-  </script>
+window.onload = listarCores;
+</script>
 
 </body>
 

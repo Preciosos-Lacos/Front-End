@@ -1,9 +1,9 @@
 {
   "cores": [
     {
-      "id": "5",
-      "nome": "Verde",
-      "cor": "#11ff00",
+      "id": "7",
+      "nome": "Vermelho",
+      "cor": "#ff0000",
       "valor": "8.00",
       "modelos": [
         "Laço Padrão",
@@ -11,19 +11,13 @@
       ]
     },
     {
-      "id": "6",
-      "nome": "Azul",
-      "cor": "#0011ff",
-      "valor": "8.00",
+      "id": "8",
+      "nome": "Verde",
+      "cor": "#04ff00",
+      "valor": "9.00",
       "modelos": [
         "Laço Padrão",
-        "Laço de Piscina",
-        "Laço de Festa",
-        "Laço Infantil",
-        "Laço Escolar",
-        "Laço de Gala",
-        "Laço Esportivo",
-        "Laço Casual"
+        "Laço de Piscina"
       ]
     }
   ],
@@ -65,7 +59,7 @@
       "padrao": true
     },
     {
-      "id": 4,
+      "id": "4",
       "id_usuario": 4,
       "cep": "08280650",
       "uf": "SP",
@@ -74,6 +68,18 @@
       "rua": "Rua Orlando Pellicci",
       "numero": "2299",
       "complemento": "1512",
+      "padrao": true
+    },
+    {
+      "id": 5,
+      "id_usuario": 4,
+      "cep": "01101010",
+      "uf": "SP",
+      "cidade": "São Paulo",
+      "bairro": "Luz",
+      "rua": "Avenida Tiradentes",
+      "numero": "159",
+      "complemento": "",
       "padrao": true
     }
   ]

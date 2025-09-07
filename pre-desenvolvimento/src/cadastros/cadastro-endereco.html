@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cadastre seu Endereço</title>
+    <title>Preciosos Laços | Cadastro de Endereço</title>
 
     <link rel="icon" type="image/png" href="../public/assets/logo_preciosos_lacos.png">
     <link rel="stylesheet" href="../public/css/cadastro-endereco.css">
@@ -16,6 +16,10 @@
 </head>
 
 <body>
+    <a href="javascript:history.back()"  title="Voltar" class="btn-voltar">
+        <i class="bi bi-arrow-left-circle"></i>
+    </a>
+
     <section class="cadastro-section">
         <div class="logo-cadastro">
             <img src="../public/assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços">
@@ -197,6 +201,11 @@
                     document.getElementById('numero').value = '';
                     document.getElementById('complemento').value = '';
                     document.getElementById('padrao').checked = false;
+                    
+                setTimeout(() => {
+                    window.location = "../carrinho/FinalizarCompra.html";
+                }, "2000"); 
+
                 } else {
                     abrirModal("modalErro", "Erro ao cadastrar endereço. Tente novamente.");
                 }
