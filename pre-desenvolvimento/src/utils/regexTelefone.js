@@ -1,4 +1,4 @@
-window.onload = function () {
+document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById("telefone");
 
     input.addEventListener("input", function (e) {
@@ -20,4 +20,4 @@ window.onload = function () {
 
         e.target.value = value;
     });
-}
+});
