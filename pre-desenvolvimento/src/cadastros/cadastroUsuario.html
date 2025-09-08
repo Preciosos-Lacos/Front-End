@@ -97,4 +97,59 @@
         togglePasswordConfirm.classList.toggle('bi-eye');
         togglePasswordConfirm.classList.toggle('bi-eye-slash');
     });
+
+        // Cadastro de usuário
+
+    document.getElementById("cadastro").addEventListener("click", async () => {
+        const nome = document.getElementById("nome").value;
+        const telefone = document.getElementById("telefone").value;
+        const cpf = document.getElementById("cpf").value;
+        const email = document.getElementById("email").value;
+        const senha = document.getElementById("senha").value;
+        const confirmar_senha = document.getElementById("confirmar_senha").value; // Usado apenas para validação no frontend
+
+        // --- Validações (Exemplo) ---
+        if (senha !== confirmar_senha) {
+            alert("As senhas não coincidem!");
+            return;
+        }
+        if (!nome || !telefone || !cpf || !email || !senha) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+        // ---------------------------
+
+        const novoUsuario = {
+            nome_completo: nome,
+            telefone: telefone,
+            cpf: cpf,
+            email: email,
+            senha: senha,
+            data_cadastro: new Date().toISOString().slice(0, 10) // Adiciona a data atual no formato YYYY-MM-DD
+        };
+
+        try {
+            const response = await fetch("http://localhost:3000/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(novoUsuario )
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert("Usuário cadastrado com sucesso! ID: " + data.id);
+                console.log("Novo usuário adicionado:", data);
+                // Redireciona para a página de login após o cadastro
+                window.location.href = "../public/login.html";
+            } else {
+                alert("Erro ao cadastrar usuário. Verifique o console para mais detalhes.");
+                console.error("Erro na resposta do servidor:", response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error("Erro na requisição fetch:", error);
+            alert("Não foi possível conectar ao servidor. Verifique se o JSON Server está rodando.");
+        }
+    });
 </script>
