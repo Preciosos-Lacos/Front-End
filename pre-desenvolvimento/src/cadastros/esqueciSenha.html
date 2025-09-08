@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="./assets/iconeWeb.ico">
+    <title>Preciosos Laços | Redefinir Senha</title>
+
+    <link rel="stylesheet" href="./css/esqueciSenha.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <a href="../home/catalogo.html"><i class="bi bi-house-door"></i></a>
+    </header>
+
+    <section class="login-section">
+        <div class="logo-login">
+            <img src="./assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços">
+        </div>
+
+        <div class="form-login">
+            <div class="incio">
+                <h2 id="inicio">Redefinir senha</h2>
+                <p id="p-inicio">Informe seu e-mail para redefinir sua senha.</p>
+            </div>
+            <div class="login">
+                <input type="text" id="email" placeholder="E-mail:">
+
+                <div class="input-group mt-3">
+                    <input type="password" id="novaSenha" placeholder="Nova senha:" class="form-control">
+                    <span class="input-group-text">
+                        <i class="bi bi-eye" id="toggleNovaSenha"></i>
+                    </span>
+                </div>
+
+                <div class="input-group mt-2">
+                    <input type="password" id="confirmarSenha" placeholder="Confirmar nova senha:" class="form-control">
+                    <span class="input-group-text">
+                        <i class="bi bi-eye" id="toggleConfirmarSenha"></i>
+                    </span>
+                </div>
+
+                <button id="redefinirSenha" class="mt-3">Redefinir senha</button>
+
+                <p class="link-container mt-3">
+                    <a href="../cadastros/login.html">Voltar ao login</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
+
+<script>
+    // Mostrar/ocultar senha
+    document.getElementById('toggleNovaSenha').addEventListener('click', function () {
+        const input = document.getElementById('novaSenha');
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+        this.classList.toggle('bi-eye');
+        this.classList.toggle('bi-eye-slash');
+    });
+
+    document.getElementById('toggleConfirmarSenha').addEventListener('click', function () {
+        const input = document.getElementById('confirmarSenha');
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+        this.classList.toggle('bi-eye');
+        this.classList.toggle('bi-eye-slash');
+    });
+
+    // Redefinir senha
+    document.getElementById("redefinirSenha").addEventListener("click", async () => {
+        const email = document.getElementById("email").value;
+        const novaSenha = document.getElementById("novaSenha").value;
+        const confirmarSenha = document.getElementById("confirmarSenha").value;
+
+        if (!email || !novaSenha || !confirmarSenha) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        if (novaSenha !== confirmarSenha) {
+            alert("As senhas não coincidem.");
+            return;
+        }
+
+        try {
+            // Verifica se o e-mail existe
+            const url = `http://localhost:3000/users?email=${encodeURIComponent(email)}`;
+            const response = await fetch(url);
+
+            if (response.ok) {
+                const users = await response.json();
+
+                if (users.length > 0) {
+                    // Usuário encontrado, atualiza a senha
+                    const userId = users[0].id;
+                    const updateUrl = `http://localhost:3000/users/${userId}`;
+                    const updateResponse = await fetch(updateUrl, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ senha: novaSenha })
+                    });
+
+                    if (updateResponse.ok) {
+                        alert("Senha redefinida com sucesso! Faça login com sua nova senha.");
+                        window.location.href = "../public/login.html";
+                    } else {
+                        alert("Erro ao atualizar a senha. Tente novamente.");
+                    }
+                } else {
+                    alert("E-mail não encontrado.");
+                }
+            } else {
+                alert("Erro ao buscar usuário.");
+            }
+        } catch (error) {
+            console.error("Erro na requisição fetch:", error);
+            alert("Ocorreu um erro. Tente novamente.");
+        }
+    });
+</script>
