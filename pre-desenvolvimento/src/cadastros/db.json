@@ -82,5 +82,16 @@
       "complemento": "",
       "padrao": true
     }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "nome_completo": "Ana Silva",
+      "email": "ana.silva@example.com",
+      "senha": "123",
+      "cpf": "123.456.789-00",
+      "telefone": "(11) 98765-4321",
+      "data_cadastro": "2025-01-10"
+    }
   ]
 }
