@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Preciosos Laços | Compra</title>
+
+    <link rel="icon" type="image/png" href="../assets/logo_preciosos_lacos.png">
+    <link rel="stylesheet" href="../styles/FinalizarCompra.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between navbar"> <a href="./catalogo.html"
+                    class="brand"> <img src="../assets/logo_preciosos_lacos.png" alt="Preciosos Laços"> </a>
+                <ul class="iconbar">
+                    <a href="./perfil.html">
+                        <li><i class="bi bi-person-fill"></i></li>
+                    </a>
+                    <a href="./MinhasCompras.html">
+                        <li><i class="bi bi-bag"></i></li>
+                    </a>
+                    <a href="./favorito.html">
+                        <li><i class="bi bi-heart"></i></li>
+                    </a>
+                    <a href="./carrinho.html">
+                        <li><i class="bi bi-cart"></i></li>
+                    </a>
+                </ul> <button class="hamburguer" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu"> <i class="bi bi-list"></i> </button>
+            </div>
+        </div>
+    </header>
+    <main>
+
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5> <button type="button" class="btn-close"
+                    data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="list-unstyled mb-4">
+                    <a href="./perfil.html">
+                        <li><i class="bi bi-person-fill"></i> Perfil</li>
+                    </a>
+                    <a href="./MinhasCompras.html">
+                        <li><i class="bi bi-bag"></i> Minhas Compras</li>
+                    </a>
+                    <a href="./favorito.html">
+                        <li><i class="bi bi-heart"></i> Favoritos</li>
+                    </a>
+                    <a href="./carrinho.html">
+                        <li><i class="bi bi-cart"></i> Carrinho</li>
+                    </a>
+                </ul>
+                <hr>
+                <ul class="list-unstyled">
+                    <a href="./catalogo.html">
+                        <li><i class="bi bi-house-door"></i> Home</li>
+                    </a>
+                    <a href="./catalogo.html">
+                        <li><i class="bi bi-grid"></i> Catálogo</li>
+                    </a>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <section class="finalizar-compra">
+        <div class="hub">
+
+            <div class="itens">
+                <div class="cabecalho-lista">
+                    <div class="produto">Produto</div>
+                    <div class="quantidade">Quantidade</div>
+                    <div class="preco">Preço</div>
+                </div>
+
+                <div class="item-produto">
+                    <div class="produto">
+                        Laço Bolinha - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)
+                    </div>
+                    <div class="quantidade">1</div>
+                    <div class="preco">R$14,99</div>
+                </div>
+
+                <div class="item-produto">
+                    <div class="produto">
+                        Laço vermelho - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)
+                    </div>
+                    <div class="quantidade">1</div>
+                    <div class="preco">R$14,99</div>
+                </div>
+
+                <div class="item-produto">
+                    <div class="produto">
+                        Laço vermelho - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)
+                    </div>
+                    <div class="quantidade">1</div>
+                    <div class="preco">R$14,99</div>
+                </div>
+
+            </div>
+
+            <div class="coluna-lateral">
+
+                <div class="endereco">
+                    <div class="cabecalho-endereco">
+                        <span>Endereço</span>
+                        <button class="editar-endereco" onclick="editar()">Editar</button>
+                    </div>
+                    <div class="info-endereco">
+                        Rua: Morubixaba, 2299 <br>
+                        Complemento: Torre 3 Apto 06 <br>
+                        Bairro: Cidade Líder <br>
+                        Cidade: São Paulo/SP <br>
+                        CEP: 08280-630
+                    </div>
+                </div>
+
+                <div class="pagamento">
+                    <div class="titulo-pagamento">Formato de pagamento</div>
+                    <div class="botoes-pagamento">
+                        <button>PIX</button>
+                        <button>Cartão de crédito</button>
+                        <button>Boleto bancário</button>
+                    </div>
+                </div>
+
+                <div class="resumo">
+                    <div class="titulo-resumo">Resumo</div>
+                    <div class="linha-resumo">
+                        <span>Subtotal</span>
+                        <span>R$44,97</span>
+                    </div>
+                    <div class="linha-resumo">
+                        <span>Custo de frete</span>
+                        <span>R$15,00</span>
+                    </div>
+                    <div class="linha-total">
+                        <span>Total</span>
+                        <span>R$59,97</span>
+                    </div>
+                </div>
+
+                <button class="btn-finalizar" onclick="finalizar()">Finalizar Pedido</button>
+
+                <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content text-center p-4">
+                            <h5 class="modal-title mb-3" id="pedidoModalLabel">Pedido realizado com sucesso!</h5>
+                            <p>Aguarde, estamos processando para finalizar seu pedido...</p>
+                        </div>
+                    </div>
+                </div>
+
+</body>
+
+</html>
+
+<script>
+
+    function editar() {
+        window.location = "./cadastro-endereco.html";
+
+    }
+
+    function finalizar() {
+        var pedidoModal = new bootstrap.Modal(document.getElementById('pedidoModal'));
+        pedidoModal.show();
+
+        setTimeout(() => {
+            window.location.href = "./pedido_confirmado.html";
+        }, 3500);
+    }
+
+</script>

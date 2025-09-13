@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preciosos Laços | Produto</title>
+    <link rel="icon" type="image/png" href="../assets/logo_preciosos_lacos.png">
+    <link rel="stylesheet" href="../styles/produto.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between navbar"> <a href="./catalogo.html"
+                    class="brand"> <img src="../assets/logo_preciosos_lacos.png" alt="Preciosos Laços"> </a>
+                <ul class="iconbar">
+                    <a href="./perfil.html">
+                        <li><i class="bi bi-person-fill"></i></li>
+                    </a>
+                    <a href="./MinhasCompras.html">
+                        <li><i class="bi bi-bag"></i></li>
+                    </a>
+                    <a href="./favorito.html">
+                        <li><i class="bi bi-heart"></i></li>
+                    </a>
+                    <a href="./carrinho.html">
+                        <li><i class="bi bi-cart"></i></li>
+                    </a>
+                </ul> <button class="hamburguer" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu"> <i class="bi bi-list"></i> </button>
+            </div>
+        </div>
+    </header>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5> <button type="button" class="btn-close"
+                data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="list-unstyled mb-4">
+                <a href="./perfil.html">
+                    <li><i class="bi bi-person-fill"></i> Perfil</li>
+                </a>
+                <a href="./MinhasCompras.html">
+                    <li><i class="bi bi-bag"></i> Minhas Compras</li>
+                </a>
+                <a href="./favorito.html">
+                    <li><i class="bi bi-heart"></i> Favoritos</li>
+                </a>
+                <a href="./carrinho.html">
+                    <li><i class="bi bi-cart"></i> Carrinho</li>
+                </a>
+            </ul>
+            <hr>
+            <ul class="list-unstyled">
+                <a href="./catalogo.html">
+                    <li><i class="bi bi-house-door"></i> Home</li>
+                </a>
+                <a href="./catalogo.html">
+                    <li><i class="bi bi-grid"></i> Catálogo</li>
+                </a>
+            </ul>
+        </div>
+    </div>
+    <main>
+
+        <div class="produto-container notebook-layout">
+            <div class="produto-imagem">
+                <img src="../assets/laco-neon-estrass.webp" alt="Laço Neon Strasss">
+            </div>
+            <div class="produto-info">
+                <h2 class="produto-titulo">Laço Neon Strass</h2>
+                <div class="d-flex align-items-center mb-2">
+                    <span class="produto-preco">R$18,00</span>
+                </div>
+                <div class="produto-acabamento mb-2">
+                    <h5>Acabamento</h5>
+                    <div class="acabamento-btns">
+                        <button>Bico de pato</button>
+                        <button>Xuxa</button>
+                        <button>Meia de seda</button>
+                        <button>Tiara</button>
+                    </div>
+                </div>
+                <div class="produto-cor mb-2">
+                    <h5>Cor <i class="bi bi-palette"></i></h5>
+                    <div class="cor-btns">
+                        <span style="background: #00FF00;"></span>
+                        <span style="background: #FF0000;"></span>
+                        <span style="background: #FFD600;"></span>
+                        <span style="background: #00C2FF;"></span>
+                        <span style="background: #fff;"></span>
+                        <span style="background: #F29DC3;"></span>
+                    </div>
+                </div>
+                <button class="btn-carrinho" onclick="carrinho()">Adicionar ao carrinho</button>
+                <div class="produto-descricao">
+                    <h5>Descrição</h5>
+                    <p>
+                        Produzido com material importado de alta qualidade, a peça apresenta conforto, segurança e a
+                        durabilidade que o amor da sua vida merece. </p>
+                </div>
+            </div>
+        </div>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="list-unstyled mb-4">
+                    <li><i class="bi bi-person-fill"></i> Perfil</li>
+                    <li><i class="bi bi-bag"></i> Minhas Compras</li>
+                    <li><i class="bi bi-heart"></i> Favoritos</li>
+                    <li><i class="bi bi-cart"></i> Carrinho</li>
+                </ul>
+                <hr>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-house-door"></i> Home</li>
+                    <li><i class="bi bi-grid"></i> Catálogo</li>
+                    <li><i class="bi bi-stars"></i> Promoções</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
+
+<script>
+    function carrinho() {
+        window.location = "./carrinho.html"
+    }
+</script>

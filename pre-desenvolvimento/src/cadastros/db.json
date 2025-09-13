@@ -1,7 +1,7 @@
 {
   "cores": [
     {
-      "id": "7",
+      "id": 1,
       "nome": "Vermelho",
       "cor": "#ff0000",
       "valor": "8.00",
@@ -11,7 +11,7 @@
       ]
     },
     {
-      "id": "8",
+      "id": 2,
       "nome": "Verde",
       "cor": "#04ff00",
       "valor": "9.00",
@@ -23,7 +23,7 @@
   ],
   "enderecos": [
     {
-      "id": "1",
+      "id": 1,
       "id_usuario": 4,
       "cep": "08280630",
       "uf": "SP",
@@ -35,7 +35,7 @@
       "padrao": true
     },
     {
-      "id": "2",
+      "id": 2,
       "id_usuario": 4,
       "cep": "01101010",
       "uf": "SP",
@@ -47,7 +47,7 @@
       "padrao": true
     },
     {
-      "id": "3",
+      "id": 3,
       "id_usuario": 4,
       "cep": "09230210",
       "uf": "SP",
@@ -59,7 +59,7 @@
       "padrao": true
     },
     {
-      "id": "4",
+      "id": 4,
       "id_usuario": 4,
       "cep": "08280650",
       "uf": "SP",

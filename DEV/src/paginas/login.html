@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="../assets/iconeWeb.ico">
+    <title>Preciosos Laços | Login</title>
+
+    <link rel="stylesheet" href="../styles/login.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+        <a href="./catalogo.html"><i class="bi bi-house-door"></i></a>
+    </header>
+
+    <section class="login-section">
+        <div class="logo-login">
+            <img src="../assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços">
+        </div>
+
+        <div class="form-login">
+            <div class="incio">
+                <h2 id="inicio">Olá novamente!</h2>
+                <p id="p-inicio">Que tal encontrar o laço perfeito hoje?</p>
+            </div>
+            <div class="login">
+                <input type="text" id="email" placeholder="E-mail:">
+
+                <div class="input-group">
+                    <input type="password" id="senha" placeholder="Senha:" class="form-control">
+                    <span class="input-group-text">
+                        <i class="bi bi-eye" id="togglePassword"></i>
+                    </span>
+                </div>
+
+                <button id="login">Login</button>
+
+                <p class="link-container">
+                    Não tem conta? <a href="./cadastroUsuario.html">Cadastre-se aqui.</a>
+                </p>
+
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="forgotPasswordModal" tabindex="12" aria-labelledby="forgotPasswordLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordLabel">Esqueceu sua senha?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    Você errou a senha 3 vezes para o e-mail <strong id="modalEmailDisplay"></strong>.<br>
+                    Deseja redefinir a senha agora?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                    <button type="button" class="btn btn-primary" id="resetPasswordBtn">Sim, redefinir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="emailNotFoundModal" tabindex="12" aria-labelledby="emailNotFoundLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emailNotFoundLabel">E-mail não encontrado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    O e-mail informado não está cadastrado. Deseja criar uma conta agora?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                    <button type="button" class="btn btn-primary" id="goToCadastroBtn">Sim, cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalCampos" tabindex="12" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">Atenção</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Por favor, preencha o e-mail e a senha.
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEmail" tabindex="12" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">E-mail não cadastrado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    O e-mail informado não está cadastrado. Deseja criar uma conta?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                    <button class="btn btn-primary" id="btnCriarConta">Sim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSenha" tabindex="12" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Senha incorreta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="msgTentativas">
+                    Senha incorreta. Tente novamente.
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalServidor" tabindex="12" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Erro de servidor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Não foi possível conectar ao servidor. Verifique se o JSON Server está rodando.
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSucesso" tabindex="12" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Sucesso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="msgSucesso">
+                    Login bem-sucedido! Bem-vindo(a).
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('senha');
+
+    togglePassword.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        togglePassword.classList.toggle('bi-eye');
+        togglePassword.classList.toggle('bi-eye-slash');
+    });
+
+    const attemptsKey = 'loginAttemptsByEmail';
+    function getAttemptsObj() {
+        try { return JSON.parse(localStorage.getItem(attemptsKey)) || {}; }
+        catch { return {}; }
+    }
+    function setAttemptsObj(obj) {
+        localStorage.setItem(attemptsKey, JSON.stringify(obj));
+    }
+
+    let modalEmailForReset = '';
+
+    document.getElementById("login").addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value.trim().toLowerCase();
+        const senha = document.getElementById("senha").value;
+
+        if (!email || !senha) {
+            new bootstrap.Modal(document.getElementById('modalCampos')).show();
+            return;
+        }
+
+        try {
+            const emailRes = await fetch(`http://localhost:3000/users?email=${encodeURIComponent(email)}`);
+            if (!emailRes.ok) throw new Error("Erro ao buscar e-mail");
+            const usersByEmail = await emailRes.json();
+
+            if (!usersByEmail || usersByEmail.length === 0) {
+                const emailNotFoundModal = new bootstrap.Modal(document.getElementById('emailNotFoundModal'));
+                emailNotFoundModal.show();
+                return;
+            }
+
+            const user = usersByEmail[0];
+
+            if (user.senha === senha) {
+                const attempts = getAttemptsObj();
+                if (attempts[email]) { delete attempts[email]; setAttemptsObj(attempts); }
+
+                document.getElementById("msgSucesso").innerText =
+                    "Login bem-sucedido! Bem-vindo(a), " + (user.nome_completo || "usuário") + "!";
+                const modalSucesso = new bootstrap.Modal(document.getElementById('modalSucesso'));
+                modalSucesso.show();
+
+                setTimeout(() => {
+                    window.location.href = "./pedido_confirmado.html";
+                }, 1500);
+
+            } else {
+                const attempts = getAttemptsObj();
+                attempts[email] = (attempts[email] || 0) + 1;
+                setAttemptsObj(attempts);
+
+                const current = attempts[email];
+                if (current >= 3) {
+                    modalEmailForReset = email;
+                    document.getElementById('modalEmailDisplay').textContent = email;
+                    const forgotModal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+                    forgotModal.show();
+
+                    delete attempts[email];
+                    setAttemptsObj(attempts);
+                } else {
+                    document.getElementById("msgTentativas").innerText =
+                        `Senha incorreta. Tentativa ${current} de 3.`;
+                    new bootstrap.Modal(document.getElementById('modalSenha')).show();
+                }
+            }
+        } catch (error) {
+            console.error("Erro na requisição fetch:", error);
+            new bootstrap.Modal(document.getElementById('modalServidor')).show();
+        }
+    });
+
+    document.getElementById("goToCadastroBtn").addEventListener("click", () => {
+        window.location.href = "./cadastroUsuario.html";
+    });
+
+    document.getElementById("resetPasswordBtn").addEventListener("click", () => {
+        const targetEmail = modalEmailForReset || document.getElementById("email").value.trim().toLowerCase();
+        window.location.href = `./esqueciSenha.html?email=${encodeURIComponent(targetEmail)}`;
+    });
+</script>

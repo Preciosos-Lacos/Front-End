@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Preciosos Laços | Cadastro de Endereço</title>
+
+    <link rel="icon" type="image/x-icon" href="../assets/iconeWeb.ico">
+    <link rel="stylesheet" href="../styles/cadastro-endereco.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <a href="javascript:history.back()" title="Voltar" class="btn-voltar">
+        <i class="bi bi-arrow-left-circle"></i>
+    </a>
+
+    <section class="cadastro-section">
+        <div class="logo-cadastro">
+            <img src="../assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços">
+        </div>
+
+        <div class="form-login">
+            <div class="incio">
+                <h2 id="inicio">Cadastro de endereço</h2>
+                <div class="cadastro">
+
+                    <input type="text" id="CEP" name="CEP" maxlength="8" placeholder="Digite o CEP">
+
+                    <input type="text" id="uf" placeholder="UF" readonly>
+
+                    <input type="text" id="cidade" placeholder="Cidade" readonly>
+
+                    <input type="text" id="bairro" placeholder="Bairro" readonly>
+
+                    <input type="text" id="rua" placeholder="Rua" readonly>
+
+                    <input type="text" id="numero" placeholder="Número">
+
+                    <input type="text" id="complemento" placeholder="Complemento">
+
+                    <label id="checkbox-padrao">
+                        <input type="checkbox" id="padrao">
+                        Usar como meu endereço principal
+                    </label>
+                    <button id="cadastrar-endereco">Cadastrar Endereço</button>
+
+                </div>
+            </div>
+    </section>
+
+    <div class="modal fade" id="modalAviso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-circle"></i> Aviso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalAvisoMsg"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-warning" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalErro" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-x-circle"></i> Erro</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalErroMsg"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSucesso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="bi bi-check-circle"></i> Sucesso</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalSucessoMsg"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var id_usuario = sessionStorage.id_usuario = 4;
+
+        const API_CEP = 'https://viacep.com.br/ws/';
+        const API_URL = 'http://localhost:3000/enderecos';
+
+        function abrirModal(id, msg) {
+            document.getElementById(id + "Msg").innerText = msg;
+            const modal = new bootstrap.Modal(document.getElementById(id));
+            modal.show();
+        }
+
+        document.getElementById('CEP').addEventListener('blur', function () {
+            const cep = this.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                preencherCamposEndereco(cep);
+            } else if (cep.length > 0) {
+                abrirModal("modalAviso", "CEP inválido. Por favor, insira um CEP com 8 dígitos.");
+                document.getElementById('CEP').value = "";
+            }
+        });
+
+        const input = document.getElementById("CEP");
+
+        input.addEventListener("input", () => {
+            input.value = input.value.replace(/\D/g, '').slice(0, 8);
+        });
+
+        function preencherCamposEndereco(cep) {
+            fetch(`${API_CEP}${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.erro) {
+                        document.getElementById('uf').value = data.uf;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('rua').value = data.logradouro;
+                    } else {
+                        abrirModal("modalAviso", "CEP não encontrado. Por favor, verifique e tente novamente.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar o CEP:', error);
+                    abrirModal("modalErro", "Erro ao buscar o CEP. Tente novamente mais tarde.");
+                });
+        }
+
+
+        async function getNextId() {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            if (data.length === 0) return 1;
+            return Math.max(...data.map(item => Number(item.id))) + 1;
+        }
+
+        document.getElementById('cadastrar-endereco').addEventListener('click', async () => {
+            const cep = document.getElementById('CEP').value;
+            const uf = document.getElementById('uf').value;
+            const cidade = document.getElementById('cidade').value;
+            const bairro = document.getElementById('bairro').value;
+            const rua = document.getElementById('rua').value;
+            const numero = document.getElementById('numero').value;
+            const complemento = document.getElementById('complemento').value;
+            const padrao = document.getElementById('padrao').checked;
+
+            if (!cep || !uf || !cidade || !bairro || !rua || !numero) {
+                abrirModal("modalAviso", "Por favor, preencha todos os campos obrigatórios.");
+                return;
+            }
+
+            const id = await getNextId();
+
+            const novoEndereco = {
+                id: Number(id),
+                id_usuario,
+                cep,
+                uf,
+                cidade,
+                bairro,
+                rua,
+                numero,
+                complemento,
+                padrao
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(novoEndereco)
+                });
+
+                if (response.ok) {
+                    abrirModal("modalSucesso", "Endereço cadastrado com sucesso!");
+                    document.getElementById('CEP').value = '';
+                    document.getElementById('uf').value = '';
+                    document.getElementById('cidade').value = '';
+                    document.getElementById('bairro').value = '';
+                    document.getElementById('rua').value = '';
+                    document.getElementById('numero').value = '';
+                    document.getElementById('complemento').value = '';
+                    document.getElementById('padrao').checked = false;
+
+                    setTimeout(() => {
+                        window.location = "./FinalizarCompra.html";
+                    }, "2000");
+
+                } else {
+                    abrirModal("modalErro", "Erro ao cadastrar endereço. Tente novamente.");
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                abrirModal("modalErro", "Erro ao conectar com o servidor. Tente novamente mais tarde.");
+            }
+        });
+    </script>
+
+</body>
+
+</html>
