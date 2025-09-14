@@ -106,9 +106,12 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* background: var(--header-bg); */
-  background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
   padding: 20px;
+  background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
+   background-size: cover;      /* ajusta a imagem ao tamanho do container */
+  background-position: center; /* centraliza a imagem */
+  background-repeat: no-repeat;
+  min-height: 100vh;
 }
 
 .titulo {
