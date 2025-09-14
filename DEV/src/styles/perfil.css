@@ -32,7 +32,6 @@ header {
   min-height: 70px;
 }
 
-/* Logo à esquerda */
 .brand {
   flex: 1;
 }
@@ -42,7 +41,7 @@ header {
   object-fit: contain;
 }
 
-/* Ícones centralizados */
+
 .iconbar {
   flex: 1;
   display: flex;
@@ -65,7 +64,6 @@ header {
   transform: scale(1.1);
 }
 
-/* Hambúrguer à direita */
 .hamburguer {
   flex: 1;
   display: flex;
@@ -108,8 +106,8 @@ header {
   align-items: center;
   padding: 20px;
   background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
-   background-size: cover;      /* ajusta a imagem ao tamanho do container */
-  background-position: center; /* centraliza a imagem */
+   background-size: cover;     
+  background-position: center; 
   background-repeat: no-repeat;
   min-height: 100vh;
 }
@@ -214,7 +212,7 @@ header {
   font-size: 15px;
   font-weight: 500;
   color: var(--texto-escuro);
-  text-align: right; /* valor alinhado à direita */
+  text-align: right;
 }
 
 .campo i {
@@ -240,11 +238,11 @@ header {
   text-decoration: none;
   color: inherit;
   font-size: 1.05rem;
-  width: 100%;       /* deixa o clique ocupar a linha inteira */
+  width: 100%;    
 }
 
 .offcanvas .list-unstyled a:hover {
-  background: rgba(0,0,0,0.05); /* opcional, efeito hover */
+  background: rgba(0,0,0,0.05);
   border-radius: 6px;
 }
 
