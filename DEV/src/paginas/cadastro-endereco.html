@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
+    <script src="../utils/regexCEP.js"></script>
+
+
 </head>
 
 <body>
@@ -30,7 +33,7 @@
                 <h2 id="inicio">Cadastro de endereço</h2>
                 <div class="cadastro">
 
-                    <input type="text" id="CEP" name="CEP" maxlength="8" placeholder="Digite o CEP">
+                    <input type="text" id="cep" name="CEP" maxlength="8" placeholder="Digite o CEP">
 
                     <input type="text" id="uf" placeholder="UF" readonly>
 
@@ -111,17 +114,17 @@
             modal.show();
         }
 
-        document.getElementById('CEP').addEventListener('blur', function () {
+        document.getElementById('cep').addEventListener('blur', function () {
             const cep = this.value.replace(/\D/g, '');
             if (cep.length === 8) {
                 preencherCamposEndereco(cep);
             } else if (cep.length > 0) {
                 abrirModal("modalAviso", "CEP inválido. Por favor, insira um CEP com 8 dígitos.");
-                document.getElementById('CEP').value = "";
+                document.getElementById('cep').value = "";
             }
         });
 
-        const input = document.getElementById("CEP");
+        const input = document.getElementById("cep");
 
         input.addEventListener("input", () => {
             input.value = input.value.replace(/\D/g, '').slice(0, 8);
@@ -155,7 +158,7 @@
         }
 
         document.getElementById('cadastrar-endereco').addEventListener('click', async () => {
-            const cep = document.getElementById('CEP').value;
+            const cep = document.getElementById('cep').value;
             const uf = document.getElementById('uf').value;
             const cidade = document.getElementById('cidade').value;
             const bairro = document.getElementById('bairro').value;
@@ -193,7 +196,7 @@
 
                 if (response.ok) {
                     abrirModal("modalSucesso", "Endereço cadastrado com sucesso!");
-                    document.getElementById('CEP').value = '';
+                    document.getElementById('cep').value = '';
                     document.getElementById('uf').value = '';
                     document.getElementById('cidade').value = '';
                     document.getElementById('bairro').value = '';

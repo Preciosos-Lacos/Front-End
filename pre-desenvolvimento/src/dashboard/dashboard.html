@@ -21,10 +21,10 @@
     <ul>
       <li><a href="#"><i class="bi bi-box"></i> <span>Pedidos</span></a></li>
       <li><a href="#"><i class="bi bi-card-list"></i> <span>Cadastro</span></a></li>
-      <li><a href="#"><i class="bi bi-tag"></i> <span>Modelos</span></a></li>
-      <li><a href="./cadastro_cor.html"><i class="bi bi-palette"></i> <span>Cores</span></a></li>
+      <li><a href="../cadastros/cadastro_modelo.html"><i class="bi bi-tag"></i> <span>Modelos</span></a></li>
+      <li><a href="../cadastros/cadastro_cor.html"><i class="bi bi-palette"></i> <span>Cores</span></a></li>
       <li><a href="#"><i class="bi bi-archive"></i> <span>Coleções</span></a></li>
-      <li><a href="#"><i class="bi bi-scissors"></i> <span>Tipos de Laço</span></a></li>
+      <li><a href="../cadastros/cadastro_tipo_laco.html"><i class="bi bi-scissors"></i> <span>Tipos de Laço</span></a></li>
       <li><a href="#"><i class="bi bi-bar-chart"></i> <span>Dashboard</span></a></li>
     </ul>
     <ul>
@@ -41,35 +41,36 @@
     <!-- KPIs -->
     <section class="kpis">
       <div class="card">
-        📦 Pedidos (últimas 24h)<br>
+         Pedidos (últimas 24h)<br>
         <strong>12</strong>
         <span class="detalhe positivo">↑ +20% vs ontem</span>
       </div>
       <div class="card">
-        🚚 Entregas programadas<br>
+         Entregas programadas<br>
         <strong>5</strong>
         <span class="detalhe">3 concluídas (60%)</span>
       </div>
       <div class="card alerta">
-        ⚠️ Entregas atrasadas<br>
+         Entregas atrasadas<br>
         <strong>3</strong>
         <span class="detalhe negativo">↓ Atraso médio: 1,5 dia</span>
       </div>
       <div class="card">
-        🔄 Pedidos pendentes<br>
+         Pedidos pendentes<br>
         <strong>4</strong>
         <span class="detalhe">2 em separação, 2 aguardando pagamento</span>
       </div>
       <div class="card">
-        💰 Vendas do dia<br>
+         Vendas do dia<br>
         <strong>R$ 320,00</strong>
+        <span class="detalhe positivo">↑ +7% vs ontem</span>
       </div>
-      <div class="card">
+      <!-- <div class="card">
         📊 Meta atingida<br>
         <strong>64%</strong>
-      </div>
+      </div> -->
       <div class="card">
-        🔼 Ticket médio<br>
+         Ticket médio<br>
         <strong>R$ 40,00</strong>
         <span class="detalhe positivo">↑ vs R$ 38 semana</span>
       </div>
@@ -162,7 +163,7 @@
     </section>
 
     <section class="tabela">
-      <h2>🚚 Entregas do dia</h2>
+      <h2> Entregas do dia</h2>
       <table>
         <tr>
           <th>Pedido</th>
@@ -174,7 +175,7 @@
         <tr>
           <td>#1024</td>
           <td>Ana Souza</td>
-          <td>Atrasado ⚠️</td>
+          <td style="color: rgb(223, 36, 36);">Atrasado</td>
           <td>08/09/2025</td>
         </tr>
         <tr>
@@ -188,7 +189,7 @@
 
     <!-- Gráficos -->
     <section class="graficos">
-      <h2>📊 Vendas nos últimos 7 dias</h2>
+      <h2> Vendas nos últimos 7 dias</h2>
       <canvas id="graficoVendas" width="600" height="200"></canvas>
     </section>
 
