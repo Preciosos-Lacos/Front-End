@@ -8,7 +8,8 @@
       "modelos": [
         "Laço Padrão",
         "Laço de Piscina",
-        "Laço de Festa"
+        "Laço de Festa",
+        "Laço Infantil"
       ]
     },
     {
@@ -19,6 +20,17 @@
       "modelos": [
         "Laço Padrão",
         "Laço de Piscina"
+      ]
+    },
+    {
+      "id": "3",
+      "nome": "Azul",
+      "cor": "#0008ff",
+      "valor": "9.00",
+      "modelos": [
+        "Laço Padrão",
+        "Laço de Piscina",
+        "Laço de Festa"
       ]
     }
   ],

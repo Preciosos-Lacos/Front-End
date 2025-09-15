@@ -235,7 +235,11 @@
                 modalSucesso.show();
 
                 setTimeout(() => {
-                    window.location.href = "./pedido_confirmado.html";
+                    if (email === "camila.osterman@gmail.com") {
+                        window.location.href = "./dashboard.html";
+                    } else {
+                        window.location.href = "./catalogo.html";
+                    }
                 }, 1500);
 
             } else {
@@ -273,3 +277,5 @@
         window.location.href = `./esqueciSenha.html?email=${encodeURIComponent(targetEmail)}`;
     });
 </script>
+
+<!-- Criar verificação caso seja o email camila.osterman@gmail.com entre para a tela ./dashboard.html-->
