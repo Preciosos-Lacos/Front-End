@@ -8,7 +8,7 @@
 body {
     margin: 0;
     background: var(--page-bg);
-    background-color: #fafbf5;
+    font-family: 'Quicksand', sans-serif;
 }
 
 header {

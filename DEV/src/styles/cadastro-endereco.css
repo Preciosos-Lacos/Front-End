@@ -12,7 +12,7 @@ body {
     min-height: 100vh;
     min-width: 100vw;
     background: var(--page-bg);
-    background-color: #fafbf5;
+    background: var(--page-bg);
     font-family: 'Quicksand', sans-serif;
     position: relative;
     background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');

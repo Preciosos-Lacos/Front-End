@@ -2,189 +2,190 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="../assets/iconeWeb.ico">
-    <title>Preciosos Laços | Cadastro de Usuário</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="../assets/iconeWeb.ico">
+  <title>Preciosos Laços | Cadastro de Usuário</title>
 
-    <link rel="stylesheet" href="../styles/cadastroUsuario.css">
-    <script src="../utils/regexCPF.js"></script>
-    <script src="../utils/regexTelefone.js"></script>
+  <link rel="stylesheet" href="../styles/cadastroUsuario.css">
+  <script src="../utils/regexCPF.js"></script>
+  <script src="../utils/regexTelefone.js"></script>
 
-    <link rel="icon" type="image/png" href="../assets/logo_preciosos_lacos.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="../assets/logo_preciosos_lacos.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <header>
-        <a href="./catalogo.html"><i class="bi bi-house-door"></i></a>
-    </header>
+  <header>
+    <a href="./home-usuario.html"><i class="bi bi-house-door"></i></a>
+  </header>
 
-    <section class="cadastro-section">
-        <div class="logo-cadastro">
-            <img src="../assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços">
+  <section class="cadastro-section">
+    <div class="logo-cadastro">
+      <img src="../assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços">
+    </div>
+
+    <div class="form-cadastro">
+      <div class="incio">
+        <h2 id="inicio">Crie sua conta!</h2>
+        <center>
+          <p id="p-inicio">E encontre o laço perfeito para cada momento especial</p>
+        </center>
+      </div>
+      <div class="cadastro">
+        <input type="text" id="nome" placeholder="Nome completo:">
+
+        <input type="text" id="telefone" placeholder="Telefone:">
+
+        <input type="text" id="cpf" placeholder="CPF:">
+
+        <input type="text" id="email" placeholder="E-mail:">
+
+        <div class="input-group">
+          <input type="password" id="senha" placeholder="Senha:" class="form-control">
+          <span class="input-group-text">
+            <i class="bi bi-eye" id="togglePassword"></i>
+          </span>
         </div>
 
-        <div class="form-cadastro">
-            <div class="incio">
-                <h2 id="inicio">Crie sua conta!</h2>
-                <center>
-                    <p id="p-inicio">E encontre o laço perfeito para cada momento especial</p>
-                </center>
-            </div>
-            <div class="cadastro">
-                <input type="text" id="nome" placeholder="Nome completo:">
-
-                <input type="text" id="telefone" placeholder="Telefone:">
-
-                <input type="text" id="cpf" placeholder="CPF:">
-
-                <input type="text" id="email" placeholder="E-mail:">
-
-                <div class="input-group">
-                    <input type="password" id="senha" placeholder="Senha:" class="form-control">
-                    <span class="input-group-text">
-                        <i class="bi bi-eye" id="togglePassword"></i>
-                    </span>
-                </div>
-
-                <div class="input-group">
-                    <input type="password" id="confirmar_senha" placeholder="Confirmar senha:" class="form-control">
-                    <span class="input-group-text">
-                        <i class="bi bi-eye" id="togglePasswordConfirm"></i>
-                    </span>
-                </div>
-
-                <button id="cadastro">Cadastrar</button>
-
-                <p class="link-container">
-                    Já tem conta? <a href="./login.html">Faça o login aqui.</a>
-                </p>
-            </div>
+        <div class="input-group">
+          <input type="password" id="confirmar_senha" placeholder="Confirmar senha:" class="form-control">
+          <span class="input-group-text">
+            <i class="bi bi-eye" id="togglePasswordConfirm"></i>
+          </span>
         </div>
-    </section>
 
-    <div class="modal fade" id="modalAviso" tabindex="12" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-          <div class="modal-header bg-warning text-dark">
-            <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Aviso</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" id="modalAvisoMsg"></div>
-          <div class="modal-footer">
-            <button class="btn btn-warning" data-bs-dismiss="modal">Ok</button>
-          </div>
+        <button id="cadastro">Cadastrar</button>
+
+        <p class="link-container">
+          Já tem conta? <a href="./login.html">Faça o login aqui.</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal fade" id="modalAviso" tabindex="12" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center">
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Aviso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="modalAvisoMsg"></div>
+        <div class="modal-footer">
+          <button class="btn btn-warning" data-bs-dismiss="modal">Ok</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="modal fade" id="modalSucesso" tabindex="12" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-          <div class="modal-header bg-success text-white">
-            <h5 class="modal-title"><i class="bi bi-check-circle"></i> Sucesso</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" id="modalSucessoMsg"></div>
-          <div class="modal-footer">
-            <button class="btn btn-success" id="btnOkSucesso">Ok</button>
-          </div>
+  <div class="modal fade" id="modalSucesso" tabindex="12" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title"><i class="bi bi-check-circle"></i> Sucesso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="modalSucessoMsg"></div>
+        <div class="modal-footer">
+          <button class="btn btn-success" id="btnOkSucesso">Ok</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="modal fade" id="modalErro" tabindex="12" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-          <div class="modal-header bg-danger text-white">
-            <h5 class="modal-title"><i class="bi bi-x-circle"></i> Erro</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" id="modalErroMsg"></div>
-          <div class="modal-footer">
-            <button class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
-          </div>
+  <div class="modal fade" id="modalErro" tabindex="12" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title"><i class="bi bi-x-circle"></i> Erro</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="modalErroMsg"></div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
         </div>
       </div>
     </div>
+  </div>
 
-<script>
+  <script>
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('senha');
     togglePassword.addEventListener('click', () => {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        togglePassword.classList.toggle('bi-eye');
-        togglePassword.classList.toggle('bi-eye-slash');
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.classList.toggle('bi-eye');
+      togglePassword.classList.toggle('bi-eye-slash');
     });
 
     const togglePasswordConfirm = document.getElementById('togglePasswordConfirm');
     const passwordInputConfirm = document.getElementById('confirmar_senha');
     togglePasswordConfirm.addEventListener('click', () => {
-        const type = passwordInputConfirm.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInputConfirm.setAttribute('type', type);
-        togglePasswordConfirm.classList.toggle('bi-eye');
-        togglePasswordConfirm.classList.toggle('bi-eye-slash');
+      const type = passwordInputConfirm.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInputConfirm.setAttribute('type', type);
+      togglePasswordConfirm.classList.toggle('bi-eye');
+      togglePasswordConfirm.classList.toggle('bi-eye-slash');
     });
 
     function showModal(id, msg) {
-        document.getElementById(id + "Msg").innerText = msg;
-        new bootstrap.Modal(document.getElementById(id)).show();
+      document.getElementById(id + "Msg").innerText = msg;
+      new bootstrap.Modal(document.getElementById(id)).show();
     }
 
     document.getElementById("cadastro").addEventListener("click", async () => {
-        const nome = document.getElementById("nome").value;
-        const telefone = document.getElementById("telefone").value;
-        const cpf = document.getElementById("cpf").value;
-        const email = document.getElementById("email").value;
-        const senha = document.getElementById("senha").value;
-        const confirmar_senha = document.getElementById("confirmar_senha").value; 
+      const nome = document.getElementById("nome").value;
+      const telefone = document.getElementById("telefone").value;
+      const cpf = document.getElementById("cpf").value;
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      const confirmar_senha = document.getElementById("confirmar_senha").value;
 
-        if (senha !== confirmar_senha) {
-            showModal("modalAviso", "As senhas não coincidem!");
-            return;
+      if (senha !== confirmar_senha) {
+        showModal("modalAviso", "As senhas não coincidem!");
+        return;
+      }
+      if (!nome || !telefone || !cpf || !email || !senha) {
+        showModal("modalAviso", "Por favor, preencha todos os campos.");
+        return;
+      }
+
+      const novoUsuario = {
+        nome_completo: nome,
+        telefone: telefone,
+        cpf: cpf,
+        email: email,
+        senha: senha,
+        data_cadastro: new Date().toISOString().slice(0, 10)
+      };
+
+      try {
+        const response = await fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(novoUsuario)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          showModal("modalSucesso", "Usuário cadastrado com sucesso! ID: " + data.id);
+
+          document.getElementById("btnOkSucesso").onclick = () => {
+            window.location.href = "./login.html";
+          };
+        } else {
+          showModal("modalErro", "Erro ao cadastrar usuário. Verifique o console para mais detalhes.");
+          console.error("Erro na resposta do servidor:", response.status, response.statusText);
         }
-        if (!nome || !telefone || !cpf || !email || !senha) {
-            showModal("modalAviso", "Por favor, preencha todos os campos.");
-            return;
-        }
-
-        const novoUsuario = {
-            nome_completo: nome,
-            telefone: telefone,
-            cpf: cpf,
-            email: email,
-            senha: senha,
-            data_cadastro: new Date().toISOString().slice(0, 10) 
-        };
-
-        try {
-            const response = await fetch("http://localhost:3000/users", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(novoUsuario )
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                showModal("modalSucesso", "Usuário cadastrado com sucesso! ID: " + data.id);
-
-                document.getElementById("btnOkSucesso").onclick = () => {
-                    window.location.href = "./login.html";
-                };
-            } else {
-                showModal("modalErro", "Erro ao cadastrar usuário. Verifique o console para mais detalhes.");
-                console.error("Erro na resposta do servidor:", response.status, response.statusText);
-            }
-        } catch (error) {
-            console.error("Erro na requisição fetch:", error);
-            showModal("modalErro", "Não foi possível conectar ao servidor. Verifique se o JSON Server está rodando.");
-        }
+      } catch (error) {
+        console.error("Erro na requisição fetch:", error);
+        showModal("modalErro", "Não foi possível conectar ao servidor. Verifique se o JSON Server está rodando.");
+      }
     });
-</script>
+  </script>
 </body>
+
 </html>

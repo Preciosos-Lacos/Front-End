@@ -10,7 +10,7 @@
 body {
     margin: 0;
     background: var(--page-bg);
-    background-color: #fafbf5;
+    background-color: var(--page-bg);
     font-family: 'Quicksand', sans-serif;
 }
 

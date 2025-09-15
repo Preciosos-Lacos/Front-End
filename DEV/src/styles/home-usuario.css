@@ -1,0 +1,280 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  font-family: 'Quicksand', sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 50px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 90px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header .logo img {
+  height: 50px;
+  object-fit: contain;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: #BC6686 !important;
+  font-weight: bold;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.3rem;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 3px;
+  background-color: #F5A9D0;
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%28188, 102, 134, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.catalogo-container a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.catalogo-container a {
+  text-decoration: none;
+  color: black;
+}
+
+.banner {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.banner img {
+  width: 100%;
+  height: 570px;
+  object-fit: cover;
+  opacity: 0.85;
+}
+
+.banner h2 {
+  position: absolute;
+  bottom: 20%;
+  left: 10%;
+  background: rgb(164, 207, 90);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 2rem;
+  color: #fff;
+}
+
+.catalogo {
+  padding: 60px 30px;
+}
+
+.catalogo h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #BC6686;
+  text-align: center;
+}
+
+.catalogo-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.card-info {
+  padding: 15px;
+  text-align: center;
+}
+
+.card-info p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.price {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #444;
+}
+
+.desconto {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #d80000;
+  color: white;
+  font-size: 0.8rem;
+  padding: 3px 6px;
+  border-radius: 5px;
+}
+
+.sessao-quem-sou-eu {
+  display: flex;
+  justify-content: center;
+  background: #FAFBF5;
+  padding: 60px 20px;
+}
+
+.quem-sou-eu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 900px;
+  text-align: center;
+}
+
+.quem-sou-eu h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #BC6686;
+}
+
+.sobre {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sobre p {
+  max-width: 500px;
+  font-size: 1.1rem;
+}
+
+.sobre img {
+  width: 220px;
+  height: 220px;
+  border-radius: 15px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 992px) {
+  header {
+    padding: 15px 20px;
+  }
+
+  nav ul {
+    gap: 15px;
+  }
+
+  .banner img {
+    height: 350px;
+  }
+
+  .banner h2 {
+    font-size: 1.5rem;
+    bottom: 15%;
+    left: 5%;
+  }
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    height: auto;
+    padding: 10px 20px;
+  }
+
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .banner img {
+    height: 250px;
+  }
+
+  .banner h2 {
+    font-size: 1.2rem;
+    padding: 8px 15px;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .catalogo {
+    padding: 40px 15px;
+  }
+
+  .quem-sou-eu {
+    width: 100%;
+  }
+
+  .sobre {
+    flex-direction: column;
+  }
+
+  .sobre img {
+    width: 180px;
+    height: 180px;
+  }
+}
