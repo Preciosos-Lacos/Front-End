@@ -13,9 +13,41 @@
       ]
     },
     {
-      "id": "2",
-      "nome": "Verde",
-      "cor": "#04ff00",
+      "id": "3",
+      "nome": "Azul",
+      "cor": "#0008ff",
+      "valor": "9.00",
+      "modelos": [
+        "Laço Padrão",
+        "Laço de Piscina",
+        "Laço de Festa",
+        "Laço Infantil"
+      ]
+    },
+    {
+      "id": "4",
+      "nome": "Laranja",
+      "cor": "#ffbb00",
+      "valor": "7.00",
+      "modelos": [
+        "Laço Padrão",
+        "Laço de Piscina"
+      ]
+    },
+    {
+      "id": "5",
+      "nome": "Rosa",
+      "cor": "#ff00dd",
+      "valor": "8.00",
+      "modelos": [
+        "Laço Padrão",
+        "Laço de Piscina"
+      ]
+    },
+    {
+      "id": "6",
+      "nome": "Verde-água",
+      "cor": "#00fffb",
       "valor": "9.00",
       "modelos": [
         "Laço Padrão",
@@ -23,9 +55,9 @@
       ]
     },
     {
-      "id": "3",
-      "nome": "Azul",
-      "cor": "#0008ff",
+      "id": "7",
+      "nome": "Verde",
+      "cor": "#2bff00",
       "valor": "9.00",
       "modelos": [
         "Laço Padrão",
@@ -105,6 +137,18 @@
       "rua": "Rua Morubixaba",
       "numero": "198",
       "complemento": "Torre 6 apto 01",
+      "padrao": true
+    },
+    {
+      "id": "7",
+      "id_usuario": 4,
+      "cep": "08280-630",
+      "uf": "SP",
+      "cidade": "São Paulo",
+      "bairro": "Cidade Líder",
+      "rua": "Rua Morubixaba",
+      "numero": "720",
+      "complemento": "bahia",
       "padrao": true
     }
   ],

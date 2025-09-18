@@ -116,7 +116,7 @@
                     </div>
                     <div class="compra-botoes d-flex gap-2 mt-2">
                         <button class="btn btn-outline-secondary btn-sm" onclick="verCompra()">Ver compra</button>
-                        <button class="btn btn-outline-primary btn-sm">Comprar novamente</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="comprarNovamente()">Comprar novamente</button>
                     </div>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                     </div>
                     <div class="compra-botoes d-flex gap-2 mt-2">
                         <button class="btn btn-outline-secondary btn-sm" onclick="verCompra()">Ver compra</button>
-                        <button class="btn btn-outline-primary btn-sm">Comprar novamente</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="comprarNovamente()">Comprar novamente</button>
                     </div>
                 </div>
             </div>
@@ -151,5 +151,9 @@
 <script>
     function verCompra() {
         window.location = "./pedido_entregue.html"
+    }
+
+    function comprarNovamente(){
+        window.location = "./carrinho.html"
     }
 </script>
