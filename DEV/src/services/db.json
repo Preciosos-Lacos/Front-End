@@ -64,6 +64,16 @@
         "Laço de Piscina",
         "Laço de Festa"
       ]
+    },
+    {
+      "id": "8",
+      "nome": "Azul",
+      "cor": "#0433ff",
+      "valor": "9.00",
+      "modelos": [
+        "Laço Padrão",
+        "Laço de Piscina"
+      ]
     }
   ],
   "enderecos": [
@@ -188,6 +198,15 @@
       "email": "pedro.cardoso@sptech.school",
       "senha": "123456",
       "data_cadastro": "2025-09-12"
+    },
+    {
+      "nome_completo": "Pedro Henrique Rodrigues",
+      "telefone": "(11) 95678-9876",
+      "cpf": "098.654.323-45",
+      "email": "pedro.h@gmail.com",
+      "senha": "P@ssw0rd!2024",
+      "data_cadastro": "2025-09-23",
+      "id": "5"
     }
   ]
 }
