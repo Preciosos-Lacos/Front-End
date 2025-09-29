@@ -1,0 +1,271 @@
+:root {
+    --page-bg: #FAFBF5;
+    --header-bg: #FAFBF5;
+    --icon-size: 32px;
+    --rosa: #e78fb3;
+}
+
+.bi::before,
+[class^="bi-"]::before,
+[class*=" bi-"]::before {
+    display: inline-block;
+    font-family: bootstrap-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.app-header {
+    background: var(--header-bg);
+    padding: 8px 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    box-sizing: border-box;
+}
+
+.app-navbar {
+    min-height: 70px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.app-brand {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    width: 120px;
+}
+
+.app-brand img {
+    height: 50px;
+    object-fit: contain;
+    display: block;
+}
+
+.app-iconbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+}
+
+.app-hamburguer-container {
+    width: 120px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.app-iconbar li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-iconbar a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    padding: 8px;
+    border-radius: 4px;
+    transition: transform 0.2s ease;
+}
+
+.app-iconbar a:hover {
+    transform: scale(1.1);
+}
+
+.app-iconbar i {
+    font-size: var(--icon-size);
+    color: #000;
+    cursor: pointer;
+    transition: transform .2s;
+    line-height: 1;
+    display: block;
+}
+
+.app-iconbar i:hover {
+    transform: scale(1.1);
+}
+
+.app-hamburguer {
+    font-size: var(--icon-size);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    padding: 8px;
+    color: #000;
+    transition: transform 0.2s ease;
+}
+
+.app-hamburguer:hover {
+    transform: scale(1.1);
+}
+
+.app-hamburguer i {
+    line-height: 1;
+    display: block;
+}
+
+.offcanvas .list-unstyled {
+    margin: 0;
+    padding: 0;
+}
+
+.offcanvas .list-unstyled li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.offcanvas .list-unstyled a {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    font-size: 1.05rem;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+.offcanvas .list-unstyled a:hover {
+    color: #e78fb3;
+}
+
+.offcanvas .list-unstyled i {
+    font-size: 1.3rem;
+    width: 20px;
+    text-align: center;
+}
+
+.offcanvas {
+    z-index: 1200 !important;
+}
+
+@media (max-width: 768px) {
+    .app-navbar {
+        padding: 0 4%;
+    }
+
+    .app-brand {
+        width: 100px;
+    }
+
+    .app-iconbar {
+        gap: 30px;
+    }
+
+    .app-iconbar a {
+        padding: 6px;
+    }
+
+    .app-iconbar i {
+        font-size: 28px;
+    }
+
+    .app-hamburguer-container {
+        width: 100px;
+    }
+
+    .app-hamburguer {
+        font-size: 28px;
+        padding: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-navbar {
+        padding: 0 3%;
+        height: 60px;
+    }
+
+    .app-brand {
+        width: 80px;
+    }
+
+    .app-brand img {
+        height: 40px;
+    }
+
+    .app-iconbar {
+        gap: 24px;
+    }
+
+    .app-iconbar a {
+        padding: 4px;
+    }
+
+    .app-hamburguer-container {
+        width: 80px;
+    }
+
+    .app-iconbar i {
+        font-size: 26px;
+    }
+
+    .app-hamburguer {
+        font-size: 26px;
+        padding: 4px;
+    }
+}
+
+@media (max-width: 360px) {
+    .app-navbar {
+        padding: 0 2%;
+    }
+
+    .app-brand {
+        width: 70px;
+    }
+
+    .app-iconbar {
+        gap: 20px;
+    }
+
+    .app-iconbar a {
+        padding: 4px;
+    }
+
+    .app-hamburguer-container {
+        width: 70px;
+    }
+
+    .app-iconbar i {
+        font-size: 24px;
+    }
+
+    .app-hamburguer {
+        font-size: 24px;
+        padding: 4px;
+    }
+}

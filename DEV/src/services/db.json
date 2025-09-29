@@ -74,6 +74,16 @@
         "Laço Padrão",
         "Laço de Piscina"
       ]
+    },
+    {
+      "id": "9",
+      "nome": "Azul",
+      "cor": "#ff0073",
+      "valor": "8.00",
+      "modelos": [
+        "Laço Padrão",
+        "Laço de Piscina"
+      ]
     }
   ],
   "enderecos": [
