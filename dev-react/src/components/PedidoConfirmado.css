@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&family=Quicksand:wght@400;600;700&display=swap');
+
+:root {
+    --page-bg: #FAFBF5;
+    --header-bg: #FAFBF5;
+    --icon-size: 32px;
+    --rosa: #e78fb3;
+}
+
+.pedido-confirmado-page {
+    margin: 0;
+    padding: 0;
+    background: var(--page-bg);
+    font-family: 'Quicksand', sans-serif;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.pedido-confirmado-page * {
+    box-sizing: border-box;
+}
+
+.pedido-confirmado-page main {
+    margin-top: 86px;
+    padding-top: 0;
+    width: 100%;
+}
+
+.pedido-confirmado-page .pedido-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.pedido-confirmado-page .pedido-section h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+    color: #333;
+}
+
+.pedido-confirmado-page .card-sucesso {
+    width: 66%;
+    background: rgb(132 242 157);
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pedido-confirmado-page .card-sucesso h5 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.pedido-confirmado-page .card-sucesso p {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.pedido-confirmado-page .sucesso {
+    width: 80%;
+    background-color: #009630;
+    border: none;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 10px 18px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.pedido-confirmado-page .sucesso:hover {
+    background-color: #059669;
+}
+
+.pedido-confirmado-page .informacoes {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 66%;
+}
+
+.pedido-confirmado-page .informacoes h5 {
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.pedido-confirmado-page .informacoes p {
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.pedido-confirmado-page .informacoes strong {
+    color: #333;
+}
+
+.pedido-confirmado-page .informacoes small {
+    display: block;
+    margin-top: 10px;
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.pedido-confirmado-page #home {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 1.5px solid var(--rosa);
+    color: #fff;
+    background: var(--rosa);
+    border-radius: 20px;
+    font-size: 1.01rem;
+    font-weight: 600;
+    padding: 12px 30px;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.pedido-confirmado-page #home:hover {
+    background: #d16b9b;
+    border-color: #d16b9b;
+    color: #fff;
+    transform: scale(1.02);
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .pedido-confirmado-page .card-sucesso,
+    .pedido-confirmado-page .informacoes {
+        width: 85%;
+    }
+}
+
+@media (max-width: 768px) {
+    .pedido-confirmado-page .pedido-section h1 {
+        font-size: 1.6rem;
+    }
+
+    .pedido-confirmado-page .card-sucesso h5 {
+        font-size: 1.2rem;
+    }
+
+    .pedido-confirmado-page .informacoes {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pedido-confirmado-page .pedido-section h1 {
+        font-size: 1.4rem;
+        padding: 0 10px;
+    }
+
+    .pedido-confirmado-page .card-sucesso {
+        width: 92%;
+        padding: 15px;
+    }
+
+    .pedido-confirmado-page .card-sucesso h5 {
+        font-size: 1.1rem;
+    }
+
+    .pedido-confirmado-page .informacoes {
+        width: 92%;
+        padding: 15px;
+    }
+
+    .pedido-confirmado-page #home {
+        width: 90%;
+        font-size: 1rem;
+        padding: 10px;
+    }
+}
