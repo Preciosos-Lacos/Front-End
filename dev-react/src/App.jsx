@@ -4,6 +4,7 @@ import Login from './components/Login.jsx'
 import Catalogo from './components/Catalogo.jsx'
 import PedidoConfirmado from './components/PedidoConfirmado.jsx'
 import PedidoEntregue from './components/PedidoEntregue.jsx'
+import Perfil from './components/Perfil.jsx' // ADICIONE ESTA LINHA
 import './App.css'
 
 function App() {
@@ -28,6 +29,10 @@ function App() {
     setCurrentScreen('pedido-entregue')
   }
 
+  const goToPerfil = () => {
+    setCurrentScreen('perfil')
+  }
+
   const goToHome = () => {
     setCurrentScreen('home')
   }
@@ -47,6 +52,7 @@ function App() {
             <button onClick={goToCatalogo}>Ir para Catálogo</button>
             <button onClick={goToPedidoConfirmado}>Ir para Pedido Confirmado</button>
             <button onClick={goToPedidoEntregue}>Ir para Pedido Entregue</button>
+            <button onClick={goToPerfil}>Ir para Perfil</button> {/* NOVO BOTÃO */}
             <p>
               Edit <code>src/App.jsx</code> and save to test HMR
             </p>
@@ -76,6 +82,16 @@ function App() {
       ) : currentScreen === 'pedido-entregue' ? (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <PedidoEntregue onNavigate={navigate} />
+        </div>
+      ) : currentScreen === 'perfil' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button 
+            onClick={goToHome} 
+            className="home-button"
+          >
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Perfil />
         </div>
       ) : null}
     </>
