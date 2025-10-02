@@ -5,6 +5,7 @@ import Catalogo from './components/Catalogo.jsx'
 import PedidoConfirmado from './components/PedidoConfirmado.jsx'
 import PedidoEntregue from './components/PedidoEntregue.jsx'
 import Perfil from './components/Perfil.jsx' // ADICIONE ESTA LINHA
+import CadastroUsuario from './components/CadastroUsuario.jsx'
 import './App.css'
 
 function App() {
@@ -37,6 +38,10 @@ function App() {
     setCurrentScreen('home')
   }
 
+  const goToCadastroUsuario = () => {
+    setCurrentScreen('cadastro-usuario')
+  }
+
   return (
     <>
       {currentScreen === 'home' ? (
@@ -53,6 +58,7 @@ function App() {
             <button onClick={goToPedidoConfirmado}>Ir para Pedido Confirmado</button>
             <button onClick={goToPedidoEntregue}>Ir para Pedido Entregue</button>
             <button onClick={goToPerfil}>Ir para Perfil</button> {/* NOVO BOTÃO */}
+            <button onClick={goToCadastroUsuario}>Ir para Cadastro</button>
             <p>
               Edit <code>src/App.jsx</code> and save to test HMR
             </p>
@@ -92,6 +98,16 @@ function App() {
             <i className="bi bi-house-fill"></i>
           </button>
           <Perfil />
+        </div>
+      ) : currentScreen === 'cadastro-usuario' ? (
+        <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
+          <button
+            onClick={goToHome} 
+            className="home-button"
+          >
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <CadastroUsuario />
         </div>
       ) : null}
     </>
