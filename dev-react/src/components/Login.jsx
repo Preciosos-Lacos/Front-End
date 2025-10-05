@@ -15,7 +15,6 @@ const login = async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
-        // Remova credentials: 'include' e use mode: 'cors' em vez disso
       },
       mode: 'cors', // Adicione esta linha
       body: JSON.stringify({ email, senha }),

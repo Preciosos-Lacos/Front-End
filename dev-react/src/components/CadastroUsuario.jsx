@@ -15,6 +15,8 @@ export default function CadastroUsuario() {
   });
   const [showPwd, setShowPwd] = useState(false);
   const [showPwdConfirm, setShowPwdConfirm] = useState(false);
+  const [error, setError] = useState(null);
+
 
   function handleChange(e) {
     const { id, value } = e.target;
@@ -24,47 +26,95 @@ export default function CadastroUsuario() {
     setForm(prev => ({ ...prev, [id]: v }));
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  // async function handleSubmit(e) {
+  //   e.preventDefault();
+
+  //   const { nome, telefone, cpf, email, senha, confirmar_senha } = form;
+
+  //   if (!nome || !telefone || !cpf || !email || !senha || !confirmar_senha) {
+  //     alert('Preencha todos os campos.');
+  //     return;
+  //   }
+  //   if (senha !== confirmar_senha) {
+  //     alert('As senhas não coincidem!');
+  //     return;
+  //   }
+
+  //   const novoUsuario = {
+  //     nome_completo: nome,
+  //     telefone,
+  //     cpf,
+  //     email,
+  //     senha,
+  //     data_cadastro: new Date().toISOString().slice(0, 10),
+  //   };
+
+  //   try {
+  //     const res = await fetch('http://localhost:5173/users', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(novoUsuario),
+  //     });
+
+  //     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+
+  //     const data = await res.json();
+  //     alert('Usuário cadastrado com sucesso! ID: ' + data.id);
+  //     // Redirecione conforme sua navegação (ex.: rota de Login)
+  //     window.location.href = '/login';
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert('Erro ao cadastrar usuário. Verifique o servidor.');
+  //   }
+  // }
+
+  const cadastro = async () => {
 
     const { nome, telefone, cpf, email, senha, confirmar_senha } = form;
 
+    console.log("Tentando cadastrar com:", form);
+
     if (!nome || !telefone || !cpf || !email || !senha || !confirmar_senha) {
-      alert('Preencha todos os campos.');
-      return;
-    }
-    if (senha !== confirmar_senha) {
-      alert('As senhas não coincidem!');
+      alert("Preencha todos os campos.");
       return;
     }
 
-    const novoUsuario = {
-      nome_completo: nome,
-      telefone,
-      cpf,
-      email,
-      senha,
-      data_cadastro: new Date().toISOString().slice(0, 10),
-    }; 
+    if (senha !== confirmar_senha) {
+      alert("As senhas não coincidem!");
+      return;
+    }
 
     try {
-      const res = await fetch('http://localhost:5173/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(novoUsuario),
+      const response = await fetch("http://localhost:8080/usuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          nomeCompleto: nome,
+          email,
+          senha,
+          cpf,
+          telefone,
+        }),
       });
 
-      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      console.log("Resposta recebida do backend:", response);
 
-      const data = await res.json();
-      alert('Usuário cadastrado com sucesso! ID: ' + data.id);
-      // Redirecione conforme sua navegação (ex.: rota de Login)
-      window.location.href = '/login';
+      if (!response.ok) {
+        const msg = await response.text();
+        throw new Error(msg || "Falha no Cadastro");
+      }
+
+      const data = await response.json();
+      alert(`Usuário cadastrado com sucesso! ID: ${data.id}`);
+      //  window.location.href = "/login";
     } catch (err) {
-      console.error(err);
-      alert('Erro ao cadastrar usuário. Verifique o servidor.');
+      setError(err.message);
+      console.error("Erro no Cadastro:", err);
     }
-  }
+  };
 
   return (
     <main className="cadastro-main">
@@ -73,7 +123,13 @@ export default function CadastroUsuario() {
           <img src={logo} alt="Logo Preciosos Laços" />
         </div>
 
-        <form className="form-cadastro" onSubmit={handleSubmit}>
+        <form
+          className="form-cadastro"
+          onSubmit={(e) => {
+            e.preventDefault();
+            cadastro();
+          }}>
+
           <div className="incio">
             <h2 id="inicio">Crie sua conta!</h2>
             <p id="p-inicio">E encontre o laço perfeito para cada momento especial</p>
