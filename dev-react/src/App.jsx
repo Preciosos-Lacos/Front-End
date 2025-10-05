@@ -4,38 +4,22 @@ import Login from './components/Login.jsx'
 import Catalogo from './components/Catalogo.jsx'
 import PedidoConfirmado from './components/PedidoConfirmado.jsx'
 import PedidoEntregue from './components/PedidoEntregue.jsx'
-import Perfil from './components/Perfil.jsx' // ADICIONE ESTA LINHA
+import Perfil from './components/Perfil.jsx'
 import './App.css'
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home')
+
   const navigate = (screen) => {
     setCurrentScreen(screen)
   }
 
-  const goToLogin = () => {
-    setCurrentScreen('login')
-  }
-
-  const goToCatalogo = () => {
-    setCurrentScreen('catalogo')
-  }
-
-  const goToPedidoConfirmado = () => {
-    setCurrentScreen('pedido-confirmado')
-  }
-
-  const goToPedidoEntregue = () => {
-    setCurrentScreen('pedido-entregue')
-  }
-
-  const goToPerfil = () => {
-    setCurrentScreen('perfil')
-  }
-
-  const goToHome = () => {
-    setCurrentScreen('home')
-  }
+  const goToLogin = () => setCurrentScreen('login')
+  const goToCatalogo = () => setCurrentScreen('catalogo')
+  const goToPedidoConfirmado = () => setCurrentScreen('pedido-confirmado')
+  const goToPedidoEntregue = () => setCurrentScreen('pedido-entregue')
+  const goToPerfil = () => setCurrentScreen('perfil')
+  const goToHome = () => setCurrentScreen('home')
 
   return (
     <>
@@ -52,7 +36,7 @@ function App() {
             <button onClick={goToCatalogo}>Ir para Catálogo</button>
             <button onClick={goToPedidoConfirmado}>Ir para Pedido Confirmado</button>
             <button onClick={goToPedidoEntregue}>Ir para Pedido Entregue</button>
-            <button onClick={goToPerfil}>Ir para Perfil</button> {/* NOVO BOTÃO */}
+            <button onClick={goToPerfil}>Ir para Perfil</button>
             <p>
               Edit <code>src/App.jsx</code> and save to test HMR
             </p>
@@ -63,13 +47,10 @@ function App() {
         </div>
       ) : currentScreen === 'login' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
-          <button 
-            onClick={goToHome} 
-            className="home-button"
-          >
+          <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
-          <Login />
+          <Login onLoginSuccess={goToCatalogo} />
         </div>
       ) : currentScreen === 'catalogo' ? (
         <div style={{ minHeight: '100vh', width: '100%' }}>
@@ -85,10 +66,7 @@ function App() {
         </div>
       ) : currentScreen === 'perfil' ? (
         <div style={{ minHeight: '100vh', width: '100%' }}>
-          <button 
-            onClick={goToHome} 
-            className="home-button"
-          >
+          <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <Perfil />

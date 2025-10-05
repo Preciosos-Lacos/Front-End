@@ -1,8 +1,45 @@
 import React, { useState } from 'react';
 import './login.css';
 
-export default function Login() {
+export default function Login({ onLoginSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [error, setError] = useState(null);
+
+const login = async () => {
+  console.log("Tentando login com:", { email, senha });
+
+  try {
+    const response = await fetch("http://localhost:8080/usuarios/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+        // Remova credentials: 'include' e use mode: 'cors' em vez disso
+      },
+      mode: 'cors', // Adicione esta linha
+      body: JSON.stringify({ email, senha }),
+    });
+
+    console.log("Resposta recebida do backend:", response);
+
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || "Falha no Login");
+    }
+
+    const token = await response.text();
+    localStorage.setItem("token", token);
+    console.log("Token recebido:", token);
+
+    if (onLoginSuccess) {
+      onLoginSuccess();
+    }
+  } catch (err) {
+    setError(err.message);
+    console.error("Erro no login:", err);
+  }
+};
 
   return (
     <div className="login-container">
@@ -16,29 +53,43 @@ export default function Login() {
             <p id="p-inicio">Que tal encontrar o laço perfeito hoje?</p>
           </div>
           <div className="login">
-          <input type="text" id="email" placeholder="E-mail" className="email" />
-          <div className="input-group">
             <input
-              type={showPassword ? 'text' : 'password'}
-              id="senha"
-              placeholder="Senha"
-              className="form-control senha"
+              type="text"
+              id="email"
+              placeholder="E-mail"
+              className="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <span
-              className="input-group-text"
-              style={{ cursor: 'pointer' }}
-              onClick={() => setShowPassword((v) => !v)}
-            >
-              <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`} id="togglePassword"></i>
-            </span>
+
+            <div className="input-group">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="senha"
+                placeholder="Senha"
+                className="form-control senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+              />
+              <span
+                className="input-group-text"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowPassword((v) => !v)}
+              >
+                <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`} id="togglePassword"></i>
+              </span>
+            </div>
+
+            <button id="login" className="login" onClick={login}>Login</button>
+
+            {error && <p className="login-error" style={{ color: "red" }}>{error}</p>}
+
+            <p className="link-container">
+              Não tem conta? <a href="/cadastroUsuario">Cadastre-se aqui.</a>
+            </p>
           </div>
-          <button id="login" className="login">Login</button>
-          <p className="link-container">
-            Não tem conta? <a href="/cadastroUsuario">Cadastre-se aqui.</a>
-          </p>
         </div>
-      </div>
-    </section>
+      </section>
     </div>
   );
-} 
+}
