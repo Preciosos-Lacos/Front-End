@@ -1,0 +1,65 @@
+:root {
+  --rosa: #F29DC3;
+}
+
+.card-custom {
+  background: var(--rosa);
+  border-radius: 30px;
+  padding: 15px;
+  color: #000;
+  margin: 10px;
+  width: 250px;
+}
+
+.card-custom h5 {
+  text-align: center;
+  font-weight: bold;
+}
+
+.color-box {
+  height: 120px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ffffff;
+}
+
+.list-associates {
+  border: 1px solid var(--rosa);
+  border-radius: 10px;
+  background: #BC6686;
+  padding: 6px 10px;
+  max-height: 90px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.list-associates ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list-associates li {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--rosa);
+  color: #fff;
+}
+
+.list-associates li:last-child {
+  border-bottom: none;
+}
+
+.list-associates::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+.icons {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.icons i {
+  margin: 0 5px;
+  cursor: pointer;
+}
