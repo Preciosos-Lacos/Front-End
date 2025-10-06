@@ -1,95 +1,150 @@
-:root{
-  --page-bg:#FAFBF5;
-  --icon-size:32px;
-  --rosa:#F29DC3;
+:root {
+  --page-bg: #FAFBF5;
+  --icon-size: 32px;
+  --rosa: #F29DC3;
 }
 
 /* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&family=Quicksand:wght@400;600;700&display=swap'); */
 
-.cadastro-main{
+.cadastro-main {
   margin-top: 0;
 }
 
-body{
-  font-family:'Quicksand',sans-serif;
-  background:var(--page-bg);
-}
-
-.cadastro-section{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width:100%;
-  min-height:100vh;
+.cadastro-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
   padding-top: 0;
-  background-image: linear-gradient(rgba(250,251,245,0.507), rgba(250,251,245,0.507)), url('../assets/background-image-borboletas.png');
-  background-size:cover;
-  background-position:center;
-  background-repeat:no-repeat;
-  background-attachment:fixed;
+  background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
-.form-cadastro{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width:100%;
+.form-cadastro {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(242, 157, 195, 0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 500px;
 }
 
-.logo-cadastro{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  max-width:300px;
-  max-height:164px;
-  margin-top:10px;
-}
-.logo-cadastro img{ width:100%; }
-
-#inicio{
-  font-family:'Playfair Display',serif;
-  font-weight:bolder;
-  font-size:24px;
-  color:#000;
-  text-align:center;
-  margin: 8px 0 2px;
-}
-#p-inicio{
-  font-family:'Poppins',sans-serif;
-  font-weight:400;
-  font-size:17px;
-  color:#000;
-  text-align:center;
-  margin-bottom:10px;
+.logo-cadastro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 220PX;
+  max-height: 120px;
+  margin-top: 10px;
 }
 
-.cadastro{ display:flex; flex-direction:column; align-items:center; }
+.logo-cadastro img {
+  width: 100%;
+}
+
+#inicio {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #000;
+  text-align: center;
+}
+
+#p-inicio {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  color: #000;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.cadastro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .cadastro #nome,
 .cadastro #telefone,
 .cadastro #cpf,
 .cadastro #email,
 .cadastro #senha,
-.cadastro #confirmar_senha{
-  width:260px;
-  height:40px;
-  padding:10px;
-  border:1.5px solid var(--rosa);
-  border-radius:12px;
-  margin:9px;
-  font-family:'Poppins',sans-serif;
-  font-size:14px;
-  outline:none;
+.cadastro #confirmar_senha {
+  width: 260px;
+  height: 40px;
+  padding: 10px;
+  border: 1.5px solid var(--rosa);
+  border-radius: 12px;
+  margin: 7px 9px;
+  background-color: #ffffff;
+  color: black;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 14px;
+  outline: none;
 }
 
-.input-group{ position:relative; width:260px; }
-.input-group .form-control{ width:100%; padding-right:40px; }
-.input-group .input-group-text{
-  position:absolute;
-  top:0; right:6px;
-  height:100%;
-  border:none; background:transparent;
-  color:#a9506d; cursor:pointer;
+.input-group {
+  position: relative;
+  width: 278px;
+  margin: 0px;
+}
+
+.input-group .form-control {
+  width: 100%;
+  height: 40px;
+  padding: 10px 40px 10px 10px;
+  border: 1.5px solid var(--rosa);
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: black;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 14px;
+  outline: none;
+  margin: 0;
+}
+
+.input-group .input-group-text {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #BB6686;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-group .input-group-text i {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.bi::before,
+[class^="bi-"]::before,
+[class*=" bi-"]::before {
+  display: inline-block;
+  font-family: bootstrap-icons !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .cadastro #nome:focus,
@@ -97,27 +152,46 @@ body{
 .cadastro #cpf:focus,
 .cadastro #email:focus,
 .cadastro #senha:focus,
-.cadastro #confirmar_senha:focus{
-  box-shadow:0 0 5px var(--rosa);
-  border-color:var(--rosa);
+.cadastro #confirmar_senha:focus,
+.input-group .form-control:focus {
+  box-shadow: 0 0 5px var(--rosa);
+  border-color: var(--rosa);
 }
 
-#cadastro{
-  width:260px; height:40px;
-  margin:12px 0;
-  background-color:#BB6686;
-  border:none; border-radius:50px;
-  color:#fff;
-  font-family:'Poppins',sans-serif;
-  font-size:15px; font-weight:600;
-  cursor:pointer; transition:background .3s;
+#cadastro {
+  width: 260px;
+  height: 40px;
+  margin: 9px 0 15px 0;
+  background-color: #BB6686;
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .3s;
 }
-#cadastro:hover{ background-color:#a9506d; }
 
-.link-container{
-  font-family:'Quicksand',sans-serif;
-  margin-top:20px; font-size:14px; font-weight:bold;
-  color:#333; text-align:center;
+#cadastro:hover {
+  background-color: #a9506d;
 }
-.link-container a{ color:#c00073; text-decoration:none; font-weight:600; }
-.link-container a:hover{ text-decoration:underline; }
+
+.link-container {
+  font-family: 'Quicksand', sans-serif;
+  margin-top: 0px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.link-container a {
+  color: #c00073;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link-container a:hover {
+  text-decoration: underline;
+}

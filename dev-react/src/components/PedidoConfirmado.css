@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&family=Quicksand:wght@400;600;700&display=swap');
+/* fonts imported globally in index.css */
 
 :root {
     --page-bg: #FAFBF5;
@@ -22,7 +22,7 @@
 }
 
 .pedido-confirmado-page main {
-    margin-top: 86px;
+    margin-top: 0;
     padding-top: 0;
     width: 100%;
 }
@@ -36,7 +36,7 @@
 }
 
 .pedido-confirmado-page .pedido-section h1 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Quicksand', sans-serif;
     font-size: 1.8rem;
     margin-top: 15px;
     margin-bottom: 20px;
@@ -60,7 +60,7 @@
 }
 
 .pedido-confirmado-page .card-sucesso h5 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Quicksand', sans-serif;
     font-size: 1.3rem;
     margin-bottom: 15px;
     color: #333;
@@ -98,7 +98,7 @@
 }
 
 .pedido-confirmado-page .informacoes h5 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Quicksand', sans-serif;
     margin-bottom: 15px;
     color: #333;
 }
@@ -142,7 +142,6 @@
     transform: scale(1.02);
 }
 
-/* Responsividade */
 @media (max-width: 992px) {
     .pedido-confirmado-page .card-sucesso,
     .pedido-confirmado-page .informacoes {

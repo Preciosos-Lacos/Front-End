@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './login.css';
+import Logo from '../assets/logo_preciosos_lacos.png';
 
 export default function Login({ onLoginSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -44,7 +45,7 @@ const login = async () => {
     <div className="login-container">
       <section className="login-section">
         <div className="logo-login">
-          <img src="/src/assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços" />
+          <img src={Logo} alt="Logo Preciosos Laços" />
         </div>
         <div className="form-login">
           <div className="inicio">

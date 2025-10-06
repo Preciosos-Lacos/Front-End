@@ -4,12 +4,10 @@ import './PedidoEntregue.css';
 
 const PedidoEntregue = ({ onNavigate }) => {
   const comprarNovamente = () => {
-    // Navegar para carrinho ou catálogo
     onNavigate && onNavigate('catalogo');
   };
 
   const precisoDeAjuda = () => {
-    // Aqui poderia abrir um modal de contato ou navegar para suporte
     alert('Entre em contato pelo WhatsApp ou e-mail para suporte!');
   };
 

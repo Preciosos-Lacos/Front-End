@@ -22,7 +22,7 @@
 }
 
 .pedido-entregue-page main {
-  margin-top: 86px;
+  margin-top: 0;
   padding-top: 0;
   width: 100%;
 }
@@ -42,11 +42,14 @@
 }
 
 .pedido-entregue-page .card {
+  display: flex;
   background: #fff;
   border-radius: 16px;
   padding: 18px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   margin-bottom: 18px;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .pedido-entregue-page .card h4 {
@@ -142,7 +145,6 @@
   transform: scale(1.02);
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .pedido-entregue-page .pedido-section {
     padding: 10px;

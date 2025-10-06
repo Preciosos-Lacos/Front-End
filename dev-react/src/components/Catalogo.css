@@ -5,10 +5,10 @@
     --rosa: #e78fb3;
 }
 
-html,
-body {
+.catalogo-page {
+    width: 100%;
+    min-height: 100vh;
     margin: 0;
-    padding: 0;
 }
 
 .catalogo-page .filter-bar {
@@ -170,7 +170,7 @@ body {
 }
 
 .catalogo-page main {
-    margin-top: 86px;
+    margin-top: 0px !important;
     padding-top: 0;
     width: 100%;
     overflow: visible;
@@ -193,13 +193,14 @@ body {
     text-align: center;
     padding: 40px 20px;
     color: white;
+    margin: 0;
 }
 
 .promo-section h2 {
     font-size: 3px;
     margin-bottom: 25px;
     font-weight: bold;
-    font-family: 'Georgia', serif;
+    font-family: 'Quicksand', sans-serif;
     font-size: 1.5rem;
 }
 
@@ -342,7 +343,7 @@ body {
 
 .filter-mobile-btn {
     position: sticky;
-    top: 135px;
+    top: 145px;
     z-index: 1020;
     padding: 10px;
     background: #fff;
@@ -397,7 +398,7 @@ select option:checked {
 
 .catalogo h3 {
     font-weight: bold;
-    font-family: 'Georgia', serif;
+    font-family: 'Quicksand', sans-serif;
     font-size: 1.5rem;
     color: var(--rosa);
     margin: 15px 0;
