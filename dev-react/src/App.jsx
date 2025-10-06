@@ -4,11 +4,7 @@ import Login from './components/Login.jsx'
 import Catalogo from './components/Catalogo.jsx'
 import PedidoConfirmado from './components/PedidoConfirmado.jsx'
 import PedidoEntregue from './components/PedidoEntregue.jsx'
-<<<<<<< Updated upstream
-import Perfil from './components/Perfil.jsx'
-=======
 import CadastroCor from './components/CadastroCor.jsx'
->>>>>>> Stashed changes
 import CadastroUsuario from './components/CadastroUsuario.jsx'
 import Perfil from './components/Perfil.jsx'
 import './App.css'
@@ -20,14 +16,6 @@ function App() {
     setCurrentScreen(screen)
   }
 
-<<<<<<< Updated upstream
-  const goToLogin = () => setCurrentScreen('login')
-  const goToCatalogo = () => setCurrentScreen('catalogo')
-  const goToPedidoConfirmado = () => setCurrentScreen('pedido-confirmado')
-  const goToPedidoEntregue = () => setCurrentScreen('pedido-entregue')
-  const goToPerfil = () => setCurrentScreen('perfil')
-  const goToHome = () => setCurrentScreen('home')
-=======
   const goToLogin = () => {
     setCurrentScreen('login')
   }
@@ -59,7 +47,6 @@ function App() {
   const goToHome = () => {
     setCurrentScreen('home')
   }
->>>>>>> Stashed changes
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '')
@@ -95,26 +82,15 @@ function App() {
             <button onClick={goToPedidoConfirmado}>Ir para Pedido Confirmado</button>
             <button onClick={goToPedidoEntregue}>Ir para Pedido Entregue</button>
             <button onClick={goToPerfil}>Ir para Perfil</button>
-<<<<<<< Updated upstream
-            <button onClick={goToCadastroUsuario}>Ir para Cadastro</button>
-            <p>
-              Edit <code>src/App.jsx</code> and save to test HMR
-            </p>
-=======
             <button onClick={goToCadastroCor}>Ir para Cadastro de Cores</button>
->>>>>>> Stashed changes
           </div>
         </div>
       ) : currentScreen === 'login' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
-<<<<<<< Updated upstream
-          <button onClick={goToHome} className="home-button">
-=======
           <button
             onClick={goToHome}
             className="home-button"
           >
->>>>>>> Stashed changes
             <i className="bi bi-house-fill"></i>
           </button>
           <Login onLoginSuccess={goToCatalogo} />
@@ -133,24 +109,10 @@ function App() {
         </div>
       ) : currentScreen === 'color-page' ? (
         <div style={{ minHeight: '100vh', width: '100%' }}>
-<<<<<<< Updated upstream
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
-          <Perfil />
-        </div>
-      ) : currentScreen === 'cadastro-usuario' ? (
-        <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
-          <button
-            onClick={goToHome} 
-            className="home-button"
-          >
-            <i className="bi bi-house-fill"></i>
-          </button>
-          <CadastroUsuario />
-=======
           <CadastroCor />
->>>>>>> Stashed changes
         </div>
       ) : currentScreen === 'cadastro-usuario' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
