@@ -1,72 +1,52 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import Logo from './assets/logo_preciosos_lacos.png';
-import Login from './components/Login.jsx'
-import Catalogo from './components/Catalogo.jsx'
-import PedidoConfirmado from './components/PedidoConfirmado.jsx'
-import PedidoEntregue from './components/PedidoEntregue.jsx'
-import CadastroCor from './components/CadastroCor.jsx'
-import CadastroUsuario from './components/CadastroUsuario.jsx'
-import Perfil from './components/Perfil.jsx'
-import './App.css'
+import Login from './components/Login.jsx';
+import Catalogo from './components/Catalogo.jsx';
+import PedidoConfirmado from './components/PedidoConfirmado.jsx';
+import PedidoEntregue from './components/PedidoEntregue.jsx';
+import CadastroCor from './components/CadastroCor.jsx';
+import CadastroUsuario from './components/CadastroUsuario.jsx';
+import Perfil from './components/Perfil.jsx';
+import CadastroTipoLacos from './components/CadastroTipoLacos.jsx';
+import './App.css';
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('home')
+  const [currentScreen, setCurrentScreen] = useState('home');
 
-  const navigate = (screen) => {
-    setCurrentScreen(screen)
-  }
+  // Funções de navegação
+  const navigate = (screen) => setCurrentScreen(screen);
+  const goToLogin = () => setCurrentScreen('login');
+  const goToCadastroUsuario = () => setCurrentScreen('cadastro-usuario');
+  const goToCatalogo = () => setCurrentScreen('catalogo');
+  const goToPedidoConfirmado = () => setCurrentScreen('pedido-confirmado');
+  const goToPedidoEntregue = () => setCurrentScreen('pedido-entregue');
+  const goToPerfil = () => setCurrentScreen('perfil');
+  const goToCadastroCor = () => setCurrentScreen('color-page');
+  const goToCadastroTipoLacos = () => setCurrentScreen('cadastro-tipo-lacos');
+  const goToHome = () => setCurrentScreen('home');
 
-  const goToLogin = () => {
-    setCurrentScreen('login')
-  }
-
-  const goToCadastroUsuario = () => {
-    setCurrentScreen('cadastro-usuario')
-  }
-
-  const goToCatalogo = () => {
-    setCurrentScreen('catalogo')
-  }
-
-  const goToPedidoConfirmado = () => {
-    setCurrentScreen('pedido-confirmado')
-  }
-
-  const goToPedidoEntregue = () => {
-    setCurrentScreen('pedido-entregue')
-  }
-
-  const goToPerfil = () => {
-    setCurrentScreen('perfil')
-  }
-
-  const goToCadastroCor = () => {
-    setCurrentScreen('color-page')
-  }
-
-  const goToHome = () => {
-    setCurrentScreen('home')
-  }
-
+  // Detecta mudança de hash na URL
   useEffect(() => {
-    const hash = window.location.hash.replace('#', '')
-    if (hash === 'login') setCurrentScreen('login')
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'login') setCurrentScreen('login');
 
     const onHashChange = () => {
-      const h = window.location.hash.replace('#', '')
+      const h = window.location.hash.replace('#', '');
       if (h) {
-        if (h === 'login') setCurrentScreen('login')
-        else if (h === 'catalogo') setCurrentScreen('catalogo')
-        else if (h === 'perfil') setCurrentScreen('perfil')
-        else if (h === 'cadastroUsuario' || h === 'cadastro-usuario') setCurrentScreen('cadastro-usuario')
-        else if (h === 'home') setCurrentScreen('home')
+        if (h === 'login') setCurrentScreen('login');
+        else if (h === 'catalogo') setCurrentScreen('catalogo');
+        else if (h === 'perfil') setCurrentScreen('perfil');
+        else if (h === 'cadastroUsuario' || h === 'cadastro-usuario') setCurrentScreen('cadastro-usuario');
+        else if (h === 'cadastroTipoLacos' || h === 'cadastro-tipo-lacos') setCurrentScreen('cadastro-tipo-lacos');
+        else if (h === 'home') setCurrentScreen('home');
       }
-    }
+    };
 
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
+  // Renderização condicional
   return (
     <>
       {currentScreen === 'home' ? (
@@ -83,14 +63,12 @@ function App() {
             <button onClick={goToPedidoEntregue}>Ir para Pedido Entregue</button>
             <button onClick={goToPerfil}>Ir para Perfil</button>
             <button onClick={goToCadastroCor}>Ir para Cadastro de Cores</button>
+            <button onClick={goToCadastroTipoLacos}>Ir para Cadastro de Tipos de Laços</button>
           </div>
         </div>
       ) : currentScreen === 'login' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
-          <button
-            onClick={goToHome}
-            className="home-button"
-          >
+          <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <Login onLoginSuccess={goToCatalogo} />
@@ -116,21 +94,33 @@ function App() {
         </div>
       ) : currentScreen === 'cadastro-usuario' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
-          <button
-            onClick={goToHome}
-            className="home-button"
-          >
+          <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <CadastroUsuario />
         </div>
+      ) : currentScreen === 'cadastro-tipo-lacos' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <CadastroTipoLacos />
+        </div>
       ) : currentScreen === 'perfil' ? (
-        <div style={{ height: '100vh', width: '100%', margin: 0, padding: 0, overflow: 'hidden' }}>
+        <div
+          style={{
+            height: '100vh',
+            width: '100%',
+            margin: 0,
+            padding: 0,
+            overflow: 'hidden',
+          }}
+        >
           <Perfil />
         </div>
       ) : null}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
