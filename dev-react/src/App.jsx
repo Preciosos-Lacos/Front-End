@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import Logo from './assets/logo_preciosos_lacos.png';
 import Login from './components/Login.jsx'
 import Catalogo from './components/Catalogo.jsx'
 import PedidoConfirmado from './components/PedidoConfirmado.jsx'
 import PedidoEntregue from './components/PedidoEntregue.jsx'
 import CadastroCor from './components/CadastroCor.jsx'
-import Pedidos from './components/Pedidos.jsx'
 import CadastroUsuario from './components/CadastroUsuario.jsx'
 import Perfil from './components/Perfil.jsx'
 import './App.css'
@@ -42,11 +41,7 @@ function App() {
   }
 
   const goToCadastroCor = () => {
-    setCurrentScreen('cadastro-cor')
-  }
-
-    const goToPedido = () => {
-    setCurrentScreen('pedido')
+    setCurrentScreen('color-page')
   }
 
   const goToHome = () => {
@@ -54,26 +49,25 @@ function App() {
   }
 
   useEffect(() => {
-    const applyHash = (hash) => {
-      if (!hash) return;
-      if (hash === 'login') setCurrentScreen('login')
-      else if (hash === 'catalogo') setCurrentScreen('catalogo')
-      else if (hash === 'perfil') setCurrentScreen('perfil')
-      else if (hash === 'pedido') setCurrentScreen('pedido')
-      else if (hash === 'cadastro-cor') setCurrentScreen('cadastro-cor')
-      else if (hash === 'cadastroUsuario' || hash === 'cadastro-usuario') setCurrentScreen('cadastro-usuario')
-      else if (hash === 'home') setCurrentScreen('home')
+    const hash = window.location.hash.replace('#', '')
+    if (hash === 'login') setCurrentScreen('login')
+
+    const onHashChange = () => {
+      const h = window.location.hash.replace('#', '')
+      if (h) {
+        if (h === 'login') setCurrentScreen('login')
+        else if (h === 'catalogo') setCurrentScreen('catalogo')
+        else if (h === 'perfil') setCurrentScreen('perfil')
+        else if (h === 'cadastroUsuario' || h === 'cadastro-usuario') setCurrentScreen('cadastro-usuario')
+        else if (h === 'home') setCurrentScreen('home')
+      }
     }
 
-    const initialHash = window.location.hash.replace('#', '')
-    applyHash(initialHash)
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
-    const onHashChange = () => applyHash(window.location.hash.replace('#', ''))
-
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
-
+  // Renderização condicional
   return (
     <>
       {currentScreen === 'home' ? (
@@ -90,15 +84,11 @@ function App() {
             <button onClick={goToPedidoEntregue}>Ir para Pedido Entregue</button>
             <button onClick={goToPerfil}>Ir para Perfil</button>
             <button onClick={goToCadastroCor}>Ir para Cadastro de Cores</button>
-            <button onClick={goToPedido}>Ir para Pedido</button>
           </div>
         </div>
       ) : currentScreen === 'login' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
-          <button
-            onClick={goToHome}
-            className="home-button"
-          >
+          <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <Login onLoginSuccess={goToCatalogo} />
@@ -126,21 +116,33 @@ function App() {
           <Pedidos />
       ) : currentScreen === 'cadastro-usuario' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
-          <button
-            onClick={goToHome}
-            className="home-button"
-          >
+          <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <CadastroUsuario />
         </div>
+      ) : currentScreen === 'cadastro-tipo-lacos' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <CadastroTipoLacos />
+        </div>
       ) : currentScreen === 'perfil' ? (
-        <div style={{ height: '100vh', width: '100%', margin: 0, padding: 0, overflow: 'hidden' }}>
+        <div
+          style={{
+            height: '100vh',
+            width: '100%',
+            margin: 0,
+            padding: 0,
+            overflow: 'hidden',
+          }}
+        >
           <Perfil />
         </div>
       ) : null}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
