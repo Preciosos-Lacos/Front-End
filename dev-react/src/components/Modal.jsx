@@ -112,14 +112,8 @@ const Modal = ({
 
       <input
         type="text"
+        id='inpNome'
         placeholder="Nome da cor: Verde-Água"
-        style={{
-          width: '100%',
-          padding: '8px',
-          margin: '10px 0',
-          borderRadius: '6px',
-          border: '1px solid #ccc'
-        }}
         value={formData.nome}
         onChange={(e) => handleInputChange('nome', e.target.value)}
       />
@@ -130,18 +124,11 @@ const Modal = ({
         value={formData.cor}
         onChange={(e) => handleInputChange('cor', e.target.value)}
       />
-      <div className="color-block" style={{ background: formData.cor }}></div>
 
       <input
         type="text"
+        id='inpValor'
         placeholder="Valor: R$ 0,00"
-        style={{
-          width: '100%',
-          padding: '8px',
-          margin: '10px 0',
-          borderRadius: '6px',
-          border: '1px solid #ccc'
-        }}
         value={formData.valor}
         onChange={(e) => handleInputChange('valor', e.target.value)}
       />
@@ -189,13 +176,7 @@ const Modal = ({
 
       <input
         type="text"
-        style={{
-          width: '100%',
-          padding: '8px',
-          margin: '10px 0',
-          borderRadius: '6px',
-          border: '1px solid #ccc'
-        }}
+        id='inpNome'
         value={formData.nome}
         readOnly
       />
@@ -203,13 +184,7 @@ const Modal = ({
       <h3 className="titulo">Valor</h3>
       <input
         type="number"
-        style={{
-          width: '100%',
-          padding: '8px',
-          margin: '10px 0',
-          borderRadius: '6px',
-          border: '1px solid #ccc'
-        }}
+        id='inpValor'
         value={formData.valor}
         onChange={(e) => handleInputChange('valor', e.target.value)}
       />

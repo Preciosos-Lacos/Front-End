@@ -20,7 +20,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
 }
 
 .modal .close {
@@ -31,7 +31,24 @@
   cursor: pointer;
 }
 
+.modal #inpNome {
+  width: 215px;
+  padding: 8px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.modal #inpValor {
+  width: 215px;
+  padding: 8px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
 .modal-search-wrapper {
+  width: 215px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,6 +71,7 @@
 }
 
 .modal .checkboxList {
+  width: 215px;
   max-height: 120px;
   overflow-y: auto;
   margin: 10px 0;
@@ -107,14 +125,14 @@
 }
 
 .modal .tituloPopUp {
-  margin: 3px 0px 12px 0px;
+  margin: 6px 20px 6px 20px;
   font-size: 21px;
   font-weight: 700;
 }
 
 .modal input[type="color"] {
   margin: 3px 0;
-  width: 100%;
+  width: 215px;
   height: 40px;
   border: 2.5px solid white;
   cursor: pointer;
@@ -123,6 +141,7 @@
 }
 
 .modal #fecharModal {
+  width: 215px;
   font-weight: 500;
   background: #fff;
   color: #000;
@@ -139,6 +158,7 @@
 }
 
 .modal #fecharModalExcluir {
+  width: 215px;
   font-weight: 500;
   background: #00ff1ee7;
   color: #000000;
@@ -154,6 +174,7 @@
 }
 
 .modal #fecharModalCancelar {
+  width: 215px;
   font-weight: 500;
   background: #ff0000ea;
   color: #fff;

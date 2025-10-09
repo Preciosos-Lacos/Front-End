@@ -8,12 +8,28 @@ import CadastroCor from './components/CadastroCor.jsx';
 import CadastroUsuario from './components/CadastroUsuario.jsx';
 import Perfil from './components/Perfil.jsx';
 import CadastroTipoLacos from './components/CadastroTipoLacos.jsx';
+import Compra from './components/Compra.jsx';
+import Pedidos from './components/Pedidos.jsx';
 import './App.css';
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('home');
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    // initialize from hash when present, otherwise default to 'home'
+    const h = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
+    if (h) {
+      if (h === 'login') return 'login';
+      if (h === 'catalogo') return 'catalogo';
+      if (h === 'perfil') return 'perfil';
+      if (h === 'cadastroUsuario' || h === 'cadastro-usuario') return 'cadastro-usuario';
+      if (h === 'cadastro-cor' || h === 'cadastroCor') return 'cadastro-cor';
+      if (h === 'pedido' || h === 'pedidos') return 'pedidos';
+      if (h === 'compra') return 'compra';
+      if (h === 'home') return 'home';
+    }
+    return 'home';
+  });
 
-  // Funções de navegação
+  // navigation helpers
   const navigate = (screen) => setCurrentScreen(screen);
   const goToLogin = () => setCurrentScreen('login');
   const goToCadastroUsuario = () => setCurrentScreen('cadastro-usuario');
@@ -21,11 +37,12 @@ function App() {
   const goToPedidoConfirmado = () => setCurrentScreen('pedido-confirmado');
   const goToPedidoEntregue = () => setCurrentScreen('pedido-entregue');
   const goToPerfil = () => setCurrentScreen('perfil');
-  const goToCadastroCor = () => setCurrentScreen('color-page');
+  const goToCadastroCor = () => setCurrentScreen('cadastro-cor');
   const goToCadastroTipoLacos = () => setCurrentScreen('cadastro-tipo-lacos');
+  const goToPedidos = () => setCurrentScreen('pedidos');
+  const goToCompra = () => setCurrentScreen('compra');
   const goToHome = () => setCurrentScreen('home');
 
-  // Detecta mudança de hash na URL
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
     if (hash === 'login') setCurrentScreen('login');
@@ -37,7 +54,9 @@ function App() {
         else if (h === 'catalogo') setCurrentScreen('catalogo');
         else if (h === 'perfil') setCurrentScreen('perfil');
         else if (h === 'cadastroUsuario' || h === 'cadastro-usuario') setCurrentScreen('cadastro-usuario');
-        else if (h === 'cadastroTipoLacos' || h === 'cadastro-tipo-lacos') setCurrentScreen('cadastro-tipo-lacos');
+        else if (h === 'cadastro-cor' || h === 'cadastroCor') setCurrentScreen('cadastro-cor');
+        else if (h === 'pedido' || h === 'pedidos') setCurrentScreen('pedidos');
+        else if (h === 'compra') setCurrentScreen('compra');
         else if (h === 'home') setCurrentScreen('home');
       }
     };
@@ -64,6 +83,8 @@ function App() {
             <button onClick={goToPerfil}>Ir para Perfil</button>
             <button onClick={goToCadastroCor}>Ir para Cadastro de Cores</button>
             <button onClick={goToCadastroTipoLacos}>Ir para Cadastro de Tipos de Laços</button>
+            <button onClick={goToCompra}>Ir para Finalizar Compra</button>
+            <button onClick={goToPedidos}>Ir para Pedidos</button>
           </div>
         </div>
       ) : currentScreen === 'login' ? (
@@ -85,13 +106,15 @@ function App() {
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <PedidoEntregue onNavigate={navigate} />
         </div>
-      ) : currentScreen === 'color-page' ? (
+      ) : currentScreen === 'cadastro-cor' ? (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <CadastroCor />
         </div>
+      ) : currentScreen === 'pedido' ? (
+          <Pedidos />
       ) : currentScreen === 'cadastro-usuario' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
@@ -106,6 +129,13 @@ function App() {
           </button>
           <CadastroTipoLacos />
         </div>
+      ) : currentScreen === 'pedidos' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Pedidos />
+        </div>
       ) : currentScreen === 'perfil' ? (
         <div
           style={{
@@ -117,6 +147,15 @@ function App() {
           }}
         >
           <Perfil />
+        </div>
+      ) : null}
+
+      {currentScreen === 'compra' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Compra />
         </div>
       ) : null}
     </>
