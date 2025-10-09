@@ -6,11 +6,26 @@ import PedidoConfirmado from './components/PedidoConfirmado.jsx'
 import PedidoEntregue from './components/PedidoEntregue.jsx'
 import CadastroCor from './components/CadastroCor.jsx'
 import CadastroUsuario from './components/CadastroUsuario.jsx'
+import CadastroTipoLacos from './components/CadastroTipoLacos.jsx'
+import Pedidos from './components/Pedidos.jsx'
 import Perfil from './components/Perfil.jsx'
 import './App.css'
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('home')
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    // prefer explicit hash when present, otherwise default to cadastro-cor
+    const h = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : ''
+    if (h) {
+      if (h === 'login') return 'login'
+      if (h === 'catalogo') return 'catalogo'
+      if (h === 'perfil') return 'perfil'
+      if (h === 'cadastroUsuario' || h === 'cadastro-usuario') return 'cadastro-usuario'
+      if (h === 'cadastro-cor') return 'cadastro-cor'
+      if (h === 'pedido' || h === 'pedidos') return 'pedidos'
+      if (h === 'home') return 'home'
+    }
+    return 'cadastro-cor'
+  })
 
   const navigate = (screen) => {
     setCurrentScreen(screen)
@@ -41,12 +56,22 @@ function App() {
   }
 
   const goToCadastroCor = () => {
-    setCurrentScreen('color-page')
+    setCurrentScreen('cadastro-cor')
+  }
+
+  const goToCadastroTipoLacos = () => {
+    setCurrentScreen('cadastro-tipo-lacos')
+  }
+
+  const goToPedidos = () => {
+    setCurrentScreen('pedidos')
   }
 
   const goToHome = () => {
     setCurrentScreen('home')
   }
+
+
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '')
@@ -59,6 +84,8 @@ function App() {
         else if (h === 'catalogo') setCurrentScreen('catalogo')
         else if (h === 'perfil') setCurrentScreen('perfil')
         else if (h === 'cadastroUsuario' || h === 'cadastro-usuario') setCurrentScreen('cadastro-usuario')
+        else if (h === 'cadastro-cor') setCurrentScreen('cadastro-cor')
+        else if (h === 'pedido' || h === 'pedidos') setCurrentScreen('pedidos')
         else if (h === 'home') setCurrentScreen('home')
       }
     }
@@ -84,6 +111,8 @@ function App() {
             <button onClick={goToPedidoEntregue}>Ir para Pedido Entregue</button>
             <button onClick={goToPerfil}>Ir para Perfil</button>
             <button onClick={goToCadastroCor}>Ir para Cadastro de Cores</button>
+            <button onClick={goToCadastroTipoLacos}>Ir para Cadastro de Tipos de Laços</button>
+            <button onClick={goToPedidos}>Ir para Pedidos</button>
           </div>
         </div>
       ) : currentScreen === 'login' ? (
@@ -127,6 +156,13 @@ function App() {
             <i className="bi bi-house-fill"></i>
           </button>
           <CadastroTipoLacos />
+        </div>
+      ) : currentScreen === 'pedidos' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Pedidos />
         </div>
       ) : currentScreen === 'perfil' ? (
         <div
