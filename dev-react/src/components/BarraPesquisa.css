@@ -8,15 +8,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 75px;
+  position: fixed;
+  top: 74px;
   background: var(--header-bg);
   width: 100%;
   height: 60px;
   padding-left: 120px;
   padding-right: 70px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.68);
-  z-index: 1049;
+  box-shadow: 0 3px 1px rgb(0 0 0 / 19%);
+  z-index: 1050;
 }
 
 .nav-pesquisa .nav-search-wrapper {
@@ -75,7 +75,8 @@
 
 @media (max-width: 992px) {
   .nav-pesquisa {
-    top: 75px; /* Mantém a mesma posição relativa ao header */
+    top: 75px;
+    /* Mantém a mesma posição relativa ao header */
     padding: 10px 20px 10px 80px;
   }
 

@@ -62,7 +62,7 @@ const login = async () => {
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <div className="input-group">
+            <div className="input-group w-150px">
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="senha"

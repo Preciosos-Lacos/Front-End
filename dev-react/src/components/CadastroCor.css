@@ -18,7 +18,7 @@ header {
   height: 75px;
   background: var(--header-bg);
   color: var(--rosa);
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Alex Brush', cursive;
   font-weight: bold;
   font-size: 40px;
   padding: 30px 70px;
@@ -27,7 +27,7 @@ header {
   justify-content: center;
   position: sticky;
   top: 0;
-  z-index: 1051;
+  z-index: 1050;
 }
 
 .content {
@@ -40,7 +40,7 @@ header {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding-top: 0px;
+  padding-top: 80px;
 }
 
 @media (min-width: 993px) {

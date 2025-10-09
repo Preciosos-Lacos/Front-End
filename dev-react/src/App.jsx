@@ -5,6 +5,7 @@ import Catalogo from './components/Catalogo.jsx'
 import PedidoConfirmado from './components/PedidoConfirmado.jsx'
 import PedidoEntregue from './components/PedidoEntregue.jsx'
 import CadastroCor from './components/CadastroCor.jsx'
+import Pedidos from './components/Pedidos.jsx'
 import CadastroUsuario from './components/CadastroUsuario.jsx'
 import Perfil from './components/Perfil.jsx'
 import './App.css'
@@ -41,7 +42,11 @@ function App() {
   }
 
   const goToCadastroCor = () => {
-    setCurrentScreen('color-page')
+    setCurrentScreen('cadastro-cor')
+  }
+
+    const goToPedido = () => {
+    setCurrentScreen('pedido')
   }
 
   const goToHome = () => {
@@ -49,19 +54,21 @@ function App() {
   }
 
   useEffect(() => {
-    const hash = window.location.hash.replace('#', '')
-    if (hash === 'login') setCurrentScreen('login')
-
-    const onHashChange = () => {
-      const h = window.location.hash.replace('#', '')
-      if (h) {
-        if (h === 'login') setCurrentScreen('login')
-        else if (h === 'catalogo') setCurrentScreen('catalogo')
-        else if (h === 'perfil') setCurrentScreen('perfil')
-        else if (h === 'cadastroUsuario' || h === 'cadastro-usuario') setCurrentScreen('cadastro-usuario')
-        else if (h === 'home') setCurrentScreen('home')
-      }
+    const applyHash = (hash) => {
+      if (!hash) return;
+      if (hash === 'login') setCurrentScreen('login')
+      else if (hash === 'catalogo') setCurrentScreen('catalogo')
+      else if (hash === 'perfil') setCurrentScreen('perfil')
+      else if (hash === 'pedido') setCurrentScreen('pedido')
+      else if (hash === 'cadastro-cor') setCurrentScreen('cadastro-cor')
+      else if (hash === 'cadastroUsuario' || hash === 'cadastro-usuario') setCurrentScreen('cadastro-usuario')
+      else if (hash === 'home') setCurrentScreen('home')
     }
+
+    const initialHash = window.location.hash.replace('#', '')
+    applyHash(initialHash)
+
+    const onHashChange = () => applyHash(window.location.hash.replace('#', ''))
 
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
@@ -83,6 +90,7 @@ function App() {
             <button onClick={goToPedidoEntregue}>Ir para Pedido Entregue</button>
             <button onClick={goToPerfil}>Ir para Perfil</button>
             <button onClick={goToCadastroCor}>Ir para Cadastro de Cores</button>
+            <button onClick={goToPedido}>Ir para Pedido</button>
           </div>
         </div>
       ) : currentScreen === 'login' ? (
@@ -107,13 +115,15 @@ function App() {
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <PedidoEntregue onNavigate={navigate} />
         </div>
-      ) : currentScreen === 'color-page' ? (
+      ) : currentScreen === 'cadastro-cor' ? (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <CadastroCor />
         </div>
+      ) : currentScreen === 'pedido' ? (
+          <Pedidos />
       ) : currentScreen === 'cadastro-usuario' ? (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
           <button
