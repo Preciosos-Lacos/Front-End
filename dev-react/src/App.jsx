@@ -8,6 +8,7 @@ import CadastroCor from './components/CadastroCor.jsx';
 import CadastroUsuario from './components/CadastroUsuario.jsx';
 import Perfil from './components/Perfil.jsx';
 import CadastroTipoLacos from './components/CadastroTipoLacos.jsx';
+import Compra from './components/Compra.jsx';
 import './App.css';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
   const goToCadastroCor = () => setCurrentScreen('color-page');
   const goToCadastroTipoLacos = () => setCurrentScreen('cadastro-tipo-lacos');
   const goToHome = () => setCurrentScreen('home');
+  const goToCompra = () => setCurrentScreen('compra');
 
   // Detecta mudança de hash na URL
   useEffect(() => {
@@ -64,6 +66,7 @@ function App() {
             <button onClick={goToPerfil}>Ir para Perfil</button>
             <button onClick={goToCadastroCor}>Ir para Cadastro de Cores</button>
             <button onClick={goToCadastroTipoLacos}>Ir para Cadastro de Tipos de Laços</button>
+            <button onClick={goToCompra}>Ir para Finalizar Compra</button>
           </div>
         </div>
       ) : currentScreen === 'login' ? (
@@ -117,6 +120,15 @@ function App() {
           }}
         >
           <Perfil />
+        </div>
+      ) : null}
+
+      {currentScreen === 'compra' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Compra />
         </div>
       ) : null}
     </>
