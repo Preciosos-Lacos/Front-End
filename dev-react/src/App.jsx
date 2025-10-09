@@ -9,6 +9,7 @@ import CadastroUsuario from './components/CadastroUsuario.jsx'
 import CadastroTipoLacos from './components/CadastroTipoLacos.jsx'
 import Pedidos from './components/Pedidos.jsx'
 import Perfil from './components/Perfil.jsx'
+import Favoritos from './components/Favoritos.jsx';
 import './App.css'
 
 function App() {
@@ -23,8 +24,10 @@ function App() {
       if (h === 'cadastro-cor') return 'cadastro-cor'
       if (h === 'pedido' || h === 'pedidos') return 'pedidos'
       if (h === 'home') return 'home'
+      if (h === 'cadastro-tipo-lacos') return 'cadastro-tipo-lacos'
+      if (h === 'favoritos') return 'favoritos'
     }
-    return 'cadastro-cor'
+    return 'home'
   })
 
   const navigate = (screen) => {
@@ -71,7 +74,9 @@ function App() {
     setCurrentScreen('home')
   }
 
-
+  const goToFavoritos = () => {
+    setCurrentScreen('favoritos')
+  }
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '')
@@ -87,6 +92,8 @@ function App() {
         else if (h === 'cadastro-cor') setCurrentScreen('cadastro-cor')
         else if (h === 'pedido' || h === 'pedidos') setCurrentScreen('pedidos')
         else if (h === 'home') setCurrentScreen('home')
+        else if (h === 'cadastro-tipo-lacos') setCurrentScreen('cadastro-tipo-lacos')
+        else if (h === 'favoritos') setCurrentScreen('favoritos')
       }
     }
 
@@ -113,6 +120,7 @@ function App() {
             <button onClick={goToCadastroCor}>Ir para Cadastro de Cores</button>
             <button onClick={goToCadastroTipoLacos}>Ir para Cadastro de Tipos de Laços</button>
             <button onClick={goToPedidos}>Ir para Pedidos</button>
+            <button onClick={goToFavoritos}>Ir para Favoritos</button>
           </div>
         </div>
       ) : currentScreen === 'login' ? (
@@ -175,6 +183,17 @@ function App() {
           }}
         >
           <Perfil />
+        </div>
+      ) : currentScreen === 'favoritos' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <Favoritos />
+        </div>
+      ) : currentScreen === 'home' ? (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Pedidos />
         </div>
       ) : null}
     </>
