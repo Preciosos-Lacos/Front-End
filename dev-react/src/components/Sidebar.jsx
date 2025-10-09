@@ -49,46 +49,46 @@ const Sidebar = () => {
         <img src={logo} alt="Logo" />
         <ul>
           <li onClick={handleItemClick}>
-            <a href="#">
-              <i className="bi bi-box"></i> 
+            <a href="#pedido">
+              <i className="bi bi-box"></i>
               <span>Pedidos</span>
             </a>
           </li>
           <li onClick={handleItemClick}>
-            <a href="./dashboard.html">
-              <i className="bi bi-bar-chart"></i> 
+            <a href="#dashboard">
+              <i className="bi bi-bar-chart"></i>
               <span>Dashboard</span>
             </a>
           </li>
           <li onClick={handleItemClick}>
-            <a href="./cadastro_modelo.html">
-              <i className="bi bi-tag"></i> 
+            <a href="#modelos">
+              <i className="bi bi-tag"></i>
               <span>Modelos</span>
             </a>
           </li>
           <li onClick={handleItemClick}>
-            <a href="./cadastro_cor.html">
-              <i className="bi bi-palette"></i> 
+            <a href="#cadastro-cor">
+              <i className="bi bi-palette"></i>
               <span>Cores</span>
             </a>
           </li>
           <li onClick={handleItemClick}>
-            <a href="#">
-              <i className="bi bi-archive"></i> 
+            <a href="#colecoes">
+              <i className="bi bi-archive"></i>
               <span>Coleções</span>
             </a>
           </li>
           <li onClick={handleItemClick}>
-            <a href="./cadastro_tipo_laco.html">
-              <i className="bi bi-scissors"></i> 
+            <a href="#tipos-laco">
+              <i className="bi bi-scissors"></i>
               <span>Tipos de Laço</span>
             </a>
           </li>
         </ul>
         <ul>
           <li onClick={handleItemClick}>
-            <a href="./catalogo.html">
-              <i className="bi bi-box-arrow-right"></i> 
+            <a href="#catalogo">
+              <i className="bi bi-box-arrow-right"></i>
               <span>Sair</span>
             </a>
           </li>

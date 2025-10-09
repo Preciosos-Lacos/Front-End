@@ -5,7 +5,7 @@ const Header = ({ showOffcanvas = true }) => {
   return (
     <header className="app-header">
       <div className="app-navbar">
-        <a href="#catalogo" className="app-brand">
+        <a href="#catalogo" className="app-brand"> 
           <img src="/src/assets/logo_preciosos_lacos.png" alt="Preciosos Laços" />
         </a>
         <ul className="app-iconbar">

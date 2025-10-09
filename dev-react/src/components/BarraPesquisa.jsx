@@ -1,7 +1,7 @@
 import React from 'react';
 import './BarraPesquisa.css';
 
-const BarraPesquisa = ({ searchTerm, onSearchChange, onAddClick }) => {
+const BarraPesquisa = ({ searchTerm, onSearchChange, onAddClick, addLabel = 'Cadastrar Cores' }) => {
   return (
     <div className="nav-pesquisa">
       <div className="nav-search-wrapper">
@@ -17,7 +17,7 @@ const BarraPesquisa = ({ searchTerm, onSearchChange, onAddClick }) => {
       </div>
       <button className="btn-cadastrar" onClick={onAddClick}>
         <i className="bi bi-patch-plus"></i>
-        <span> Cadastrar Cores</span>
+        <span>{` ${addLabel}`}</span>
       </button>
     </div>
   );

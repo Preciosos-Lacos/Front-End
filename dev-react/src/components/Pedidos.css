@@ -1,0 +1,219 @@
+:root {
+    --page-bg: #FAFBF5;
+    --header-bg: #FAFBF5;
+    --icon-size: 32px;
+    --rosa: #F29DC3;
+    --header-height: 75px;
+    --nav-height: 60px;
+}
+
+.pedidos-root {
+    font-family: 'Quicksand', sans-serif;
+    background: var(--page-bg);
+    min-height: 100vh;
+}
+
+.pedidos-root .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 70px;
+    background: var(--page-bg);
+    border-right: 1px solid #ddd;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    transition: width 0.3s, box-shadow 0.3s;
+    z-index: 1055;
+}
+
+.pedidos-root .sidebar:hover,
+.pedidos-root .sidebar.active {
+    width: 220px;
+    align-items: flex-start;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.pedidos-root header {
+    width: 100%;
+    height: 75px;
+    background: var(--header-bg);
+    color: var(--rosa);
+    font-family: 'Alex Brush', cursive;
+    font-weight: bold;
+    font-size: 40px;
+    padding: 30px 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+}
+
+.pedidos-root .nav-pesquisa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 74px;
+    background: var(--header-bg);
+    width: 100%;
+    height: 60px;
+    padding-left: 120px;
+    padding-right: 70px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.68);
+    z-index: 1050;
+}
+
+.pedidos-root .content {
+    display: flex;
+    padding: 20px;
+    margin-top: calc(var(--header-height) + var(--nav-height) - 100px);
+    margin-left: 70px;
+    transition: margin-left 0.3s;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-control {
+    display: block;
+    width: 150px;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--bs-body-bg);
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.pedidos-root .filter-group input,
+.pedidos-root .filter-group select {
+    border-radius: 15px;
+    background-color: #f8c4d6;
+    border: none;
+    padding: 6px 12px;
+    color: #000;
+    font-weight: 500;
+}
+
+.pedidos-root .table-pedidos {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.pedidos-root .pedido-row {
+    background-color: #f58bb0;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 1rem;
+    color: #000;
+}
+
+.pedidos-root .status-badge {
+    border-radius: 25px;
+    padding: 5px 15px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.pedidos-root .status-pagamento.aguardando {
+    background-color: #f1c40f;
+    color: #000
+}
+
+.pedidos-root .status-pagamento.atrasado {
+    background-color: #c0392b
+}
+
+.pedidos-root .status-pagamento.concluido {
+    background-color: #27ae60
+}
+
+.pedidos-root .status-pedido.iniciado,
+.pedidos-root .status-pedido.producao {
+    background-color: #bc6686
+}
+
+.pedidos-root .status-pedido.concluido {
+    background-color: #27ae60
+}
+
+.pedidos-root .status-pedido.enviado {
+    background-color: #207ed6
+}
+
+.pedidos-root .status-pedido.entregue {
+    background-color: #146312
+}
+
+.pedidos-root .status-pedido.cancelado {
+    background-color: #a32a2a
+}
+
+.pedidos-root .btn-contato {
+    background: var(--rosa);
+    border: none;
+    color: #fff;
+    border-radius: 85px;
+    width: 30px;
+    height: 45px;
+    margin-left: 4px;
+    font-size: 1.2em;
+    display: inline-flex;
+    transition: background .2s;
+    justify-content: center;
+}
+
+.pedidos-root .btn-contato:hover {
+    background: #f07eb1
+}
+
+.pedidos-root .modal .modal-content {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2)
+}
+
+.pedidos-root .detalhe-item {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 8px 15px;
+    margin-bottom: 10px;
+    font-weight: 500
+}
+
+@media (max-width: 992px) {
+    .pedidos-root .content {
+        margin-left: 0 !important
+    }
+
+    .pedidos-root .nav-pesquisa {
+        padding: 10px 20px 10px 80px
+    }
+
+    .pedidos-root .btn-cadastrar {
+        width: 45px;
+        height: 45px;
+        padding: 0;
+        border-radius: 50%
+    }
+
+    .pedidos-root .btn-cadastrar span {
+        display: none
+    }
+}

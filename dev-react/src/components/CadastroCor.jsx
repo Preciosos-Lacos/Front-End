@@ -305,6 +305,7 @@ const CadastroCor = () => {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onAddClick={openCreateModal}
+        addLabel="Cadastrar Cores"
       />
 
       <div className="content">

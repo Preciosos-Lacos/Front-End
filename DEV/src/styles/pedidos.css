@@ -1,0 +1,414 @@
+/* ------------------------ ROOT VARIÁVEIS E IMPORTS ------------------------ */
+:root {
+  --page-bg: #FAFBF5;
+  --header-bg: #FAFBF5;
+  --icon-size: 32px;
+  --rosa: #F29DC3;
+  --header-height: 75px;
+  --nav-height: 60px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&family=Quicksand:wght@400;600;700&display=swap');
+
+/* ------------------------ BASE ------------------------ */
+body {
+  margin: 0;
+  background: var(--page-bg);
+  font-family: 'Quicksand', sans-serif;
+}
+
+/* ------------------------ SIDEBAR ------------------------ */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 70px;
+  background: var(--page-bg);
+  border-right: 1px solid #ddd;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  transition: width 0.3s, box-shadow 0.3s;
+  z-index: 1055;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.sidebar:hover,
+.sidebar.active {
+  width: 220px;
+  align-items: flex-start;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar img {
+  width: 100px;
+  height: 40px;
+  margin: 25px 0 -35px 0;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: margin-left 0.5s;
+}
+
+.sidebar:hover img,
+.sidebar.active img {
+  margin-left: 55px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.sidebar ul li {
+  display: flex;
+  align-items: center;
+  padding: 15px 23px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar ul li:hover {
+  background: var(--rosa);
+}
+
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}
+
+.sidebar ul li i {
+  font-size: 20px;
+  margin-right: 15px;
+  min-width: 25px;
+  text-align: center;
+}
+
+.sidebar ul li span {
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.3s;
+}
+
+.sidebar:hover ul li span,
+.sidebar.active ul li span {
+  opacity: 1;
+}
+
+/* ------------------------ HEADER ------------------------ */
+header {
+  width: 100%;
+  height: var(--header-height);
+  background: var(--header-bg);
+  color: var(--rosa);
+  font-family: 'Alex Brush', cursive;
+  font-weight: bold;
+  font-size: 40px;
+  padding: 0 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 1050;
+}
+
+/* Base content area: reserve space for header (75px) + nav-pesquisa (60px) + small gap */
+.content {
+  display: flex;
+  padding: 20px;
+  margin-top: calc(var(--header-height) + var(--nav-height)); /* reserve space for header + nav */
+  margin-left: 70px; /* space for sidebar collapsed */
+  transition: margin-left 0.3s;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ------------------------ BOTÃO MENU ------------------------ */
+.toggle-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: 45px;
+  height: 45px;
+  background: var(--rosa);
+  border: none;
+  color: #3a3a3a;
+  font-size: 22px;
+  border-radius: 50%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1300;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.toggle-btn:hover {
+  background: #f07eb1;
+}
+
+/* ------------------------ NAV PESQUISA E CADASTRO ------------------------ */
+.nav-pesquisa {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  background: var(--header-bg);
+  width: 100%;
+  height: 60px;
+  padding-left: 120px;
+  padding-right: 70px;
+  top: var(--header-height);
+  /* place nav-pesquisa directly below header */
+  box-shadow: none; /* no shadow so both look like one element */
+  z-index: 1000;
+}
+
+.nav-pesquisa .nav-search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
+}
+
+.nav-search-box {
+  width: 100%;
+  padding: 8px 40px 8px 16px;
+  margin-right: 15px;
+  border-radius: 50px;
+  border: none;
+  background: var(--rosa);
+  color: #3a3a3a;
+}
+
+.nav-search-box::placeholder {
+  color: #3a3a3a;
+}
+
+#lupa-search {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #3a3a3a;
+  font-size: 18px;
+}
+
+.btn-cadastrar {
+  background: var(--rosa);
+  color: #3a3a3a;
+  border-radius: 50px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.3s;
+}
+
+.btn-cadastrar:hover {
+  background: #f07eb1;
+}
+
+.btn-cadastrar span {
+  margin-left: 6px;
+}
+
+/* ------------------------ FILTROS ------------------------ */
+.filter-group input,
+.filter-group select {
+  border-radius: 15px;
+  background-color: #f8c4d6;
+  border: none;
+  padding: 6px 12px;
+  color: #000;
+  font-weight: 500;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.18);
+}
+
+/* ------------------------ PEDIDOS (LISTA/CARDS) ------------------------ */
+.table-pedidos {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.pedido-row {
+  background-color: #f58bb0;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 1rem;
+  color: #000;
+}
+
+.status-badge {
+  border-radius: 25px;
+  padding: 5px 15px;
+  font-weight: bold;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.status-pagamento.aguardando {
+  background-color: #f1c40f;
+  color: #000;
+}
+
+.status-pagamento.atrasado {
+  background-color: #c0392b;
+}
+
+.status-pagamento.concluido {
+  background-color: #27ae60;
+}
+
+.status-pedido.iniciado,
+.status-pedido.producao {
+  background-color: #bc6686;
+}
+
+.status-pedido.concluido {
+  background-color: #27ae60;
+}
+
+.status-pedido.enviado {
+  background-color: #207ed6;
+}
+
+.status-pedido.entregue {
+  background-color: #146312;
+}
+
+.status-pedido.cancelado {
+  background-color: #a32a2a;
+}
+
+/* Botões de contato */
+.btn-contato {
+  background: var(--rosa);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  margin-left: 4px;
+  font-size: 1.2em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.btn-contato:hover {
+  background: #f07eb1;
+}
+
+/* ------------------------ MODAL DETALHES PEDIDO ------------------------ */
+.modal .modal-content h5 {
+  font-weight: bold;
+}
+
+.detalhe-item {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 8px 15px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.modal .btn-success {
+  background: #27ae60;
+  border: none;
+}
+
+.modal .btn-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 25px;
+  background: none;
+  border: none;
+  color: #d63384;
+  cursor: pointer;
+}
+
+/* ------------------------ RESPONSIVO ------------------------ */
+@media (max-width: 992px) {
+  .toggle-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    left: -220px;
+    width: 220px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .sidebar ul li span {
+    opacity: 1;
+  }
+
+  .content {
+    margin-left: 0 !important;
+  }
+
+  .sidebar span {
+    padding-left: 10px;
+  }
+
+  .nav-pesquisa {
+    padding: 10px 20px 10px 80px;
+  }
+
+  .btn-cadastrar {
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .btn-cadastrar span {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .pedido-row {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 0.95rem;
+  }
+
+  header {
+    font-size: 24px;
+    padding: 12px 10px;
+  }
+
+  .nav-pesquisa {
+    padding: 10px 10px 10px 60px;
+  }
+}
