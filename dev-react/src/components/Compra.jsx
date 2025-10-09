@@ -58,7 +58,7 @@ const Compra = () => {
             <div className="pagamento">
               <div className="titulo-pagamento">Formato de pagamento</div>
               <div className="botoes-pagamento">
-                {['PIX', 'Cartão de crédito', 'Boleto bancário'].map((p) => (
+                {['PIX', 'Cartão de crédito', 'Cartão de débito'].map((p) => (
                   <button
                     key={p}
                     className={payment === p ? 'selected' : ''}
