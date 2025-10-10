@@ -15,7 +15,7 @@ export default function CadastroUsuario() {
   });
   const [showPwd, setShowPwd] = useState(false);
   const [showPwdConfirm, setShowPwdConfirm] = useState(false);
-  const [error, setError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
 
   function handleChange(e) {
@@ -111,7 +111,7 @@ export default function CadastroUsuario() {
       alert(`Usuário cadastrado com sucesso! ID: ${data.id}`);
       //  window.location.href = "/login";
     } catch (err) {
-      setError(err.message);
+      setErrorMessage(err.message);
       console.error("Erro no Cadastro:", err);
     }
   };
@@ -210,6 +210,7 @@ export default function CadastroUsuario() {
               </button>
             </div>
 
+            {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
             <button id="cadastro" type="submit">Cadastrar</button>
 
             <p className="link-container">

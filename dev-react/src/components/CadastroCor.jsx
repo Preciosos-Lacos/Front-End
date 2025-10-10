@@ -1,9 +1,83 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './Sidebar';
 import BarraPesquisa from './BarraPesquisa';
 import CardCor from './CardCor';
 import Modal from './Modal';
 import './CadastroCor.css';
+
+// Constante estável fora do componente para evitar dependências desnecessárias no useCallback/useEffect
+const mockColors = [
+  {
+    id: "1",
+    nome: "Vermelho",
+    cor: "#f44336",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "2",
+    nome: "Rosa",
+    cor: "#f8b2cc",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "3",
+    nome: "Lilas",
+    cor: "#dda0dd",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "4",
+    nome: "Azul claro",
+    cor: "lightskyblue",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "5",
+    nome: "Lavanda",
+    cor: "#cac1fe",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "6",
+    nome: "Amarelo",
+    cor: "#fdfd96",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "7",
+    nome: "Verde",
+    cor: "#98fb98",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "8",
+    nome: "Marrom",
+    cor: "#d2b48c",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "9",
+    nome: "Preto",
+    cor: "#000000",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  },
+  {
+    id: "10",
+    nome: "Branco",
+    cor: "#ffffff",
+    valor: "6.00",
+    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
+  }
+];
 
 const CadastroCor = () => {
   const [colors, setColors] = useState([]);
@@ -14,79 +88,6 @@ const CadastroCor = () => {
     colorData: null,
     colorName: ''
   });
-
-  const mockColors = [
-    {
-      id: "1",
-      nome: "Vermelho",
-      cor: "#f44336",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "2",
-      nome: "Rosa",
-      cor: "#f8b2cc",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "3",
-      nome: "Lilas",
-      cor: "#dda0dd",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "4",
-      nome: "Azul claro",
-      cor: "lightskyblue",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "5",
-      nome: "Lavanda",
-      cor: "#cac1fe",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "6",
-      nome: "Amarelo",
-      cor: "#fdfd96",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "7",
-      nome: "Verde",
-      cor: "#98fb98",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "8",
-      nome: "Marrom",
-      cor: "#d2b48c",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "9",
-      nome: "Preto",
-      cor: "#000000",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    },
-    {
-      id: "10",
-      nome: "Branco",
-      cor: "#ffffff",
-      valor: "6.00",
-      modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-    }
-  ];
 
   const API_URL = "http://localhost:3000/cores";
 
@@ -112,16 +113,16 @@ const CadastroCor = () => {
     setTimeout(() => alertDiv.remove(), 3000);
   };
 
-  const loadColors = async () => {
+  const loadColors = useCallback(async () => {
     try {
       const res = await fetch(API_URL);
       const colorsData = await res.json();
       setColors(colorsData);
-    } catch (error) {
+    } catch {
       console.log("API não disponível, usando dados de exemplo");
       setColors(mockColors);
     }
-  };
+  }, []);
 
   const createColor = async (formData) => {
     try {
@@ -145,7 +146,7 @@ const CadastroCor = () => {
             modelos: formData.modelos
           })
         });
-      } catch (apiError) {
+      } catch {
         const novoId = colors.length > 0
           ? Math.max(...colors.map(c => Number(c.id) || 0)) + 1
           : 1;
@@ -164,7 +165,7 @@ const CadastroCor = () => {
       showAlert("sucesso", "Cor cadastrada com sucesso!");
       closeModal();
       loadColors();
-    } catch (error) {
+    } catch {
       showAlert("erro", "Erro ao cadastrar cor!");
     }
   };
@@ -185,7 +186,7 @@ const CadastroCor = () => {
             modelos: formData.modelos
           })
         });
-      } catch (apiError) {
+      } catch {
         setColors(prev => prev.map(color => 
           color.id === modalState.colorData.id 
             ? { ...color, nome: formData.nome, valor: formData.valor, modelos: formData.modelos }
@@ -196,7 +197,7 @@ const CadastroCor = () => {
       showAlert("sucesso", "Cor atualizada com sucesso!");
       closeModal();
       loadColors();
-    } catch (error) {
+    } catch {
       showAlert("erro", "Erro ao atualizar cor!");
     }
   };
@@ -208,14 +209,14 @@ const CadastroCor = () => {
           method: "DELETE" 
         });
         if (!res.ok) throw new Error("Erro ao excluir");
-      } catch (apiError) {
+      } catch {
         setColors(prev => prev.filter(color => color.id !== modalState.colorData.id));
       }
       
       showAlert("sucesso", "Cor excluída com sucesso!");
       closeModal();
       loadColors();
-    } catch (error) {
+    } catch {
       showAlert("erro", "Cor não encontrada ou já excluída!");
     }
   };
@@ -237,7 +238,7 @@ const CadastroCor = () => {
         const res = await fetch(`${API_URL}/${id}`);
         if (!res.ok) throw new Error("Cor não encontrada");
         colorData = await res.json();
-      } catch (apiError) {
+      } catch {
         colorData = colors.find(color => color.id === id);
         if (!colorData) throw new Error("Cor não encontrada");
       }
@@ -248,7 +249,7 @@ const CadastroCor = () => {
         colorData: colorData,
         colorName: colorData.nome
       });
-    } catch (error) {
+    } catch {
       showAlert("erro", "Cor não encontrada!");
     }
   };
@@ -293,7 +294,7 @@ const CadastroCor = () => {
 
   useEffect(() => {
     loadColors();
-  }, []);
+  }, [loadColors]);
 
   return (
     <div className="color-page">

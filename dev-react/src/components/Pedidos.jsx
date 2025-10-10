@@ -44,6 +44,17 @@ const Pedidos = () => {
       <header>Pedidos</header>
 
       <div className="content">
+        <div className="row mb-3">
+          <div className="col-md-6">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar por nome ou modelo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
         <div className="row filter-group">
           <div className="col-md-3 mb-2 ">
             <label>Data Início</label>

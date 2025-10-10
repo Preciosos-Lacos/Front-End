@@ -48,20 +48,6 @@
   max-width: 400px;
 }
 
-.search-box {
-  width: 100%;
-  padding: 10px 40px 10px 15px;
-  border: 2px solid var(--rosa);
-  border-radius: 25px;
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.search-box:focus {
-  border-color: var(--rosa-escuro);
-}
-
 #lupa-search {
   position: absolute;
   right: 12px;

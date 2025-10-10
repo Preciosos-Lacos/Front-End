@@ -81,7 +81,7 @@ export default function CadastroTipoLacos() {
 
   const handleModalSubmit = (formData) => {
     switch (modalState.type) {
-      case "create":
+      case "create": {
         const novoTipo = {
           id: String(tipos.length + 1),
           nome: formData.nome,
@@ -90,16 +90,19 @@ export default function CadastroTipoLacos() {
         setTipos(prev => [...prev, novoTipo]);
         showAlert("sucesso", "Tipo de laço cadastrado!");
         break;
+      }
 
-      case "edit":
+      case "edit": {
         setTipos(prev => prev.map(t => t.id === modalState.tipoData.id ? { ...t, ...formData } : t));
         showAlert("sucesso", "Tipo de laço atualizado!");
         break;
+      }
 
-      case "delete":
+      case "delete": {
         setTipos(prev => prev.filter(t => t.id !== modalState.tipoData.id));
         showAlert("sucesso", "Tipo de laço deletado!");
         break;
+      }
 
       default:
         break;
@@ -136,7 +139,7 @@ export default function CadastroTipoLacos() {
 
               <div className="list-associates">
                 <ul>
-                  {modelosAssociados.map((modelo, index) => (
+                  {modelosAssociados.map((modelo) => (
                     <li key={modelo}>{modelo}</li>
                   ))}
                 </ul>

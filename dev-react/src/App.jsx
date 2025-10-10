@@ -45,6 +45,7 @@ function App() {
   const goToPedidos = () => setCurrentScreen('pedidos');
   const goToCompra = () => setCurrentScreen('compra');
   const goToHome = () => setCurrentScreen('home');
+  const goToFavoritos = () => setCurrentScreen('favoritos');
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -73,7 +74,7 @@ function App() {
   // Renderização condicional
   return (
     <>
-      {currentScreen === 'home' ? (
+      {currentScreen === 'home' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <div>
             <img src={Logo} className="logo" alt="Vite logo" />
@@ -93,56 +94,72 @@ function App() {
             <button onClick={goToFavoritos}>Ir para Favoritos</button>
           </div>
         </div>
-      ) : currentScreen === 'login' ? (
+      )}
+
+      {currentScreen === 'login' && (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <Login onLoginSuccess={goToCatalogo} />
         </div>
-      ) : currentScreen === 'catalogo' ? (
+      )}
+
+      {currentScreen === 'catalogo' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <Catalogo onNavigate={navigate} />
         </div>
-      ) : currentScreen === 'pedido-confirmado' ? (
+      )}
+
+      {currentScreen === 'pedido-confirmado' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <PedidoConfirmado onNavigate={navigate} />
         </div>
-      ) : currentScreen === 'pedido-entregue' ? (
+      )}
+
+      {currentScreen === 'pedido-entregue' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <PedidoEntregue onNavigate={navigate} />
         </div>
-      ) : currentScreen === 'cadastro-cor' ? (
+      )}
+
+      {currentScreen === 'cadastro-cor' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <CadastroCor />
         </div>
-      ) : currentScreen === 'pedido' ? (
-          <Pedidos />
-      ) : currentScreen === 'cadastro-usuario' ? (
+      )}
+
+      {currentScreen === 'cadastro-usuario' && (
         <div style={{ position: 'relative', minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <CadastroUsuario />
         </div>
-      ) : currentScreen === 'cadastro-tipo-lacos' ? (
+      )}
+
+      {currentScreen === 'cadastro-tipo-lacos' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <CadastroTipoLacos />
         </div>
-      ) : currentScreen === 'pedidos' ? (
+      )}
+
+      {currentScreen === 'pedidos' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <Pedidos />
         </div>
-      ) : currentScreen === 'perfil' ? (
+      )}
+
+      {currentScreen === 'perfil' && (
         <div
           style={{
             height: '100vh',
@@ -154,45 +171,22 @@ function App() {
         >
           <Perfil />
         </div>
-      ) : currentScreen === 'favoritos' ? (
+      )}
+
+      {currentScreen === 'favoritos' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <Favoritos />
         </div>
-      ) : currentScreen === 'home' ? (
-        <div style={{ minHeight: '100vh', width: '100%' }}>
-          <button onClick={goToHome} className="home-button">
-            <i className="bi bi-house-fill"></i>
-          </button>
-          <Pedidos />
-        </div>
-      ) : null}
+      )}
 
-      {currentScreen === 'compra' ? (
+      {currentScreen === 'compra' && (
         <div style={{ minHeight: '100vh', width: '100%' }}>
           <button onClick={goToHome} className="home-button">
             <i className="bi bi-house-fill"></i>
           </button>
           <Compra />
         </div>
-      ) : currentScreen === 'favoritos' ? (
-        <div style={{ minHeight: '100vh', width: '100%' }}>
-          <Favoritos />
-        </div>
-      ) : currentScreen === 'home' ? (
-        <div style={{ minHeight: '100vh', width: '100%' }}>
-          <button onClick={goToHome} className="home-button">
-            <i className="bi bi-house-fill"></i>
-          </button>
-          <Pedidos />
-        </div>
-        ) : currentScreen === 'compra' ? (
-          <div style={{ minHeight: '100vh', width: '100%' }}>
-            <button onClick={goToHome} className="home-button">
-              <i className="bi bi-house-fill"></i>
-            </button>
-            <Compra />
-        </div>
-      ) : null}
+      )}
     </>
   );
 }

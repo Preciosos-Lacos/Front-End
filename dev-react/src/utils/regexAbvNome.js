@@ -1,4 +1,4 @@
-function abreviarNomeMeio(nome) {
+export function abreviarNomeMeio(nome) {
     const excecoes = ["de", "da", "do", "das", "dos", "e"];
     const partes = nome.trim().split(" ");
     if (partes.length <= 2) return nome; // Sem nomes do meio
@@ -11,3 +11,5 @@ function abreviarNomeMeio(nome) {
 
     return `${primeiro} ${meios} ${ultimo}`;
 }
+
+export default abreviarNomeMeio;
