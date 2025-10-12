@@ -11,6 +11,7 @@ import CadastroTipoLacos from './components/CadastroTipoLacos.jsx';
 import Compra from './components/Compra.jsx';
 import Pedidos from './components/Pedidos.jsx';
 import Favoritos from './components/Favoritos.jsx';
+import Produto from './components/Produto.jsx';
 import './App.css';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
       if (h === 'home') return 'home';
       if (h === 'cadastro-tipo-lacos') return 'cadastro-tipo-lacos'
       if (h === 'favoritos') return 'favoritos'
+      if (h === 'produto') return 'produto';
     }
     return 'home';
   });
@@ -46,6 +48,7 @@ function App() {
   const goToCompra = () => setCurrentScreen('compra');
   const goToHome = () => setCurrentScreen('home');
   const goToFavoritos = () => setCurrentScreen('favoritos');
+  const goToProduto = () => setCurrentScreen('produto');
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -64,6 +67,7 @@ function App() {
         else if (h === 'home') setCurrentScreen('home');
         else if (h === 'cadastro-tipo-lacos') setCurrentScreen('cadastro-tipo-lacos')
         else if (h === 'favoritos') setCurrentScreen('favoritos')
+        else if (h === 'produto') setCurrentScreen('produto');
       }
     };
 
@@ -92,6 +96,7 @@ function App() {
             <button onClick={goToCompra}>Ir para Finalizar Compra</button>
             <button onClick={goToPedidos}>Ir para Pedidos</button>
             <button onClick={goToFavoritos}>Ir para Favoritos</button>
+            <button onClick={goToProduto}>Ir para Produto</button>
           </div>
         </div>
       )}
@@ -185,6 +190,15 @@ function App() {
             <i className="bi bi-house-fill"></i>
           </button>
           <Compra />
+        </div>
+      )}
+
+      {currentScreen === 'produto' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Produto />
         </div>
       )}
     </>
