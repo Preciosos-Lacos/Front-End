@@ -1,0 +1,89 @@
+/* Adaptado de pre-desenvolvimento/src/public/css/cadastro-endereco.css and home-usuario.css */
+* { box-sizing: border-box; }
+
+.cadastro-container {
+  font-family: 'Quicksand', sans-serif;
+  background: #FAFBF5;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.btn-voltar {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  font-size: 24px;
+  color: #BC6686;
+  text-decoration: none;
+}
+
+.cadastro-section {
+  max-width: 720px;
+  margin: 80px auto 40px; /* considera header fixo */
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+
+.logo-cadastro img {
+  display: block;
+  margin: 0 auto 14px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.form-cadastro h2 {
+  text-align: center;
+  color: #BC6686;
+  margin-bottom: 16px;
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.inputs input[type="text"], .inputs input[type="number"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.inputs input[readonly] {
+  background: #f5f5f5;
+}
+
+.checkbox-padrao {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.btn-cadastrar {
+  grid-column: 1 / -1;
+  padding: 12px;
+  background: #BC6686;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-cadastrar:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.alert {
+  margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  .cadastro-section { margin: 100px 12px; padding: 18px; }
+  .inputs { grid-template-columns: 1fr; }
+  .logo-cadastro img { height: 50px; }
+}
