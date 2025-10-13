@@ -12,6 +12,7 @@ import Compra from './components/Compra.jsx';
 import Pedidos from './components/Pedidos.jsx';
 import Favoritos from './components/Favoritos.jsx';
 import Produto from './components/Produto.jsx';
+import Carrinho from './components/Carrinho.jsx';
 import './App.css';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
       if (h === 'cadastro-tipo-lacos') return 'cadastro-tipo-lacos'
       if (h === 'favoritos') return 'favoritos'
       if (h === 'produto') return 'produto';
+      if (h === 'carrinho') return 'carrinho';
     }
     return 'home';
   });
@@ -49,6 +51,7 @@ function App() {
   const goToHome = () => setCurrentScreen('home');
   const goToFavoritos = () => setCurrentScreen('favoritos');
   const goToProduto = () => setCurrentScreen('produto');
+  const goToCarrinho = () => setCurrentScreen('carrinho');
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -68,6 +71,7 @@ function App() {
         else if (h === 'cadastro-tipo-lacos') setCurrentScreen('cadastro-tipo-lacos')
         else if (h === 'favoritos') setCurrentScreen('favoritos')
         else if (h === 'produto') setCurrentScreen('produto');
+        
       }
     };
 
@@ -97,6 +101,7 @@ function App() {
             <button onClick={goToPedidos}>Ir para Pedidos</button>
             <button onClick={goToFavoritos}>Ir para Favoritos</button>
             <button onClick={goToProduto}>Ir para Produto</button>
+            <button onClick={goToCarrinho}>Ir para Carrinho</button>
           </div>
         </div>
       )}
@@ -199,6 +204,15 @@ function App() {
             <i className="bi bi-house-fill"></i>
           </button>
           <Produto />
+        </div>
+      )}
+
+      {currentScreen === 'carrinho' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Carrinho />
         </div>
       )}
     </>
