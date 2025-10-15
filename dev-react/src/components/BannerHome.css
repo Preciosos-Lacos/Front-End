@@ -1,0 +1,40 @@
+:root {
+  --radius-xl: 18px;
+  --shadow-lg: 0 18px 40px rgba(0,0,0,.18);
+}
+
+.home-banner {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 16px 12px 8px;
+}
+
+.home-banner__container {
+  width: 100%;
+  max-width: 1200px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.08));
+}
+
+.home-banner__link {
+  display: block;
+}
+
+.home-banner__image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .home-banner {
+    padding: 12px 10px 6px;
+  }
+  .home-banner__container {
+    border-radius: 14px;
+  }
+}
