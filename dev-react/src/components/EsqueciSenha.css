@@ -5,8 +5,7 @@
     --rosa: #F29DC3;
 }
 
-body {
-    margin: 0;
+.esqueci-senha-bg {
     min-height: 100vh;
     min-width: 100vw;
     background: var(--page-bg);
@@ -19,7 +18,8 @@ body {
     background-attachment: fixed;
 }
 
-header {
+
+.esqueci-senha-bg header {
     padding: 15px 25px;
     position: fixed;
     top: 0;
@@ -32,7 +32,7 @@ header {
     align-items: center;
     box-shadow: none !important;
 }
-header a {
+.esqueci-senha-bg header a {
     margin-left: 0;
     margin-right: auto;
     display: flex;
@@ -40,12 +40,12 @@ header a {
     justify-content: flex-start;
 }
 
-header .bi-house-door {
+.esqueci-senha-bg header .bi-house-door {
     color: #a9506d;
     font-size: 30px;
 }
 
-.login-section {
+.esqueci-senha-bg .login-section {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -56,7 +56,7 @@ header .bi-house-door {
     padding-bottom: 30px;
 }
 
-.form-login {
+.esqueci-senha-bg .form-login {
     background: rgba(255,255,255,0.95);
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(242,157,195,0.10);
@@ -68,17 +68,17 @@ header .bi-house-door {
     width: 100%;
 }
 
-.logo-login {
+.esqueci-senha-bg .logo-login {
     max-width: 220px;
     margin-bottom: 18px;
 }
 
-.logo-login img {
+.esqueci-senha-bg .logo-login img {
     width: 100%;
     height: auto;
 }
 
-#inicio {
+.esqueci-senha-bg #inicio {
     font-family: 'Playfair Display', serif;
     font-weight: bolder;
     font-size: 24px;
@@ -87,7 +87,7 @@ header .bi-house-door {
     margin-bottom: 5px;
 }
 
-#p-inicio {
+.esqueci-senha-bg #p-inicio {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
     font-size: 17px;
@@ -96,16 +96,16 @@ header .bi-house-door {
     margin-bottom: 12px;
 }
 
-.login {
+.esqueci-senha-bg .login {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
 }
 
-.login #email,
-.login #novaSenha,
-.login #confirmarSenha {
+.esqueci-senha-bg .login #email,
+.esqueci-senha-bg .login #novaSenha,
+.esqueci-senha-bg .login #confirmarSenha {
     width: 260px;
     height: 40px;
     padding: 10px;
@@ -118,16 +118,16 @@ header .bi-house-door {
     background: #fff;
 }
 
-.input-group {
+.esqueci-senha-bg .input-group {
     position: relative;
     width: 260px;
 }
 
-.input-group .form-control {
+.esqueci-senha-bg .input-group .form-control {
     padding-right: 40px;
 }
 
-.input-group .input-group-text {
+.esqueci-senha-bg .input-group .input-group-text {
     position: absolute;
     top: 0;
     right: 10px;
@@ -139,14 +139,14 @@ header .bi-house-door {
     font-size: 1.2rem;
 }
 
-.login #email:focus,
-.login #novaSenha:focus,
-.login #confirmarSenha:focus {
+.esqueci-senha-bg .login #email:focus,
+.esqueci-senha-bg .login #novaSenha:focus,
+.esqueci-senha-bg .login #confirmarSenha:focus {
     box-shadow: 0 0 5px var(--rosa);
     border-color: var(--rosa);
 }
 
-.login #redefinirSenha {
+.esqueci-senha-bg .login #redefinirSenha {
     width: 260px;
     height: 40px;
     margin-top: 18px;
@@ -161,11 +161,11 @@ header .bi-house-door {
     transition: background .3s;
 }
 
-.login #redefinirSenha:hover {
+.esqueci-senha-bg .login #redefinirSenha:hover {
     background-color: #a9506d;
 }
 
-.link-container {
+.esqueci-senha-bg .link-container {
     font-family: 'Quicksand', sans-serif;
     margin-top: 20px;
     font-size: 14px;
@@ -174,47 +174,47 @@ header .bi-house-door {
     text-align: center;
 }
 
-.link-container a {
+.esqueci-senha-bg .link-container a {
     color: #c00073;
     text-decoration: none;
     font-weight: 600;
 }
 
-.link-container a:hover {
+.esqueci-senha-bg .link-container a:hover {
     text-decoration: underline;
 }
 
 @media (max-width: 480px) {
-    .form-login {
+    .esqueci-senha-bg .form-login {
         max-width: 95vw;
         padding: 18px 8px;
     }
-    .logo-login {
+    .esqueci-senha-bg .logo-login {
         max-width: 150px;
         margin-bottom: 10px;
     }
-    #inicio {
+    .esqueci-senha-bg #inicio {
         font-size: 20px;
     }
-    #p-inicio {
+    .esqueci-senha-bg #p-inicio {
         font-size: 15px;
     }
-    .login #email,
-    .login #novaSenha,
-    .login #confirmarSenha,
-    .input-group {
+    .esqueci-senha-bg .login #email,
+    .esqueci-senha-bg .login #novaSenha,
+    .esqueci-senha-bg .login #confirmarSenha,
+    .esqueci-senha-bg .input-group {
         width: 90vw;
         max-width: 320px;
     }
-    .login #redefinirSenha {
+    .esqueci-senha-bg .login #redefinirSenha {
         width: 90vw;
         max-width: 320px;
     }
-    header {
+    .esqueci-senha-bg header {
         padding: 10px 10px;
         height: 55px;
     }
-    header .bi-house-door {
+    .esqueci-senha-bg header .bi-house-door {
         font-size: 26px;
     }
 }

@@ -49,7 +49,7 @@ export default function EsqueciSenha() {
   };
 
   return (
-    <div>
+    <div className="esqueci-senha-bg">
       {/* Header removido para usar o header global, igual à tela de login */}
       <section className="login-section">
         <div className="logo-login">
