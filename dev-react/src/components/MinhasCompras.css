@@ -41,11 +41,11 @@ body {
 
 .busca-compras {
     min-width: 260px;
-    max-width: 340px;
+    max-width: 540px;
 }
 
 .busca-compras .input-group-text {
-    background: var(--rosa, #F29DC3);
+    /* background: var(--rosa, #F29DC3); */
     color: #fff;
     border: none;
     border-radius: 20px 0 0 20px;
