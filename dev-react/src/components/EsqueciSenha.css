@@ -1,0 +1,220 @@
+:root {
+    --page-bg: #FAFBF5;
+    --header-bg: #FAFBF5;
+    --icon-size: 32px;
+    --rosa: #F29DC3;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-width: 100vw;
+    background: var(--page-bg);
+    font-family: 'Quicksand', sans-serif;
+    position: relative;
+    background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+header {
+    padding: 15px 25px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 1050;
+    background: var(--header-bg);
+    display: flex;
+    align-items: center;
+    box-shadow: none !important;
+}
+header a {
+    margin-left: 0;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+header .bi-house-door {
+    color: #a9506d;
+    font-size: 30px;
+}
+
+.login-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    justify-content: center;
+    padding-top: 90px;
+    padding-bottom: 30px;
+}
+
+.form-login {
+    background: rgba(255,255,255,0.95);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(242,157,195,0.10);
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 350px;
+    width: 100%;
+}
+
+.logo-login {
+    max-width: 220px;
+    margin-bottom: 18px;
+}
+
+.logo-login img {
+    width: 100%;
+    height: auto;
+}
+
+#inicio {
+    font-family: 'Playfair Display', serif;
+    font-weight: bolder;
+    font-size: 24px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+#p-inicio {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.login #email,
+.login #novaSenha,
+.login #confirmarSenha {
+    width: 260px;
+    height: 40px;
+    padding: 10px;
+    border: 1.5px solid var(--rosa);
+    border-radius: 12px;
+    margin: 12px 0 0 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+}
+
+.input-group {
+    position: relative;
+    width: 260px;
+}
+
+.input-group .form-control {
+    padding-right: 40px;
+}
+
+.input-group .input-group-text {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: #a9506d;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.login #email:focus,
+.login #novaSenha:focus,
+.login #confirmarSenha:focus {
+    box-shadow: 0 0 5px var(--rosa);
+    border-color: var(--rosa);
+}
+
+.login #redefinirSenha {
+    width: 260px;
+    height: 40px;
+    margin-top: 18px;
+    background-color: #BB6686;
+    border: none;
+    border-radius: 50px;
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .3s;
+}
+
+.login #redefinirSenha:hover {
+    background-color: #a9506d;
+}
+
+.link-container {
+    font-family: 'Quicksand', sans-serif;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.link-container a {
+    color: #c00073;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-container a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .form-login {
+        max-width: 95vw;
+        padding: 18px 8px;
+    }
+    .logo-login {
+        max-width: 150px;
+        margin-bottom: 10px;
+    }
+    #inicio {
+        font-size: 20px;
+    }
+    #p-inicio {
+        font-size: 15px;
+    }
+    .login #email,
+    .login #novaSenha,
+    .login #confirmarSenha,
+    .input-group {
+        width: 90vw;
+        max-width: 320px;
+    }
+    .login #redefinirSenha {
+        width: 90vw;
+        max-width: 320px;
+    }
+    header {
+        padding: 10px 10px;
+        height: 55px;
+    }
+    header .bi-house-door {
+        font-size: 26px;
+    }
+}
