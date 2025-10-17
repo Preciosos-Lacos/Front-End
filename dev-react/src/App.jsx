@@ -15,6 +15,7 @@ import Produto from './components/Produto.jsx';
 import Carrinho from './components/Carrinho.jsx';
 import Modelo from './components/Modelo.jsx';
 import MinhasCompras from './components/MinhasCompras.jsx';
+import EsqueciSenha from './components/EsqueciSenha.jsx';
 import './App.css';
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
   const goToCarrinho = () => setCurrentScreen('carrinho');
   const goToModelo = () => setCurrentScreen('modelo');
   const goToMinhasCompras = () => setCurrentScreen('minhas-compras');
+  const goToEsqueciSenha = () => setCurrentScreen('esqueci-senha');
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -108,6 +110,7 @@ function App() {
             <button onClick={goToCarrinho}>Ir para Carrinho</button>
             <button onClick={goToModelo}>Ir para Modelos (Dashboard)</button>
             <button onClick={goToMinhasCompras}>Ir para Minhas Compras</button>
+            <button onClick={goToEsqueciSenha}>Ir para Esqueci Senha</button>
           </div>
         </div>
       )}
@@ -237,6 +240,15 @@ function App() {
             <i className="bi bi-house-fill"></i>
           </button>
           <MinhasCompras />
+        </div>
+      )}
+
+      {currentScreen === 'esqueci-senha' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <EsqueciSenha />
         </div>
       )}
     </>

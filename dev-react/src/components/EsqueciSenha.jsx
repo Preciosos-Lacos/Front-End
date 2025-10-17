@@ -50,9 +50,7 @@ export default function EsqueciSenha() {
 
   return (
     <div>
-      <header>
-        <a href="#/catalogo"><i className="bi bi-house-door"></i></a>
-      </header>
+      {/* Header removido para usar o header global, igual à tela de login */}
       <section className="login-section">
         <div className="logo-login">
           <img src={logo} alt="Logo Preciosos Laços" />

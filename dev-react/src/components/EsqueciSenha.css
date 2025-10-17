@@ -27,7 +27,7 @@ header {
     width: 100%;
     height: 70px;
     z-index: 1050;
-    background: var(--header-bg);
+    background: transparent;
     display: flex;
     align-items: center;
     box-shadow: none !important;
