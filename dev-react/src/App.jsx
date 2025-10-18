@@ -16,6 +16,8 @@ import Carrinho from './components/Carrinho.jsx';
 import Modelo from './components/Modelo.jsx';
 import MinhasCompras from './components/MinhasCompras.jsx';
 import EsqueciSenha from './components/EsqueciSenha.jsx';
+import Dashboard from './components/Dashboard.jsx';
+
 import './App.css';
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
       if (h === 'favoritos') return 'favoritos'
       if (h === 'produto') return 'produto';
       if (h === 'carrinho') return 'carrinho';
+      if (h === 'dashboard') return 'dashboard';
+
     }
     return 'home';
   });
@@ -58,6 +62,7 @@ function App() {
   const goToModelo = () => setCurrentScreen('modelo');
   const goToMinhasCompras = () => setCurrentScreen('minhas-compras');
   const goToEsqueciSenha = () => setCurrentScreen('esqueci-senha');
+  const goToDashboard = () => setCurrentScreen('dashboard');
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -77,7 +82,8 @@ function App() {
         else if (h === 'cadastro-tipo-lacos') setCurrentScreen('cadastro-tipo-lacos')
         else if (h === 'favoritos') setCurrentScreen('favoritos')
         else if (h === 'produto') setCurrentScreen('produto');
-        
+        else if (h === 'dashboard') setCurrentScreen('dashboard');
+
       }
     };
 
@@ -111,6 +117,8 @@ function App() {
             <button onClick={goToModelo}>Ir para Modelos (Dashboard)</button>
             <button onClick={goToMinhasCompras}>Ir para Minhas Compras</button>
             <button onClick={goToEsqueciSenha}>Ir para Esqueci Senha</button>
+            <button onClick={goToDashboard}>Ir para Dashboard</button>
+
           </div>
         </div>
       )}
@@ -251,6 +259,15 @@ function App() {
           <EsqueciSenha />
         </div>
       )}
+      {currentScreen === 'dashboard' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Dashboard />
+        </div>
+      )}
+
     </>
   );
 }
