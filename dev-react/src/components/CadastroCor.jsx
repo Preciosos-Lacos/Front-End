@@ -124,51 +124,35 @@ const CadastroCor = () => {
     }
   }, []);
 
-  const createColor = async (formData) => {
-    try {
-      const valor = formData.valor.replace("R$ ", "").replace(",", ".").trim();
-      
-      try {
-        const res = await fetch(API_URL);
-        const existingColors = await res.json();
-        const novoId = existingColors.length > 0
-          ? Math.max(...existingColors.map(c => Number(c.id) || 0)) + 1
-          : 1;
+const createColor = async (formData) => {
+  try {
+    const precoNumerico = parseFloat(
+      formData.valor.replace("R$ ", "").replace(",", ".").trim()
+    );
 
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: String(novoId),
-            nome: formData.nome,
-            cor: formData.cor,
-            valor: valor || "0.00",
-            modelos: formData.modelos
-          })
-        });
-      } catch {
-        const novoId = colors.length > 0
-          ? Math.max(...colors.map(c => Number(c.id) || 0)) + 1
-          : 1;
-        
-        const newColor = {
-          id: String(novoId),
-          nome: formData.nome,
-          cor: formData.cor,
-          valor: valor || "0.00",
-          modelos: formData.modelos
-        };
-        
-        setColors(prev => [...prev, newColor]);
-      }
+    const response = await fetch("http://localhost:8080/caracteristica-detalhe/cor", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nomeDaCor: formData.nome,
+        hexaDecimal: formData.cor,
+        preco: precoNumerico || 0.0,
+        listaModelos: []
+      })
+    });
 
+    if (response.ok) {
       showAlert("sucesso", "Cor cadastrada com sucesso!");
       closeModal();
-      loadColors();
-    } catch {
-      showAlert("erro", "Erro ao cadastrar cor!");
+      // loadColors(); // Atualiza a lista se quiser buscar de novo
+    } else {
+      showAlert("erro", "Erro ao cadastrar cor no servidor!");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    showAlert("erro", "Erro ao conectar com o servidor!");
+  }
+};
 
   const updateColor = async (formData) => {
     try {

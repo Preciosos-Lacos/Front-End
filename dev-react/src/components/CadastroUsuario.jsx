@@ -17,7 +17,6 @@ export default function CadastroUsuario() {
   const [showPwdConfirm, setShowPwdConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-
   function handleChange(e) {
     const { id, value } = e.target;
     let v = value;
@@ -25,48 +24,6 @@ export default function CadastroUsuario() {
     if (id === 'cpf') v = formatCPF(v);
     setForm(prev => ({ ...prev, [id]: v }));
   }
-
-  // async function handleSubmit(e) {
-  //   e.preventDefault();
-
-  //   const { nome, telefone, cpf, email, senha, confirmar_senha } = form;
-
-  //   if (!nome || !telefone || !cpf || !email || !senha || !confirmar_senha) {
-  //     alert('Preencha todos os campos.');
-  //     return;
-  //   }
-  //   if (senha !== confirmar_senha) {
-  //     alert('As senhas não coincidem!');
-  //     return;
-  //   }
-
-  //   const novoUsuario = {
-  //     nome_completo: nome,
-  //     telefone,
-  //     cpf,
-  //     email,
-  //     senha,
-  //     data_cadastro: new Date().toISOString().slice(0, 10),
-  //   };
-
-  //   try {
-  //     const res = await fetch('http://localhost:5173/users', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(novoUsuario),
-  //     });
-
-  //     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-
-  //     const data = await res.json();
-  //     alert('Usuário cadastrado com sucesso! ID: ' + data.id);
-  //     // Redirecione conforme sua navegação (ex.: rota de Login)
-  //     window.location.href = '/login';
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert('Erro ao cadastrar usuário. Verifique o servidor.');
-  //   }
-  // }
 
   const cadastro = async () => {
 

@@ -1,72 +1,182 @@
+import { useEffect, useState } from 'react';
 import './Favoritos.css';
-import lacoBolinhas from '../assets/laco_bolinhas.png';
-import lacoPink from '../assets/laco-pink.webp';
-import lacoJeans from '../assets/laco-jeans.webp';
 import Header from './Header';
 
+const BASE_URL = 'http://localhost:8080';
+
+function getAuthToken() {
+    return localStorage.getItem('token');
+}
+
+function decodeJwt(token) {
+    try {
+        const payload = token.split('.')[1];
+        const json = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+        return json || {};
+    } catch {
+        return {};
+    }
+}
+
 export default function Favoritos() {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [usuario, setUsuario] = useState(null);
+    const [favoritos, setFavoritos] = useState([]); // lista de modelos favoritos
+    const [fotos, setFotos] = useState({}); // { [idModelo]: dataUrl }
+
+    const precoBRL = (v) => Number(v ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    useEffect(() => {
+        let active = true;
+        async function load() {
+            try {
+                setLoading(true);
+                setError(null);
+                const token = getAuthToken();
+                if (!token) {
+                    setError('Faça login para ver seus favoritos.');
+                    return;
+                }
+                const payload = decodeJwt(token);
+                const email = payload?.sub; // subject deve ser o login (email)
+
+                // 1) Buscar usuários e encontrar o logado pelo login/email
+                const resUsers = await fetch(`${BASE_URL}/usuarios`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (!resUsers.ok) {
+                    const msg = await resUsers.text();
+                    throw new Error(msg || 'Falha ao carregar usuários');
+                }
+                const listaUsuarios = await resUsers.json();
+                const u = (listaUsuarios || []).find((x) => x.login === email) || null;
+                if (!u) throw new Error('Usuário autenticado não encontrado');
+                if (!active) return;
+                setUsuario(u);
+
+                // 2) Buscar favoritos do usuário (lista de Modelos)
+                const resFav = await fetch(`${BASE_URL}/modelos/favoritos/${u.idUsuario}`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (resFav.status === 204) {
+                    if (!active) return;
+                    setFavoritos([]);
+                    setFotos({});
+                    return;
+                }
+                if (!resFav.ok) {
+                    const msg = await resFav.text();
+                    throw new Error(msg || 'Falha ao carregar favoritos');
+                }
+                const modelos = await resFav.json();
+                if (!active) return;
+                setFavoritos(modelos);
+
+                // 3) Para cada modelo, tentar buscar a foto base64 específica
+                const fotosMap = {};
+                await Promise.all(
+                    (modelos || []).map(async (m) => {
+                        try {
+                            const rf = await fetch(`${BASE_URL}/modelos/${m.idModelo}/foto`, {
+                                method: 'GET',
+                                mode: 'cors',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    Authorization: `Bearer ${token}`,
+                                },
+                            });
+                            if (rf.ok) {
+                                const data = await rf.json();
+                                if (data?.foto) fotosMap[m.idModelo] = `data:image/jpeg;base64,${data.foto}`;
+                            }
+                        } catch {}
+                    })
+                );
+                if (!active) return;
+                setFotos(fotosMap);
+            } catch (e) {
+                console.error(e);
+                if (active) setError(e.message || 'Falha ao carregar favoritos');
+            } finally {
+                if (active) setLoading(false);
+            }
+        }
+        load();
+        return () => { active = false; };
+    }, []);
+
+    async function removerFavorito(idModelo) {
+        try {
+            if (!usuario?.idUsuario) return;
+            const token = getAuthToken();
+            const res = await fetch(`${BASE_URL}/modelos/favorito`, {
+                method: 'DELETE',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ idUsuario: usuario.idUsuario, idModelo }),
+            });
+            if (res.status !== 204 && !res.ok) {
+                const msg = await res.text();
+                throw new Error(msg || 'Falha ao remover favorito');
+            }
+            // Atualiza lista local
+            setFavoritos((prev) => prev.filter((m) => m.idModelo !== idModelo));
+            setFotos((prev) => {
+                const n = { ...prev }; delete n[idModelo]; return n;
+            });
+        } catch (e) {
+            console.error(e);
+            alert('Não foi possível remover o favorito');
+        }
+    }
+
     return (
         <>
             <Header />
-            <main className="fav-main"> 
+            <main className="fav-main">
                 <section className="fav-container">
                     <h1 className="fav-title">Meus Favoritos</h1>
+                    {error && <p style={{ color: 'red', marginTop: 8 }}>{error}</p>}
 
-                    <div className="fav-grid">
-                        <article className="fav-card">
-                            <div className="fav-image">
-                                <img src={lacoBolinhas} alt="Laço de bolinha" />
-                            </div>
-                            <div className="fav-info">
-                                <h3 className="fav-name">Laço de bolinha</h3>
-                                <p className="fav-collection">COLEÇÃO TRADICIONAIS</p>
-                                <p className="fav-detail">(Tam M | Bico de pato)</p>
-                                <div className="fav-bottom">
-                                    <div className="fav-price">R$44,97</div>
-                                    <div className="fav-actions">
-                                        <button className="btn-add">Adicionar ao carrinho</button>
-                                        <button className="btn-remove">Remover</button>
+                    {loading ? (
+                        <p>Carregando…</p>
+                    ) : favoritos.length === 0 ? (
+                        <p>Você ainda não possui favoritos.</p>
+                    ) : (
+                        <div className="fav-grid">
+                            {favoritos.map((m) => (
+                                <article className="fav-card" key={m.idModelo}>
+                                    <div className="fav-image">
+                                        <img src={fotos[m.idModelo] || ''} alt={m.nomeModelo || 'Modelo'} />
                                     </div>
-                                </div>
-                            </div>
-                        </article>
-
-                        <article className="fav-card">
-                            <div className="fav-image">
-                                <img src={lacoPink} alt="Laço Pink" />
-                            </div>
-                            <div className="fav-info">
-                                <h3 className="fav-name">Laço Pink</h3>
-                                <p className="fav-collection">COLEÇÃO CETIM</p>
-                                <p className="fav-detail">(Tam M | Bico de pato)</p>
-                                <div className="fav-bottom">
-                                    <div className="fav-price">R$39,90</div>
-                                    <div className="fav-actions">
-                                        <button className="btn-add">Adicionar ao carrinho</button>
-                                        <button className="btn-remove">Remover</button>
+                                    <div className="fav-info">
+                                        <h3 className="fav-name">{m.nomeModelo}</h3>
+                                        <p className="fav-collection">{m.descricao || '—'}</p>
+                                        <div className="fav-bottom">
+                                            <div className="fav-price">{precoBRL(m.preco)}</div>
+                                                                    <div className="fav-actions">
+                                                                        <button className="btn-remove" onClick={() => removerFavorito(m.idModelo)}>Remover</button>
+                                                                    </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </article>
-
-                        <article className="fav-card">
-                            <div className="fav-image">
-                                <img src={lacoJeans} alt="Laço Jeans" />
-                            </div>
-                            <div className="fav-info">
-                                <h3 className="fav-name">Laço Jeans</h3>
-                                <p className="fav-collection">COLEÇÃO CASUAL</p>
-                                <p className="fav-detail">(Tam M | Elástico)</p>
-                                <div className="fav-bottom">
-                                    <div className="fav-price">R$32,50</div>
-                                    <div className="fav-actions">
-                                        <button className="btn-add">Adicionar ao carrinho</button>
-                                        <button className="btn-remove">Remover</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    )}
                 </section>
             </main>
         </>

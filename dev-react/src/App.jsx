@@ -12,6 +12,12 @@ import Compra from './components/Compra.jsx';
 import Pedidos from './components/Pedidos.jsx';
 import Favoritos from './components/Favoritos.jsx';
 import Produto from './components/Produto.jsx';
+import Carrinho from './components/Carrinho.jsx';
+import Modelo from './components/Modelo.jsx';
+import MinhasCompras from './components/MinhasCompras.jsx';
+import EsqueciSenha from './components/EsqueciSenha.jsx';
+import Dashboard from './components/Dashboard.jsx';
+
 import './App.css';
 
 function App() {
@@ -30,6 +36,9 @@ function App() {
       if (h === 'cadastro-tipo-lacos') return 'cadastro-tipo-lacos'
       if (h === 'favoritos') return 'favoritos'
       if (h === 'produto') return 'produto';
+      if (h === 'carrinho') return 'carrinho';
+      if (h === 'dashboard') return 'dashboard';
+
     }
     return 'home';
   });
@@ -49,6 +58,11 @@ function App() {
   const goToHome = () => setCurrentScreen('home');
   const goToFavoritos = () => setCurrentScreen('favoritos');
   const goToProduto = () => setCurrentScreen('produto');
+  const goToCarrinho = () => setCurrentScreen('carrinho');
+  const goToModelo = () => setCurrentScreen('modelo');
+  const goToMinhasCompras = () => setCurrentScreen('minhas-compras');
+  const goToEsqueciSenha = () => setCurrentScreen('esqueci-senha');
+  const goToDashboard = () => setCurrentScreen('dashboard');
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -68,6 +82,8 @@ function App() {
         else if (h === 'cadastro-tipo-lacos') setCurrentScreen('cadastro-tipo-lacos')
         else if (h === 'favoritos') setCurrentScreen('favoritos')
         else if (h === 'produto') setCurrentScreen('produto');
+        else if (h === 'dashboard') setCurrentScreen('dashboard');
+
       }
     };
 
@@ -97,6 +113,12 @@ function App() {
             <button onClick={goToPedidos}>Ir para Pedidos</button>
             <button onClick={goToFavoritos}>Ir para Favoritos</button>
             <button onClick={goToProduto}>Ir para Produto</button>
+            <button onClick={goToCarrinho}>Ir para Carrinho</button>
+            <button onClick={goToModelo}>Ir para Modelos (Dashboard)</button>
+            <button onClick={goToMinhasCompras}>Ir para Minhas Compras</button>
+            <button onClick={goToEsqueciSenha}>Ir para Esqueci Senha</button>
+            <button onClick={goToDashboard}>Ir para Dashboard</button>
+
           </div>
         </div>
       )}
@@ -201,6 +223,51 @@ function App() {
           <Produto />
         </div>
       )}
+
+      {currentScreen === 'carrinho' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Carrinho />
+        </div>
+      )}
+
+      {currentScreen === 'modelo' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Modelo />
+        </div>
+      )}
+
+      {currentScreen === 'minhas-compras' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <MinhasCompras />
+        </div>
+      )}
+
+      {currentScreen === 'esqueci-senha' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <EsqueciSenha />
+        </div>
+      )}
+      {currentScreen === 'dashboard' && (
+        <div style={{ minHeight: '100vh', width: '100%' }}>
+          <button onClick={goToHome} className="home-button">
+            <i className="bi bi-house-fill"></i>
+          </button>
+          <Dashboard />
+        </div>
+      )}
+
     </>
   );
 }

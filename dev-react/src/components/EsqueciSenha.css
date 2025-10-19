@@ -1,0 +1,220 @@
+:root {
+    --page-bg: #FAFBF5;
+    --header-bg: #FAFBF5;
+    --icon-size: 32px;
+    --rosa: #F29DC3;
+}
+
+.esqueci-senha-bg {
+    min-height: 100vh;
+    min-width: 100vw;
+    background: var(--page-bg);
+    font-family: 'Quicksand', sans-serif;
+    position: relative;
+    background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+
+.esqueci-senha-bg header {
+    padding: 15px 25px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 1050;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    box-shadow: none !important;
+}
+.esqueci-senha-bg header a {
+    margin-left: 0;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.esqueci-senha-bg header .bi-house-door {
+    color: #a9506d;
+    font-size: 30px;
+}
+
+.esqueci-senha-bg .login-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    justify-content: center;
+    padding-top: 90px;
+    padding-bottom: 30px;
+}
+
+.esqueci-senha-bg .form-login {
+    background: rgba(255,255,255,0.95);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(242,157,195,0.10);
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 350px;
+    width: 100%;
+}
+
+.esqueci-senha-bg .logo-login {
+    max-width: 220px;
+    margin-bottom: 18px;
+}
+
+.esqueci-senha-bg .logo-login img {
+    width: 100%;
+    height: auto;
+}
+
+.esqueci-senha-bg #inicio {
+    font-family: 'Playfair Display', serif;
+    font-weight: bolder;
+    font-size: 24px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.esqueci-senha-bg #p-inicio {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.esqueci-senha-bg .login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.esqueci-senha-bg .login #email,
+.esqueci-senha-bg .login #novaSenha,
+.esqueci-senha-bg .login #confirmarSenha {
+    width: 260px;
+    height: 40px;
+    padding: 10px;
+    border: 1.5px solid var(--rosa);
+    border-radius: 12px;
+    margin: 12px 0 0 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+}
+
+.esqueci-senha-bg .input-group {
+    position: relative;
+    width: 260px;
+}
+
+.esqueci-senha-bg .input-group .form-control {
+    padding-right: 40px;
+}
+
+.esqueci-senha-bg .input-group .input-group-text {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: #a9506d;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.esqueci-senha-bg .login #email:focus,
+.esqueci-senha-bg .login #novaSenha:focus,
+.esqueci-senha-bg .login #confirmarSenha:focus {
+    box-shadow: 0 0 5px var(--rosa);
+    border-color: var(--rosa);
+}
+
+.esqueci-senha-bg .login #redefinirSenha {
+    width: 260px;
+    height: 40px;
+    margin-top: 18px;
+    background-color: #BB6686;
+    border: none;
+    border-radius: 50px;
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .3s;
+}
+
+.esqueci-senha-bg .login #redefinirSenha:hover {
+    background-color: #a9506d;
+}
+
+.esqueci-senha-bg .link-container {
+    font-family: 'Quicksand', sans-serif;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.esqueci-senha-bg .link-container a {
+    color: #c00073;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.esqueci-senha-bg .link-container a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .esqueci-senha-bg .form-login {
+        max-width: 95vw;
+        padding: 18px 8px;
+    }
+    .esqueci-senha-bg .logo-login {
+        max-width: 150px;
+        margin-bottom: 10px;
+    }
+    .esqueci-senha-bg #inicio {
+        font-size: 20px;
+    }
+    .esqueci-senha-bg #p-inicio {
+        font-size: 15px;
+    }
+    .esqueci-senha-bg .login #email,
+    .esqueci-senha-bg .login #novaSenha,
+    .esqueci-senha-bg .login #confirmarSenha,
+    .esqueci-senha-bg .input-group {
+        width: 90vw;
+        max-width: 320px;
+    }
+    .esqueci-senha-bg .login #redefinirSenha {
+        width: 90vw;
+        max-width: 320px;
+    }
+    .esqueci-senha-bg header {
+        padding: 10px 10px;
+        height: 55px;
+    }
+    .esqueci-senha-bg header .bi-house-door {
+        font-size: 26px;
+    }
+}
