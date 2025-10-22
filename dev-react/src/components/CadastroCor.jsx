@@ -5,80 +5,6 @@ import CardCor from './CardCor';
 import Modal from './Modal';
 import './CadastroCor.css';
 
-// Constante estável fora do componente para evitar dependências desnecessárias no useCallback/useEffect
-const mockColors = [
-  {
-    id: "1",
-    nome: "Vermelho",
-    cor: "#f44336",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "2",
-    nome: "Rosa",
-    cor: "#f8b2cc",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "3",
-    nome: "Lilas",
-    cor: "#dda0dd",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "4",
-    nome: "Azul claro",
-    cor: "lightskyblue",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "5",
-    nome: "Lavanda",
-    cor: "#cac1fe",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "6",
-    nome: "Amarelo",
-    cor: "#fdfd96",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "7",
-    nome: "Verde",
-    cor: "#98fb98",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "8",
-    nome: "Marrom",
-    cor: "#d2b48c",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "9",
-    nome: "Preto",
-    cor: "#000000",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  },
-  {
-    id: "10",
-    nome: "Branco",
-    cor: "#ffffff",
-    valor: "6.00",
-    modelos: ["Laço Padrão", "Laço de Festa", "Laço Infantil", "Laço Princesa", "Laço Piscina", "Laço Silicone"]
-  }
-];
-
 const CadastroCor = () => {
   const [colors, setColors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,7 +15,21 @@ const CadastroCor = () => {
     colorName: ''
   });
 
-  const API_URL = "http://localhost:3000/cores";
+  const API_URL = "http://localhost:8080/caracteristica-detalhe/cor";
+
+  // Normaliza os campos vindos do backend (Hibernate/Spring) para o formato usado no frontend
+  // Backend (tabela): id_caracteristica_detalhe, descricao, hexa_decimal, preco, imagem
+  // Frontend esperado: { id, nome, cor, valor, imagem, modelos }
+  const normalizeColor = (raw) => {
+    if (!raw) return null;
+    const id = raw.id ?? raw.idCaracteristicaDetalhe ?? raw.id_caracteristica_detalhe ?? raw.id_caracteristica ?? raw.idCor;
+    const nome = raw.nome ?? raw.descricao ?? '';
+    const cor = raw.cor ?? raw.hexaDecimal ?? raw.hexa_decimal ?? '';
+    const valor = typeof raw.valor === 'number' ? raw.valor : (typeof raw.preco === 'number' ? raw.preco : parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$','').replace('.','').replace(',','.')) || 0);
+    const imagem = raw.imagem ?? null;
+    const modelos = Array.isArray(raw.modelos) ? raw.modelos : [];
+    return { id, nome, cor, valor, imagem, modelos };
+  };
 
   const showAlert = (tipo, mensagem) => {
     let bgColor = "#f0f0f0";
@@ -115,88 +55,88 @@ const CadastroCor = () => {
 
   const loadColors = useCallback(async () => {
     try {
-      const res = await fetch(API_URL);
-      const colorsData = await res.json();
-      setColors(colorsData);
-    } catch {
-      console.log("API não disponível, usando dados de exemplo");
-      setColors(mockColors);
+      // Busca todas as cores (GET /caracteristica-detalhe/cor)
+      const res = await fetch(API_URL, { method: 'GET', headers: { Accept: 'application/json' } });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      const list = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.content)
+          ? data.content
+          : [];
+      setColors(list.map(normalizeColor).filter(Boolean));
+    } catch (error) {
+      console.error("Erro ao carregar cores:", error);
+      setColors([]);
     }
   }, []);
 
-const createColor = async (formData) => {
-  try {
-    const precoNumerico = parseFloat(
-      formData.valor.replace("R$ ", "").replace(",", ".").trim()
-    );
-
-    const response = await fetch("http://localhost:8080/caracteristica-detalhe/cor", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+  const createColor = async (formData) => {
+    try {
+      const precoNumerico = parseFloat(String(formData.valor ?? '').replace('R$','').replace('.', '').replace(',', '.').trim()) || 0.0;
+      // Corpo no formato esperado pelo backend (Spring/Jackson camelCase)
+      const payload = {
         nomeDaCor: formData.nome,
         hexaDecimal: formData.cor,
-        preco: precoNumerico || 0.0,
+        preco: precoNumerico,
+        imagem: formData.imagem ?? null,
         listaModelos: []
-      })
-    });
-
-    if (response.ok) {
-      showAlert("sucesso", "Cor cadastrada com sucesso!");
-      closeModal();
-      // loadColors(); // Atualiza a lista se quiser buscar de novo
-    } else {
-      showAlert("erro", "Erro ao cadastrar cor no servidor!");
+      
+      };
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (response.ok) {
+        showAlert('sucesso', 'Cor cadastrada com sucesso!');
+        closeModal();
+        loadColors();
+      } else {
+        showAlert('erro', 'Erro ao cadastrar cor no servidor!');
+      }
+    } catch (error) {
+      console.error(error);
+      showAlert('erro', 'Erro ao conectar com o servidor!');
     }
-  } catch (error) {
-    console.error(error);
-    showAlert("erro", "Erro ao conectar com o servidor!");
-  }
-};
+  };
 
   const updateColor = async (formData) => {
     try {
-      let corHex = modalState.colorData.cor || "#ffffff";
-
-      try {
-        await fetch(`${API_URL}/${modalState.colorData.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: modalState.colorData.id,
-            nome: formData.nome,
-            cor: corHex,
-            valor: formData.valor,
-            modelos: formData.modelos
-          })
-        });
-      } catch {
-        setColors(prev => prev.map(color => 
-          color.id === modalState.colorData.id 
-            ? { ...color, nome: formData.nome, valor: formData.valor, modelos: formData.modelos }
-            : color
-        ));
+      const id = modalState.colorData?.id ?? modalState.colorData?.idCaracteristicaDetalhe ?? modalState.colorData?.id_caracteristica_detalhe;
+      if (!id) throw new Error('ID inválido para atualização');
+      const payload = {
+        preco: parseFloat(String(formData.valor ?? '').replace('R$','').replace('.', '').replace(',', '.').trim()) || 0.0,
+      };
+      // PUT /caracteristica-detalhe/cor/{id}
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (response.ok) {
+        showAlert('sucesso', 'Cor atualizada com sucesso!');
+        closeModal();
+        loadColors();
+      } else {
+        showAlert('erro', 'Erro ao atualizar cor!');
       }
-
-      showAlert("sucesso", "Cor atualizada com sucesso!");
-      closeModal();
-      loadColors();
-    } catch {
-      showAlert("erro", "Erro ao atualizar cor!");
+    } catch (e) {
+      console.error(e);
+      showAlert('erro', 'Erro ao atualizar cor!');
     }
   };
 
   const deleteColor = async () => {
     try {
-      try {
-        const res = await fetch(`${API_URL}/${modalState.colorData.id}`, { 
-          method: "DELETE" 
-        });
-        if (!res.ok) throw new Error("Erro ao excluir");
-      } catch {
-        setColors(prev => prev.filter(color => color.id !== modalState.colorData.id));
-      }
-      
+      // DELETE /caracteristica-detalhe/cor/{id}
+      const id = modalState.colorData?.id ?? modalState.colorData?.idCaracteristicaDetalhe ?? modalState.colorData?.id_caracteristica_detalhe;
+      const res = await fetch(`${API_URL}/${id}`, { 
+        method: "DELETE" 
+      });
+      if (!res.ok) throw new Error("Erro ao excluir");
       showAlert("sucesso", "Cor excluída com sucesso!");
       closeModal();
       loadColors();
@@ -216,17 +156,11 @@ const createColor = async (formData) => {
 
   const openEditModal = async (id) => {
     try {
-      let colorData;
-      
-      try {
-        const res = await fetch(`${API_URL}/${id}`);
-        if (!res.ok) throw new Error("Cor não encontrada");
-        colorData = await res.json();
-      } catch {
-        colorData = colors.find(color => color.id === id);
-        if (!colorData) throw new Error("Cor não encontrada");
-      }
-      
+      // GET /caracteristica-detalhe/cor/{id}
+      const res = await fetch(`${API_URL}/${id}`);
+      if (!res.ok) throw new Error("Cor não encontrada");
+      const colorDataRaw = await res.json();
+      const colorData = normalizeColor(colorDataRaw);
       setModalState({
         isOpen: true,
         type: 'edit',
@@ -272,9 +206,10 @@ const createColor = async (formData) => {
     }
   };
 
-  const filteredColors = colors.filter(color =>
-    color.nome?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredColors = colors
+    .map(normalizeColor)
+    .filter(Boolean)
+    .filter(color => color.nome?.toLowerCase().includes(searchTerm.toLowerCase()));
 
   useEffect(() => {
     loadColors();
