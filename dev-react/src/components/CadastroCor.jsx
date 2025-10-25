@@ -18,16 +18,41 @@ const CadastroCor = () => {
   const API_URL = "http://localhost:8080/caracteristica-detalhe/cor";
 
   // Normaliza os campos vindos do backend (Hibernate/Spring) para o formato usado no frontend
-  // Backend (tabela): id_caracteristica_detalhe, descricao, hexa_decimal, preco, imagem
-  // Frontend esperado: { id, nome, cor, valor, imagem, modelos }
+  // Backend exemplo: { id, nomeDaCor, hexaDecimal, preco, imagem, listaModelos: [{...}] }
+  // Frontend esperado: { id, nome, cor, valor, imagem, modelos: string[] }
   const normalizeColor = (raw) => {
     if (!raw) return null;
+    // Pega apenas o id do banco, nunca fallback
     const id = raw.id ?? raw.idCaracteristicaDetalhe ?? raw.id_caracteristica_detalhe ?? raw.id_caracteristica ?? raw.idCor;
-    const nome = raw.nome ?? raw.descricao ?? '';
+    const nome = raw.nomeDaCor ?? raw.nome ?? raw.descricao ?? '';
     const cor = raw.cor ?? raw.hexaDecimal ?? raw.hexa_decimal ?? '';
-    const valor = typeof raw.valor === 'number' ? raw.valor : (typeof raw.preco === 'number' ? raw.preco : parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$','').replace('.','').replace(',','.')) || 0);
+    const valor = typeof raw.valor === 'number'
+      ? raw.valor
+      : (typeof raw.preco === 'number'
+          ? raw.preco
+          : parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$','').replace('.','').replace(',','.')) || 0);
     const imagem = raw.imagem ?? null;
-    const modelos = Array.isArray(raw.modelos) ? raw.modelos : [];
+    const modelosRaw = Array.isArray(raw.listaModelos) ? raw.listaModelos : (Array.isArray(raw.modelos) ? raw.modelos : []);
+    const modelos = modelosRaw
+      .map((m) => {
+        if (typeof m === 'string') return m;
+        if (!m || typeof m !== 'object') return null;
+
+        if (m.modelo) {
+          if (typeof m.modelo === 'string') return m.modelo;
+          if (typeof m.modelo === 'object') {
+            const nested = m.modelo.nome ?? m.modelo.descricao ?? Object.values(m.modelo).find(v => typeof v === 'string' && v.trim().length > 0) ?? null;
+            if (nested) return nested;
+          }
+        }
+
+        const direto = m.nome ?? m.nomeDoModelo ?? m.descricao ?? m.titulo ?? m.label ?? m.nomeCor ?? m.modeloNome ?? null;
+        if (direto) return direto;
+
+        const anyString = Object.values(m).find(v => typeof v === 'string' && v.trim().length > 0) ?? null;
+        return anyString;
+      })
+      .filter((v) => typeof v === 'string' && v.trim().length > 0);
     return { id, nome, cor, valor, imagem, modelos };
   };
 
@@ -66,6 +91,7 @@ const CadastroCor = () => {
         : Array.isArray(data?.content)
           ? data.content
           : [];
+          console.log(data);
       setColors(list.map(normalizeColor).filter(Boolean));
     } catch (error) {
       console.error("Erro ao carregar cores:", error);
@@ -73,30 +99,62 @@ const CadastroCor = () => {
     }
   }, []);
 
+  // Função para cadastrar cor e associar modelos em duas requisições
   const createColor = async (formData) => {
     try {
       const precoNumerico = parseFloat(String(formData.valor ?? '').replace('R$','').replace('.', '').replace(',', '.').trim()) || 0.0;
-      // Corpo no formato esperado pelo backend (Spring/Jackson camelCase)
-      const payload = {
+      const modelosArray = Array.isArray(formData.modelos) ? formData.modelos : [];
+      console.log('Modelos selecionados:', modelosArray);
+      if (!modelosArray.length) {
+        showAlert('aviso', 'Selecione pelo menos um modelo para associar à cor.');
+        return;
+      }
+      // Payload da cor (inclui listaModelos, obrigatório para o backend)
+      const corPayload = {
         nomeDaCor: formData.nome,
         hexaDecimal: formData.cor,
         preco: precoNumerico,
         imagem: formData.imagem ?? null,
-        listaModelos: []
-      
+        listaModelos: modelosArray.map(id => ({ id }))
       };
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (response.ok) {
-        showAlert('sucesso', 'Cor cadastrada com sucesso!');
-        closeModal();
-        loadColors();
-      } else {
-        showAlert('erro', 'Erro ao cadastrar cor no servidor!');
-      }
+      console.log('Payload enviado para cadastro de cor:', corPayload);
+          // POST para cadastrar cor
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(corPayload)
+          });
+          if (response.ok) {
+            // Busca a cor recém-criada pelo nome e cor
+            let corId = null;
+            try {
+              const resGet = await fetch(API_URL, { method: 'GET', headers: { Accept: 'application/json' } });
+              if (resGet.ok) {
+                const data = await resGet.json();
+                const list = Array.isArray(data) ? data : Array.isArray(data?.content) ? data.content : [];
+                const corEncontrada = list.find(c => (c.nomeDaCor === formData.nome || c.nome === formData.nome) && (c.hexaDecimal === formData.cor || c.cor === formData.cor));
+                corId = corEncontrada?.id ?? null;
+              }
+            } catch (e) {
+              corId = null;
+            }
+            if (corId) {
+              const modelosPayload = {
+                id: corId,
+                listaModelos: modelosArray
+              };
+              await fetch('http://localhost:8080/caracteristica-detalhe/corModelo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                body: JSON.stringify(modelosPayload)
+              });
+            }
+            showAlert('sucesso', 'Cor cadastrada e modelos associados com sucesso!');
+            closeModal();
+            loadColors();
+          } else {
+            showAlert('erro', 'Erro ao cadastrar cor no servidor!');
+          }
     } catch (error) {
       console.error(error);
       showAlert('erro', 'Erro ao conectar com o servidor!');
@@ -107,6 +165,11 @@ const CadastroCor = () => {
     try {
       const id = modalState.colorData?.id ?? modalState.colorData?.idCaracteristicaDetalhe ?? modalState.colorData?.id_caracteristica_detalhe;
       if (!id) throw new Error('ID inválido para atualização');
+      if (isNaN(Number(id))) {
+        showAlert('aviso', 'Esta cor não pode ser editada no backend (id não é do banco).');
+        closeModal();
+        return;
+      }
       const payload = {
         preco: parseFloat(String(formData.valor ?? '').replace('R$','').replace('.', '').replace(',', '.').trim()) || 0.0,
       };
@@ -117,6 +180,17 @@ const CadastroCor = () => {
         body: JSON.stringify(payload)
       });
       if (response.ok) {
+        // Atualiza associação dos modelos
+        const modelosArray = Array.isArray(formData.modelos) ? formData.modelos : [];
+        const modelosPayload = {
+          id: id,
+          listaModelos: modelosArray
+        };
+        await fetch('http://localhost:8080/caracteristica-detalhe/corModelo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(modelosPayload)
+        });
         showAlert('sucesso', 'Cor atualizada com sucesso!');
         closeModal();
         loadColors();
@@ -131,8 +205,14 @@ const CadastroCor = () => {
 
   const deleteColor = async () => {
     try {
-      // DELETE /caracteristica-detalhe/cor/{id}
       const id = modalState.colorData?.id ?? modalState.colorData?.idCaracteristicaDetalhe ?? modalState.colorData?.id_caracteristica_detalhe;
+      // Se o id não for um número, não tente deletar no backend
+      if (isNaN(Number(id))) {
+        showAlert('aviso', 'Esta cor não pode ser excluída no backend (id não é do banco).');
+        closeModal();
+        return;
+      }
+      // DELETE /caracteristica-detalhe/cor/{id}
       const res = await fetch(`${API_URL}/${id}`, { 
         method: "DELETE" 
       });
@@ -156,10 +236,17 @@ const CadastroCor = () => {
 
   const openEditModal = async (id) => {
     try {
-      // GET /caracteristica-detalhe/cor/{id}
-      const res = await fetch(`${API_URL}/${id}`);
-      if (!res.ok) throw new Error("Cor não encontrada");
-      const colorDataRaw = await res.json();
+      // Se o id for composto (ex: nome-cor), buscar no array colors
+      let colorDataRaw = null;
+      if (String(id).includes('-')) {
+        colorDataRaw = colors.find(c => (c.id ?? `${c.nome}-${c.cor}`) === id);
+      }
+      if (!colorDataRaw) {
+        // GET /caracteristica-detalhe/cor/{id}
+        const res = await fetch(`${API_URL}/${id}`);
+        if (!res.ok) throw new Error("Cor não encontrada");
+        colorDataRaw = await res.json();
+      }
       const colorData = normalizeColor(colorDataRaw);
       setModalState({
         isOpen: true,
@@ -207,9 +294,8 @@ const CadastroCor = () => {
   };
 
   const filteredColors = colors
-    .map(normalizeColor)
     .filter(Boolean)
-    .filter(color => color.nome?.toLowerCase().includes(searchTerm.toLowerCase()));
+    .filter(color => (color.nome ?? '').toLowerCase().includes(searchTerm.toLowerCase()));
 
   useEffect(() => {
     loadColors();
@@ -230,9 +316,15 @@ const CadastroCor = () => {
 
       <div className="content">
         <div className="card-container">
-          {filteredColors.map(color => (
+          {filteredColors.map((color, idx) => (
             <CardCor
-              key={color.id}
+              key={
+                color.id
+                  ?? (color.nome && color.cor ? `${color.nome}-${color.cor}` : undefined)
+                  ?? color.cor
+                  ?? color.nome
+                  ?? idx
+              }
               color={color}
               onEdit={openEditModal}
               onDelete={openDeleteModal}

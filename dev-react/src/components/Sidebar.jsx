@@ -61,7 +61,7 @@ const Sidebar = () => {
             </a>
           </li>
           <li onClick={handleItemClick}>
-            <a href="#modelos">
+            <a href="#modelo">
               <i className="bi bi-tag"></i>
               <span>Modelos</span>
             </a>

@@ -16,7 +16,7 @@ const modelosIniciais = [
 	{ id: '10', nome: 'Laço Linho', valor: 6.0, imagem: '/src/assets/laco-faixinhas.jpg' },
 ];
 
-export default function Modelo() {
+const Modelo = () => {
 	const [modelos, setModelos] = useState(modelosIniciais);
 	const [pesquisa, setPesquisa] = useState('');
 	const [mostrarModalExcluir, setMostrarModalExcluir] = useState(false);
@@ -116,3 +116,4 @@ export default function Modelo() {
 	);
 }
 
+export default Modelo;

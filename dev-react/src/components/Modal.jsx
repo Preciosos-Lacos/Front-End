@@ -18,29 +18,56 @@ const Modal = ({
   });
   const [searchTerm, setSearchTerm] = useState('');
 
-  const availableModels = [
-    'Laço Padrão',
-    'Laço de Piscina',
-    'Laço de Festa',
-    'Laço Infantil',
-    'Laço Escolar',
-    'Laço de Gala',
-    'Laço Esportivo',
-    'Laço Casual'
-  ];
-
-  const filteredModels = availableModels.filter(model =>
-    model.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [availableModels, setAvailableModels] = useState([]);
 
   useEffect(() => {
-    if (type === 'edit' && colorData) {
+    // Buscar modelos reais do backend
+        const fetchModelos = async () => {
+          try {
+            const res = await fetch('http://localhost:8080/modelos', { method: 'GET', headers: { Accept: 'application/json' } });
+            if (!res.ok) throw new Error('Erro ao buscar modelos');
+            const data = await res.json();
+            console.log("Modelos disponíveis:", data);
+            // Supondo que cada modelo tem idModelo e nomeModelo
+            const modelos = Array.isArray(data)
+              ? data.map(m => ({ id: m.idModelo, nome: m.nomeModelo }))
+              : [];
+            setAvailableModels(modelos.filter(m => m.id && m.nome));
+          } catch (e) {
+            setAvailableModels([]);
+          }
+        };
+        fetchModelos();
+  }, []);
+
+  const filteredModels = availableModels.filter(model =>
+    model.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Preenche formData ao abrir modal de edição, sempre que availableModels estiver pronto
+  useEffect(() => {
+    if (type === 'edit' && colorData && availableModels.length > 0) {
+      console.log('colorData recebido no modal:', colorData);
+      console.log('availableModels carregados:', availableModels);
+      let modelosIds = [];
+      if (Array.isArray(colorData.modelos) && colorData.modelos.length > 0) {
+        if (typeof colorData.modelos[0] === 'string') {
+          modelosIds = availableModels
+            .filter(m => colorData.modelos.includes(m.nome))
+            .map(m => m.id);
+        } else if (typeof colorData.modelos[0] === 'number') {
+          modelosIds = colorData.modelos;
+        } else if (typeof colorData.modelos[0] === 'object' && colorData.modelos[0].idModelo) {
+          modelosIds = colorData.modelos.map(m => m.idModelo);
+        }
+      }
       setFormData({
         nome: colorData.nome || '',
         cor: colorData.cor || '#F29DC3',
         valor: colorData.valor || '',
-        modelos: colorData.modelos || []
+        modelos: modelosIds
       });
+      setSearchTerm('');
     } else if (type === 'create') {
       setFormData({
         nome: '',
@@ -48,9 +75,9 @@ const Modal = ({
         valor: '',
         modelos: []
       });
+      setSearchTerm('');
     }
-    setSearchTerm('');
-  }, [type, colorData, isOpen]);
+  }, [type, colorData, isOpen, availableModels]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -63,8 +90,8 @@ const Modal = ({
     setFormData(prev => ({
       ...prev,
       modelos: checked
-        ? [...prev.modelos, model]
-        : prev.modelos.filter(m => m !== model)
+        ? [...prev.modelos, model.id]
+        : prev.modelos.filter(mId => mId !== model.id)
     }));
   };
 
@@ -150,15 +177,15 @@ const Modal = ({
       </div>
 
       <div className="checkboxList">
-        {filteredModels.map((model, index) => (
-          <div key={index}>
+        {filteredModels.map((model) => (
+          <div key={model.id}>
             <input
               type="checkbox"
-              id={`modelo${index}`}
-              checked={formData.modelos.includes(model)}
+              id={`modelo${model.id}`}
+              checked={formData.modelos.includes(model.id)}
               onChange={(e) => handleModelChange(model, e.target.checked)}
             />
-            <label htmlFor={`modelo${index}`}>{model}</label>
+            <label htmlFor={`modelo${model.id}`}>{model.nome}</label>
           </div>
         ))}
       </div>
@@ -206,15 +233,15 @@ const Modal = ({
       </div>
 
       <div className="checkboxList">
-        {filteredModels.map((model, index) => (
-          <div key={index}>
+        {filteredModels.map((model) => (
+          <div key={model.id}>
             <input
               type="checkbox"
-              id={`modeloEdit${index}`}
-              checked={formData.modelos.includes(model)}
+              id={`modeloEdit${model.id}`}
+              checked={formData.modelos.includes(model.id)}
               onChange={(e) => handleModelChange(model, e.target.checked)}
             />
-            <label htmlFor={`modeloEdit${index}`}>{model}</label>
+            <label htmlFor={`modeloEdit${model.id}`}>{model.nome}</label>
           </div>
         ))}
       </div>
