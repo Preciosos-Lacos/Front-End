@@ -1,5 +1,5 @@
 import React from 'react';
-import './QuemSouEu.css';
+import '../styles/QuemSouEu.css';
 import camila from '../assets/camila_osterman.jpg';
 
 const QuemSouEu = () => {

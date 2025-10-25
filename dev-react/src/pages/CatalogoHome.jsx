@@ -1,5 +1,6 @@
 import React from 'react';
-import './CatalogoHome.css';
+import { Link } from 'react-router-dom';
+import '../styles/CatalogoHome.css';
 
 import lacoAzul from '../assets/laco-azul.webp';
 import unicornio from '../assets/laco-kit-unicornio.webp';
@@ -17,13 +18,13 @@ const CatalogoPreview = () => {
   return (
     <section id="catalogo" className="catalogo-preview">
       <div className="catalogo-preview__header">
-        <h2>Alguns de nossos produtos</h2>
-        <a href="#catalogo" className="btn-ver-mais">Ver catálogo</a>
+  <h2>Alguns de nossos produtos</h2>
+  <Link to="/catalogo" className="btn-ver-mais">Ver catálogo</Link>
       </div>
 
       <div className="catalogo-preview__grid">
         {produtos.map((p) => (
-          <a key={p.id} href="#catalogo" className="produto-card" aria-label={`Ver ${p.nome}`}>
+          <Link key={p.id} to="/catalogo" className="produto-card" aria-label={`Ver ${p.nome}`}>
             <div className="produto-card__image-wrap">
               <img src={p.img} alt={p.nome} />
               {p.desconto && <span className="badge-desconto">{p.desconto}</span>}
@@ -32,7 +33,7 @@ const CatalogoPreview = () => {
               <p className="produto-card__title">{p.nome} <br /> <i>{p.colecao}</i></p>
               <span className="produto-card__price">{p.preco}</span>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </section>

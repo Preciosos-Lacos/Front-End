@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Header from './Header.jsx';
-import './Catalogo.css';
+import { Link } from 'react-router-dom';
+import Header from '../components/Header.jsx';
+import '../styles/Catalogo.css';
 
 const Catalogo = () => {
     const [categoryFilter, setCategoryFilter] = useState('');
@@ -430,7 +431,7 @@ const Catalogo = () => {
                         <div className="card-container">
                             {filteredProducts.map(product => (
                                 <div key={product.id} className="product-card">
-                                    <a href="#produto">
+                                    <Link to="/produto">
                                         <img src={product.image} alt={product.name} />
                                         <div className="card-info">
                                             <p className="product-name">
@@ -438,7 +439,7 @@ const Catalogo = () => {
                                             </p>
                                             <p className="price">R${product.price.toFixed(2).replace('.', ',')}</p>
                                         </div>
-                                    </a>
+                                    </Link>
                                 </div>
                             ))}
                         </div>

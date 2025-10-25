@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "./Sidebar";
-import BarraPesquisa from "./BarraPesquisa";
-import Modal from "./Modal"; // Você pode criar um Modal genérico ou adaptar do CadastroCor
-import "./CadastroTipoLaco.css";
+import Sidebar from "../components/Sidebar";
+import BarraPesquisa from "../components/BarraPesquisa";
+import Modal from "../components/Modal"; // Você pode criar um Modal genérico ou adaptar do CadastroCor
+import "../styles/CadastroTipoLaco.css";
 
 import bicoDePato from "../assets/bico de pato.svg";
 import meioDeSeda from "../assets/meio de seda.svg";

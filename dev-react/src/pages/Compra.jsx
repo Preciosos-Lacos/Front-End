@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Header from './Header';
-import './Compra.css';
+import Header from '../components/Header';
+import '../styles/Compra.css';
 
 const sampleItems = [
   { id: 1, name: 'Laço Bolinha - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)', qty: 1, price: 14.99 },

@@ -1,6 +1,6 @@
 import React from 'react';
-import Header from './Header.jsx';
-import './PedidoConfirmado.css';
+import Header from '../components/Header.jsx';
+import '../styles/PedidoConfirmado.css';
 
 const PedidoConfirmado = ({ onNavigate }) => {
   return (

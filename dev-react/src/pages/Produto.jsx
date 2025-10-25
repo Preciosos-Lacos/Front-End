@@ -1,5 +1,5 @@
-import './Produto.css';
-import Header from './Header.jsx';
+import '../styles/Produto.css';
+import Header from '../components/Header.jsx';
 import imgPrincipal from '../assets/laco_bolinhas.png';
 
 export default function Produto() {

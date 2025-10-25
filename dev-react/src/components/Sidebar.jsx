@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './Sidebar.css';
+import { Link } from 'react-router-dom';
+import '../styles/Sidebar.css';
 import logo from '../assets/logo_preciosos_lacos.png';
 
 const Sidebar = () => {
@@ -49,48 +50,48 @@ const Sidebar = () => {
         <img src={logo} alt="Logo" />
         <ul>
           <li onClick={handleItemClick}>
-            <a href="#pedido">
+            <Link to="/pedido">
               <i className="bi bi-box"></i>
               <span>Pedidos</span>
-            </a>
+            </Link>
           </li>
           <li onClick={handleItemClick}>
-            <a href="#dashboard">
+            <Link to="/dashboard">
               <i className="bi bi-bar-chart"></i>
               <span>Dashboard</span>
-            </a>
+            </Link>
           </li>
           <li onClick={handleItemClick}>
-            <a href="#modelo">
+            <Link to="/modelo">
               <i className="bi bi-tag"></i>
               <span>Modelos</span>
-            </a>
+            </Link>
           </li>
           <li onClick={handleItemClick}>
-            <a href="#cadastro-cor">
+            <Link to="/cadastro-cor">
               <i className="bi bi-palette"></i>
               <span>Cores</span>
-            </a>
+            </Link>
           </li>
           <li onClick={handleItemClick}>
-            <a href="#colecoes">
+            <Link to="/colecoes">
               <i className="bi bi-archive"></i>
               <span>Coleções</span>
-            </a>
+            </Link>
           </li>
           <li onClick={handleItemClick}>
-            <a href="#tipos-laco">
+            <Link to="/tipos-laco">
               <i className="bi bi-scissors"></i>
               <span>Tipos de Laço</span>
-            </a>
+            </Link>
           </li>
         </ul>
         <ul>
           <li onClick={handleItemClick}>
-            <a href="#catalogo">
+            <Link to="/catalogo">
               <i className="bi bi-box-arrow-right"></i>
               <span>Sair</span>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

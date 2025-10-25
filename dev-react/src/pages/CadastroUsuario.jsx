@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import './CadastroUsuario.css';
+import { Link } from 'react-router-dom';
+import '../styles/CadastroUsuario.css';
 import logo from '../assets/logo_preciosos_lacos.png';
 import { formatCPF } from '../utils/regexCPF';
 import { formatTelefone } from '../utils/regexTelefone';
@@ -171,7 +172,7 @@ export default function CadastroUsuario() {
             <button id="cadastro" type="submit">Cadastrar</button>
 
             <p className="link-container">
-              Já tem conta? <a href="/login">Faça o login aqui.</a>
+              Já tem conta? <Link to="/login">Faça o login aqui.</Link>
             </p>
           </div>
         </form>

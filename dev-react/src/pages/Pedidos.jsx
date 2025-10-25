@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Sidebar from './Sidebar';
-import Modal from './Modal';
-import './Pedidos.css';
+import Sidebar from '../components/Sidebar';
+import Modal from '../components/Modal';
+import '../styles/Pedidos.css';
 
 const Pedidos = () => {
   const [searchTerm, setSearchTerm] = useState('');

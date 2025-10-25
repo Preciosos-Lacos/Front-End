@@ -1,5 +1,5 @@
 import React from 'react';
-import './CardCor.css';
+import '../styles/CardCor.css';
 
 const CardCor = ({ color, onEdit, onDelete }) => {
   const { id, nome, cor, modelos = [], valor } = color;

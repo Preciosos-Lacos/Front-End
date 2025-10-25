@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './cadastro-endereco.css';
+import '../styles/cadastro-endereco.css';
 import Logo from '../assets/logo_preciosos_lacos.png';
 
 const API_CEP = 'https://viacep.com.br/ws/';
@@ -113,9 +113,9 @@ export default function CadastroEndereco() {
 
   return (
     <div className="cadastro-container">
-      <a href="#" className="btn-voltar" onClick={() => window.history.back()} title="Voltar">
-        <i className="bi bi-arrow-left-circle"></i>
-      </a>
+      <button type="button" className="btn-voltar" onClick={() => window.history.back()} title="Voltar">
+            <i className="bi bi-arrow-left-circle"></i>
+          </button>
 
       <section className="cadastro-section">
         <div className="logo-cadastro">

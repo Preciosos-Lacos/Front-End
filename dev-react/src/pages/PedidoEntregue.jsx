@@ -1,6 +1,6 @@
 import React from 'react';
-import Header from './Header.jsx';
-import './PedidoEntregue.css';
+import Header from '../components/Header.jsx';
+import '../styles/PedidoEntregue.css';
 
 const PedidoEntregue = ({ onNavigate }) => {
   const comprarNovamente = () => {

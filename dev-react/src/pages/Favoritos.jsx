@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import './Favoritos.css';
-import Header from './Header';
+import '../styles/Favoritos.css';
+import Header from '../components/Header';
 
 const BASE_URL = 'http://localhost:8080';
 

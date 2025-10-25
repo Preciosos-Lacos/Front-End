@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Sidebar from './Sidebar';
-import BarraPesquisa from './BarraPesquisa';
-import CardCor from './CardCor';
-import Modal from './Modal';
-import './CadastroCor.css';
+import Sidebar from '../components/Sidebar';
+import BarraPesquisa from '../components/BarraPesquisa';
+import CardCor from '../components/CardCor';
+import Modal from '../components/Modal';
+import '../styles/CadastroCor.css';
 
 const CadastroCor = () => {
   const [colors, setColors] = useState([]);

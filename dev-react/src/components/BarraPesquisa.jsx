@@ -1,5 +1,5 @@
 import React from 'react';
-import './BarraPesquisa.css';
+import '../styles/BarraPesquisa.css';
 
 const BarraPesquisa = ({ searchTerm, onSearchChange, onAddClick, addLabel = 'Cadastrar Cores' }) => {
   return (

@@ -1,5 +1,5 @@
-import './Carrinho.css';
-import Header from './Header.jsx';
+import '../styles/Carrinho.css';
+import Header from '../components/Header.jsx';
 import imgVermelho from '../assets/laco-pink.webp';
 import imgBolinhas from '../assets/laco-bolinha.webp';
 

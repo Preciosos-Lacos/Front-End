@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Header from './Header.jsx';
-import './perfil.css';
+import Header from '../components/Header.jsx';
+import '../styles/perfil.css';
 import camilaImg from '../assets/camila_osterman.jpg';
 
 export default function Perfil() {

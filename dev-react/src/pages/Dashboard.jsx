@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import SideBar from "./SideBar.jsx";
+import Sidebar from "../components/Sidebar";
 
 import {
   Chart,
@@ -11,7 +11,7 @@ import {
   Title,
 } from "chart.js";
 
-import "./Dashboard.css";
+import "../styles/Dashboard.css";
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title);
 
@@ -50,7 +50,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <SideBar />
+      <Sidebar />
       <div className="dashboard-content">
         <header className="dashboard-header">
           <h1 className="dashboard-title">Bem-vinda, Camila!</h1>

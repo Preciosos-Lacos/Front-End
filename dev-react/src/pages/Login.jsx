@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './login.css';
+import { Link } from 'react-router-dom';
+import '../styles/login.css';
 import Logo from '../assets/logo_preciosos_lacos.png';
 
 export default function Login({ onLoginSuccess }) {
@@ -85,7 +86,7 @@ const login = async () => {
             {error && <p className="login-error" style={{ color: "red" }}>{error}</p>}
 
             <p className="link-container">
-              Não tem conta? <a href="/cadastroUsuario">Cadastre-se aqui.</a>
+              Não tem conta? <Link to="/cadastro-usuario">Cadastre-se aqui.</Link>
             </p>
           </div>
         </div>

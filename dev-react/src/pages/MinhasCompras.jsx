@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Header from './Header';
-import './MinhasCompras.css';
+import Header from '../components/Header';
+import '../styles/MinhasCompras.css';
 
 const comprasMock = [
   {

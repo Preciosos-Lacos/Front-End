@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './HeaderHome.css';
+import { Link } from 'react-router-dom';
+import '../styles/HeaderHome.css';
 
 const HeaderHomeBootstrap = () => {
   const [open, setOpen] = useState(false);
@@ -19,9 +20,9 @@ const HeaderHomeBootstrap = () => {
   return (
     <header className="navbar navbar-expand-lg" role="banner">
       <div className="container-fluid">
-        <a className="navbar-brand logo" href="#home" onClick={close} aria-label="Ir para o início">
+        <Link className="navbar-brand logo" to="/home" onClick={close} aria-label="Ir para o início">
           <img src="/src/assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços" />
-        </a>
+        </Link>
 
         <button
           className="navbar-toggler"
@@ -36,9 +37,9 @@ const HeaderHomeBootstrap = () => {
 
         <nav className={`collapse navbar-collapse ${open ? 'show' : ''}`} id="menuNav" role="navigation" aria-label="Menu principal">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item"><a className="nav-link" href="#catalogo" onClick={close}>Catálogo</a></li>
-            <li className="nav-item"><a className="nav-link" href="#cadastro-usuario" onClick={close}>Cadastro</a></li>
-            <li className="nav-item"><a className="nav-link" href="#login" onClick={close}>Login</a></li>
+            <li className="nav-item"><Link className="nav-link" to="/catalogo" onClick={close}>Catálogo</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/cadastro-usuario" onClick={close}>Cadastro</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/login" onClick={close}>Login</Link></li>
           </ul>
         </nav>
       </div>

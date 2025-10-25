@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Sidebar from './Sidebar';
-import './Modelo.css';
+import Sidebar from '../components/Sidebar';
+import '../styles/Modelo.css';
 
 // Mock de modelos (poderá ser substituído por fetch futuramente)
 const modelosIniciais = [

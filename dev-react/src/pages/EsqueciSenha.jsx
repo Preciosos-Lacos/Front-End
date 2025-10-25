@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './esqueciSenha.css';
+import { Link } from 'react-router-dom';
+import '../styles/esqueciSenha.css';
 import logo from '../assets/logo_preciosos_lacos.png';
 
 export default function EsqueciSenha() {
@@ -98,7 +99,7 @@ export default function EsqueciSenha() {
               Redefinir senha
             </button>
             <p className="link-container mt-3">
-              <a href="#/login">Voltar ao login</a>
+              <Link to="/login">Voltar ao login</Link>
             </p>
           </div>
         </div>
