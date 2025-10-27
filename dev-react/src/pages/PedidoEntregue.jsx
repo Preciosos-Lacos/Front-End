@@ -10,7 +10,7 @@ const PedidoEntregue = () => {
   const comprarNovamente = (e) => {
     // se chamado como handler, previne comportamento padrão
     if (e && e.preventDefault) e.preventDefault();
-    navigate('/catalogo');
+    navigate('/carrinho');
   };
 
   const [helpOpen, setHelpOpen] = useState(false);
