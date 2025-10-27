@@ -20,32 +20,31 @@ export default function EsqueciSenha() {
       return;
     }
     try {
-      const url = `http://localhost:3000/users?email=${encodeURIComponent(email)}`;
-      const response = await fetch(url);
+      const response = await fetch('http://localhost:8080/usuarios/atualizar_senha', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify({ email, senha: novaSenha })
+      });
+
       if (response.ok) {
-        const users = await response.json();
-        if (users.length > 0) {
-          const userId = users[0].id;
-          const updateUrl = `http://localhost:3000/users/${userId}`;
-          const updateResponse = await fetch(updateUrl, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ senha: novaSenha })
-          });
-          if (updateResponse.ok) {
-            alert('Senha redefinida com sucesso! Faça login com sua nova senha.');
-            window.location.href = '/login';
-          } else {
-            alert('Erro ao atualizar a senha. Tente novamente.');
-          }
-        } else {
-          alert('E-mail não encontrado.');
-        }
-      } else {
-        alert('Erro ao buscar usuário.');
+        alert('Senha redefinida com sucesso! Faça login com sua nova senha.');
+        window.location.href = '/login';
+        return;
       }
+
+      if (response.status === 404) {
+        alert('E-mail não encontrado.');
+        return;
+      }
+
+      const msg = await response.text();
+      alert(msg || 'Erro ao atualizar a senha. Tente novamente.');
     } catch (error) {
-      alert('Ocorreu um erro. Tente novamente.');
+      alert('Erro de conexão com o servidor. Tente novamente.');
     }
   };
 
