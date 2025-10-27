@@ -107,22 +107,82 @@
     font-weight: 500;
 }
 
+/* Search input wrapper to match selects/date inputs and show icon */
+.search-input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 275px; /* wrapper matches the fixed input width */
+}
+
+.search-input {
+    width: 275px; /* fixed width as requested */
+    border-radius: 15px;
+    background-color: #f8c4d6;
+    border: none;
+    padding: 8px 40px 8px 12px; /* room for icon on right */
+    color: #000;
+    font-weight: 500;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.search-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(242, 157, 195, 0.18);
+}
+
+.search-icon {
+    position: absolute;
+    /* place icon at the very end of the field (inside) */
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #3a3a3a;
+    font-size: 1.15rem;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* On very small screens, make the search input fluid and adjust icon */
+@media (max-width: 480px) {
+    .search-input { width: 100%; padding: 8px 36px 8px 12px; }
+    .search-icon { right: 12px; font-size: 1.05rem; }
+}
+
 .pedidos-root .table-pedidos {
     width: 100%;
     margin-top: 20px;
 }
 
+.pedidos-root .table-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1fr 1fr 0.9fr;
+    gap: 12px;
+    padding: 10px 12px;
+    color: #5a2b40;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
 .pedidos-root .pedido-row {
     background-color: #f58bb0;
-    border-radius: 15px;
+    border-radius: 12px;
     margin-bottom: 10px;
     padding: 12px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1fr 1fr 0.9fr;
+    gap: 12px;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    font-size: 1rem;
+    font-size: 0.98rem;
     color: #000;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pedidos-root .pedido-row:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .pedidos-root .status-badge {
@@ -216,4 +276,17 @@
     .pedidos-root .btn-cadastrar span {
         display: none
     }
+}
+
+/* Responsive: stack cards on small screens */
+@media (max-width: 768px) {
+    .pedidos-root .table-header { display: none; }
+    .pedidos-root .pedido-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 14px;
+    }
+    .pedidos-root .pedido-row > div:nth-child(1) { font-weight: 700; font-size: 1.02rem }
+    .pedidos-root .pedido-row > div { opacity: 0.95 }
+    .pedidos-root .pedido-row .status-badge { justify-self: start }
 }

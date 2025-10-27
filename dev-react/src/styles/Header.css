@@ -192,6 +192,75 @@
     z-index: 1200 !important;
 }
 
+/* --- Desktop / Mobile header variants --- */
+.header-desktop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.desktop-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 28px;
+    align-items: center;
+}
+
+.desktop-nav a {
+    font-size: 18px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    padding: 8px;
+    color: #000;
+    transition: transform 0.2s ease;
+    font-family: 'Quicksand', Arial, sans-serif;
+    letter-spacing: 0.6px;
+}
+
+.desktop-nav a:hover {
+    transition: transform 0.2s ease;
+    transform: scale(1.1);
+    color: var(--rosa);
+}
+
+.header-mobile {
+    display: none;
+    /* hidden on desktop, visible on small screens via media query */
+}
+
+.mobile-iconbar {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.mobile-iconbar a {
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+}
+
+.mobile-iconbar i {
+    font-size: 24px;
+}
+
 @media (max-width: 768px) {
     .app-navbar {
         padding: 0 4%;
@@ -220,6 +289,15 @@
     .app-hamburguer {
         font-size: 28px;
         padding: 6px;
+    }
+
+    /* on tablet and below, show mobile header (icons) and hide desktop text nav */
+    .header-desktop {
+        display: none;
+    }
+
+    .header-mobile {
+        display: flex;
     }
 }
 

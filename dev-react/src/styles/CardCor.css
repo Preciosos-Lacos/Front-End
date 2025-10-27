@@ -8,7 +8,7 @@
   padding: 15px;
   color: #000;
   margin: 10px;
-  width: 250px;
+  width: 180px;
 }
 
 .card-custom h5 {
@@ -17,10 +17,14 @@
 }
 
 .color-box {
+  width: 140px;
   height: 120px;
+  object-fit: contain;
   border-radius: 10px;
-  margin-bottom: 10px;
   border: 1px solid #ffffff;
+  margin: 10px auto;
+  /* center horizontally within the card */
+  display: block;
 }
 
 .list-associates {
@@ -62,4 +66,25 @@
 .icons i {
   margin: 0 5px;
   cursor: pointer;
+}
+
+/* card footer styling to match CadastroTipoLaco */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  gap: 12px;
+}
+
+.card-footer .valor {
+  margin: 0;
+  font-weight: 500;
+}
+
+.div_card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Sidebar from "../components/Sidebar";
+import "../styles/Dashboard.css";
 
 import {
   Chart,
@@ -11,7 +12,6 @@ import {
   Title,
 } from "chart.js";
 
-import "../styles/Dashboard.css";
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title);
 

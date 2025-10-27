@@ -50,7 +50,7 @@ const Sidebar = () => {
         <img src={logo} alt="Logo" />
         <ul>
           <li onClick={handleItemClick}>
-            <Link to="/pedido">
+            <Link to="/pedidos">
               <i className="bi bi-box"></i>
               <span>Pedidos</span>
             </Link>
@@ -62,7 +62,7 @@ const Sidebar = () => {
             </Link>
           </li>
           <li onClick={handleItemClick}>
-            <Link to="/modelo">
+            <Link to="/cadastro-modelo">
               <i className="bi bi-tag"></i>
               <span>Modelos</span>
             </Link>
@@ -73,14 +73,14 @@ const Sidebar = () => {
               <span>Cores</span>
             </Link>
           </li>
-          <li onClick={handleItemClick}>
+          {/* <li onClick={handleItemClick}>
             <Link to="/colecoes">
               <i className="bi bi-archive"></i>
               <span>Coleções</span>
             </Link>
-          </li>
+          </li> */}
           <li onClick={handleItemClick}>
-            <Link to="/tipos-laco">
+            <Link to="/cadastro-tipo-lacos">
               <i className="bi bi-scissors"></i>
               <span>Tipos de Laço</span>
             </Link>
@@ -88,7 +88,7 @@ const Sidebar = () => {
         </ul>
         <ul>
           <li onClick={handleItemClick}>
-            <Link to="/catalogo">
+            <Link to="/home">
               <i className="bi bi-box-arrow-right"></i>
               <span>Sair</span>
             </Link>

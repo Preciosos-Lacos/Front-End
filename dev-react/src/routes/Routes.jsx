@@ -19,12 +19,15 @@ import Modelo from '../pages/Modelo.jsx';
 import MinhasCompras from '../pages/MinhasCompras.jsx';
 import EsqueciSenha from '../pages/EsqueciSenha.jsx';
 import Dashboard from '../pages/Dashboard.jsx';
+import CadastroEndereco from '../pages/CadastroEndereco.jsx';
+import ScrollToTop from '../components/ScrollToTop.jsx';
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
+  <ScrollToTop behavior="smooth" />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/catalogo" element={<Catalogo />} />
         <Route path="/pedido-confirmado" element={<PedidoConfirmado />} />
@@ -43,6 +46,7 @@ export default function AppRoutes() {
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/cor/:id" element={<CadastroCor />} />
+        <Route path="/cadastro-endereco" element={<CadastroEndereco />} />
         <Route path="*" element={<div style={{ padding: 20 }}>Página não encontrada</div>} />
       </Routes>
     </BrowserRouter>

@@ -51,18 +51,20 @@ const CardCor = ({ color, onEdit, onDelete }) => {
           <span>—</span>
         )}
       </div>
-      <p className="mt-2">Valor: R$ {formattedValue}</p>
-      <div className="icons">
-        <i 
-          className="bi bi-pencil" 
-          onClick={() => realId !== null && onEdit(realId)}
-          style={{opacity: realId !== null ? 1 : 0.3, pointerEvents: realId !== null ? 'auto' : 'none'}}
-        ></i>
-        <i 
-          className="bi bi-trash" 
-          onClick={() => realId !== null && onDelete(realId, nome)}
-          style={{opacity: realId !== null ? 1 : 0.3, pointerEvents: realId !== null ? 'auto' : 'none'}}
-        ></i>
+      <div className="card-footer">
+        <p className="valor">Valor: R$ {formattedValue}</p>
+        <div className="icons">
+          <i
+            className="bi bi-pencil"
+            onClick={() => realId !== null && onEdit(realId)}
+            style={{ opacity: realId !== null ? 1 : 0.3, pointerEvents: realId !== null ? 'auto' : 'none' }}
+          ></i>
+          <i
+            className="bi bi-trash"
+            onClick={() => realId !== null && onDelete(realId, nome)}
+            style={{ opacity: realId !== null ? 1 : 0.3, pointerEvents: realId !== null ? 'auto' : 'none' }}
+          ></i>
+        </div>
       </div>
     </div>
   );

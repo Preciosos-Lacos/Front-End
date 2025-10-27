@@ -28,12 +28,15 @@ body {
 
 a {
   font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  /* remover cor azul padrão para links; eles herdam a cor do contexto
+     - caso queira links visíveis, aplique uma classe específica */
+  color: inherit;
+  text-decoration: none;
 }
 
 a:hover {
-  color: #535bf2;
+  color: inherit;
+  text-decoration: none;
 }
 
 #root {
@@ -79,8 +82,9 @@ h1 {
   align-items: center;
 }
 
+
 button {
-  width: 20%;
+  width: auto; /* não forçar largura fixa, permite botões com tamanho natural */
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -91,11 +95,30 @@ button {
   color: white;
   cursor: pointer;
   margin: 4px;
-  transition: border-color 0.25s;
+  transition: background 160ms ease, transform 120ms ease, border-color 160ms ease;
 }
 
 button:hover {
-  border-color: #646cff;
+  transform: translateY(-2px);
+}
+
+/* Tratar <a> que são usados como botões: quaisquer classes que contenham 'btn' */
+a[class*="btn"],
+a[class^="btn-"],
+a.btn {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  transition: background 160ms ease, transform 120ms ease, filter 160ms ease;
+}
+
+a[class*="btn"]:hover,
+a[class^="btn-"]:hover,
+a.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.95);
 }
 
 button:focus,

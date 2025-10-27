@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
+import { Link } from 'react-router-dom';
 import '../styles/MinhasCompras.css';
 
 const comprasMock = [
@@ -9,8 +10,8 @@ const comprasMock = [
     status: 'Em confecção',
     statusClass: 'status-em-confeccao',
     entrega: 'Chegará no dia 9 de Maio',
-    produto: 'Laço bolinha - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)',
-    imagem: '/src/assets/laco_bolinha.jpg',
+    produto: 'Kit 6 laços multicolorido - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)',
+    imagem: '/src/assets/laco-kit-6.webp',
   },
   {
     id: 2,
@@ -18,8 +19,8 @@ const comprasMock = [
     status: 'Entregue',
     statusClass: 'status-entregue',
     entrega: 'Chegou no dia 4 de Abril',
-    produto: 'Laço vermelho - COLEÇÃO TRADICIONAIS (Tam M, Bico de pato)',
-    imagem: '/src/assets/laco_vermelho.jpg',
+    produto: 'Laço Tricolor Escolar - COLEÇÃO ESPECIAIS (Tam M, Bico de pato)',
+    imagem: '/src/assets/laco-tricolor-escolar.webp',
   },
 ];
 
@@ -81,8 +82,8 @@ export default function MinhasCompras() {
                 <div className="compra-entrega fw-semibold mb-1">{compra.entrega}</div>
                 <div className="compra-produto mb-1">{compra.produto}</div>
                 <div className="compra-botoes d-flex gap-2 mt-2">
-                  <button className="btn btn-outline-secondary btn-sm">Ver compra</button>
-                  <button className="btn btn-outline-primary btn-sm">Comprar novamente</button>
+                  <Link to={`/pedido-entregue`} className="btn btn-outline-secondary btn-sm">Ver compra</Link>
+                  <Link to="/carrinho" className="btn btn-outline-primary btn-sm">Comprar novamente</Link>
                 </div>
               </div>
             </div>

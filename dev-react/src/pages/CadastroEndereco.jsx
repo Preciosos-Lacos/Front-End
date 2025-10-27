@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/cadastro-endereco.css';
 import Logo from '../assets/logo_preciosos_lacos.png';
 
 const API_CEP = 'https://viacep.com.br/ws/';
-const API_URL = 'http://localhost:3000/enderecos';
+// Use backend endpoint for enderecos
+const API_URL = 'http://localhost:8080/enderecos';
 
 export default function CadastroEndereco() {
+  const navigate = useNavigate();
   const [cep, setCep] = useState('');
   const [uf, setUf] = useState('');
   const [cidade, setCidade] = useState('');
@@ -49,6 +52,10 @@ export default function CadastroEndereco() {
     }
   };
 
+  // When using the backend API (Spring) the id is usually generated server-side —
+  // we don't need to compute next id on the client. Keep this function commented
+  // in case you need a client-side fallback for a different dev server.
+  /*
   const getNextId = async () => {
     try {
       const res = await fetch(API_URL);
@@ -60,6 +67,7 @@ export default function CadastroEndereco() {
       return Date.now();
     }
   };
+  */
 
   const handleSubmit = async () => {
     if (!cep || !uf || !cidade || !bairro || !rua || !numero) {
@@ -67,18 +75,17 @@ export default function CadastroEndereco() {
       return;
     }
 
-    const id = await getNextId();
-
+    // When posting to the backend we send the address fields expected by the
+    // server. The server will normally generate the primary key (id).
     const id_usuario = sessionStorage.id_usuario ? Number(sessionStorage.id_usuario) : 4;
 
     const novoEndereco = {
-      id: Number(id),
-      id_usuario,
+      usuario_id: id_usuario,
       cep,
       uf,
-      cidade,
+      localidade: cidade,
       bairro,
-      rua,
+      logradouro: rua,
       numero,
       complemento,
       padrao
@@ -98,7 +105,8 @@ export default function CadastroEndereco() {
         setCep(''); setUf(''); setCidade(''); setBairro(''); setRua(''); setNumero(''); setComplemento(''); setPadrao(false);
         // redirecionar após 1.5s (comportamento parecido com versão original)
         setTimeout(() => {
-          window.location.href = '/carrinho/FinalizarCompra.html';
+          // navegar para a rota de finalizar compra
+          navigate('/finalizar-compra');
         }, 1500);
       } else {
         setMessage({ type: 'error', text: 'Erro ao cadastrar endereço. Tente novamente.' });
@@ -113,7 +121,7 @@ export default function CadastroEndereco() {
 
   return (
     <div className="cadastro-container">
-      <button type="button" className="btn-voltar" onClick={() => window.history.back()} title="Voltar">
+  <button type="button" className="btn-voltar" onClick={() => navigate(-1)} title="Voltar">
             <i className="bi bi-arrow-left-circle"></i>
           </button>
 

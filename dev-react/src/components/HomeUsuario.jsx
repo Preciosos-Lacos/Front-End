@@ -8,10 +8,10 @@ import '../styles/HomeUsuario.css';
 const HomeUsuario = () => {
   return (
     <main className="home-usuario">
-      <HeaderHome />
-      <BannerHome />
-      <CatalogoPreview />
-      <QuemSouEu />
+      {/* <HeaderHome /> */}
+      {/* <BannerHome /> */}
+      {/* <CatalogoPreview /> */}
+      {/* <QuemSouEu /> */}
     </main>
   );
 };

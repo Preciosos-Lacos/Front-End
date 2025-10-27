@@ -1,6 +1,72 @@
+/* BannerHome.css - estilos do banner principal */
+
+.banner {
+  position: relative;
+  text-align: center;
+  color: #fff
+}
+
+.banner img {
+  width: 100%;
+  height: 570px;
+  object-fit: cover;
+  display: block
+}
+
+/* subtle overlay to keep text readable */
+.banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.18) 100%);
+}
+
+.banner .hero {
+  position: absolute;
+  bottom: 22%;
+  left: 10%;
+  z-index: 2
+}
+
+.banner .hero .chip {
+  background: rgb(164, 207, 90);
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 2rem
+}
+
+@media (max-width:992px) {
+  .banner img {
+    height: 320px
+  }
+
+  .banner .hero .chip {
+    font-size: 1.4rem;
+    bottom: 18%
+  }
+}
+
+@media (max-width:600px) {
+  .banner img {
+    height: 160px
+  }
+
+  .banner .hero {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 10%
+  }
+
+  .banner .hero .chip {
+    font-size: 1.05rem;
+    padding: 8px 14px
+  }
+}
+
 :root {
   --radius-xl: 18px;
-  --shadow-lg: 0 18px 40px rgba(0,0,0,.18);
+  --shadow-lg: 0 18px 40px rgba(0, 0, 0, .18);
 }
 
 .home-banner {
@@ -16,7 +82,7 @@
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
-  background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.08));
+  background: linear-gradient(180deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .08));
 }
 
 .home-banner__link {
@@ -34,6 +100,7 @@
   .home-banner {
     padding: 12px 10px 6px;
   }
+
   .home-banner__container {
     border-radius: 14px;
   }

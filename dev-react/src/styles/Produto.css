@@ -15,7 +15,7 @@
 @media (min-width:1024px){
   .produto-container{
     max-width: 1200px;
-    margin: 80px auto 40px auto; /* abaixo do header */
+    margin: 25px auto 40px auto; /* abaixo do header */
     padding: 0 24px;
     display: grid;
     grid-template-columns: 520px 1fr;
@@ -71,7 +71,7 @@
     font-weight: 600;
     transition: .2s ease;
     cursor: pointer;
-    width: 50%;
+    width: 40%;
   }
   .btn-add-cart:hover{
     background: #2E7D32;

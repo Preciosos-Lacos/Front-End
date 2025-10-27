@@ -1,35 +1,78 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Logo from '../assets/logo_preciosos_lacos.png';
-import '../App.css';
+import { Link } from 'react-router-dom';
+import '../styles/HomeUsuario.css';
+import '../styles/BannerHome.css';
+import HeaderHome from '../components/HeaderHome';
+import QuemSouEu from '../components/QuemSouEu';
+import LacoAzul from '../assets/laco-azul.webp';
+import LacosUnicornio from '../assets/laco-kit-unicornio.webp';
+import LacoBarbie from '../assets/laco-barbie-detalhado.jpg';
+import LacoPanda from '../assets/laco-panda.webp';
+import banner from '../assets/banner_natal.png';
 
 export default function Home() {
-  const navigate = useNavigate();
   return (
-    <div style={{ minHeight: '100vh', width: '100%' }}>
-      <div>
-        <img src={Logo} className="logo" alt="Preciosos Laços" />
-      </div>
-      <h1 style={{ padding: '0px 30px' }}>Preciosos Laços</h1>
-      <div className="card">
-        <button onClick={() => navigate('/login')}>Ir para Login</button>
-        <button onClick={() => navigate('/cadastro-usuario')}>Ir para Cadastro de Usuário</button>
-        <button onClick={() => navigate('/catalogo')}>Ir para Catálogo</button>
-        <button onClick={() => navigate('/pedido-confirmado')}>Ir para Pedido Confirmado</button>
-        <button onClick={() => navigate('/pedido-entregue')}>Ir para Pedido Entregue</button>
-        <button onClick={() => navigate('/perfil')}>Ir para Perfil</button>
-        <button onClick={() => navigate('/cadastro-cor')}>Ir para Cadastro de Cores</button>
-        <button onClick={() => navigate('/cadastro-tipo-lacos')}>Ir para Cadastro de Tipos de Laços</button>
-        <button onClick={() => navigate('/finalizar-compra')}>Ir para Finalizar Compra</button>
-        <button onClick={() => navigate('/pedidos')}>Ir para Pedidos</button>
-        <button onClick={() => navigate('/favoritos')}>Ir para Favoritos</button>
-        <button onClick={() => navigate('/produto')}>Ir para Produto</button>
-        <button onClick={() => navigate('/carrinho')}>Ir para Carrinho</button>
-        <button onClick={() => navigate('/cadastro-modelo')}>Ir para Modelos (Dashboard)</button>
-        <button onClick={() => navigate('/minhas-compras')}>Ir para Minhas Compras</button>
-        <button onClick={() => navigate('/esqueci-senha')}>Ir para Esqueci Senha</button>
-        <button onClick={() => navigate('/dashboard')}>Ir para Dashboard</button>
-      </div>
+    <div>
+      <HeaderHome />
+      <main data-scroll-container>
+        <section className="banner">
+          <div className="banner-content">
+            <Link to="/catalogo">
+              <img src={banner} alt="Banner" />
+            </Link>
+          </div>
+        </section>
+
+        <section id="catalogo" className="catalogo container">
+          <h2>Alguns de nossos produtos</h2>
+          <div className="catalogo-container">
+            <div className="card">
+              <Link to="/catalogo">
+                <img src={LacoAzul} alt="Laço Azul" />
+                <div className="card-info">
+                  <p>Laço Azul <br /><i>COLEÇÃO TRADICIONAIS</i></p>
+                  <span className="price">R$34,90</span>
+                  <span className="desconto">-15%</span>
+                </div>
+              </Link>
+            </div>
+
+            <div className="card">
+              <Link to="/catalogo">
+                <img src={LacosUnicornio} alt="Laço Unicornio" />
+                <div className="card-info">
+                  <p>Kit Laços unicornio <br /><i>COLEÇÃO UNICORNIO</i></p>
+                  <span className="price">R$59,99</span>
+                </div>
+              </Link>
+            </div>
+
+            <div className="card">
+              <Link to="/catalogo">
+                <img src={LacoBarbie} alt="Laço Barbie" />
+                <div className="card-info">
+                  <p>Laço Barbie detalhado <br /><i>COLEÇÃO BARBIE</i></p>
+                  <span className="price">R$44,90</span>
+                </div>
+              </Link>
+            </div>
+
+            <div className="card">
+              <Link to="/catalogo">
+                <img src={LacoPanda} alt="Laço Panda" />
+                <div className="card-info">
+                  <p>Laço Panda <br /><i>COLEÇÃO PANDA</i></p>
+                  <span className="price">R$44,90</span>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section style={{ paddingTop: 24 }}>
+          <QuemSouEu />
+        </section>
+      </main>
     </div>
   );
 }
