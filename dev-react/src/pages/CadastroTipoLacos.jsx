@@ -125,6 +125,7 @@ export default function CadastroTipoLacos() {
           searchTerm={"Pesquisar tipo de laço"}
           onSearchChange={setSearchTerm}
           onAddClick={() => openModal("create")}
+          addLabel="Cadastrar Tipo de Laço"
         />
 
         <div className="card-container-tipo-laco">
@@ -145,7 +146,7 @@ export default function CadastroTipoLacos() {
                 </ul>
               </div>
             
-              <div className="card-footer" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div className="card-footer">
                 <p>Valor: R$ 6,00</p>
                 <div className="icons">
                   <i className="bi bi-pencil" style={{ cursor: "pointer" }} onClick={() => openModal("edit", tipo)}></i>

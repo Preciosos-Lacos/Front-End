@@ -7,7 +7,7 @@
 
 .main-content1 {
   margin-left: 0px;
-  padding: 100px 0px;
+  padding: 20px 0px;
   box-sizing: border-box;
   background-color: var(--page-bg);
 
@@ -27,14 +27,14 @@
   position: fixed;
   top: 0;
   z-index: 1050;
-  padding: 12px 16px;
+  padding: 18px 20px;
 }
 
 .card-container-tipo-laco {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 20px;
-  padding: 40px 18px 60px 18px;
+  padding: 120px 18px 60px 18px;
   margin: 0 auto;
   max-width: 1200px;
 }
@@ -47,9 +47,15 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: 100%;
+  gap: 4px;
+  width: 210px;
   align-items: stretch;
+}
+
+.card-custom h5 {
+  text-align: center;
+  font-weight: bold;
+  margin: 0;
 }
 
 .card-custom .tipo-laco-box {
@@ -59,13 +65,48 @@
 }
 
 .card-custom .img-laco {
-  max-width: 120px;
-  height: auto;
-  object-fit: contain
+  max-width: 140px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 10px;
 }
 
 .card-custom p {
   margin: 8px 0
+}
+
+/* Align list-associates styling with CardCor to avoid bold text and match appearance */
+.list-associates {
+  border: 1px solid var(--rosa);
+  border-radius: 10px;
+  background: #BC6686;
+  padding: 6px 10px;
+  max-height: 90px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.list-associates ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list-associates li {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--rosa);
+  color: #fff;
+  font-weight: 400;
+  /* ensure not bold; override container's 600 */
+}
+
+.list-associates li:last-child {
+  border-bottom: none;
+}
+
+.list-associates::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
 }
 
 /* ======== Estrutura base ======== */
@@ -73,7 +114,10 @@
   margin: 0;
   padding: 0;
   background-color: var(--page-bg);
-  font-family: "Poppins", sans-serif;
+  /* Match fonts with CadastroCor: use Quicksand and a unified font-weight */
+  font-family: 'Quicksand', sans-serif;
+  /* avoid setting a global font-weight here to prevent unwanted bold inheritance */
+  font-weight: 400;
   color: var(--texto-escuro);
 }
 
@@ -100,7 +144,8 @@
   border-radius: 25px;
   padding: 10px 20px;
   text-decoration: none;
-  font-weight: 500;
+  /* follow the page font-weight for consistency */
+  font-weight: 600;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -149,6 +194,9 @@
 .tituloPopUp {
   margin-bottom: 20px;
   color: var(--texto-escuro);
+  /* match modal title styles from Modal.css */
+  font-size: 21px;
+  font-weight: 700;
 }
 
 #fecharModalExcluir,

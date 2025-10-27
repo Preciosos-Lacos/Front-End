@@ -41,9 +41,9 @@
 .card-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  padding-top: 30px;
-  align-items: start;
+  padding: 70px 18px 60px 18px;
+  margin: 0 auto;
+  max-width: 1200px;
 }
 
 @media (min-width: 993px) {

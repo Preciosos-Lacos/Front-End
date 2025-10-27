@@ -21,7 +21,7 @@
 /* CONTEÚDO PRINCIPAL */
 .dashboard-content {
   flex: 1;
-  padding: 28px 20px;
+  padding: 135px 20px;
   margin-left: 70px; /* aligns with sidebar width */
   transition: margin-left 0.3s;
   display: flex;
@@ -35,10 +35,10 @@
   color: white;
   text-align: center;
   padding: 36px 18px;
-  border-radius: 12px;
+  /* border-radius: 12px; */
   font-family: "Poppins", sans-serif;
   width: 100%;
-  max-width: 1200px;
+  /* max-width: 1200px; */
   margin: 0 auto 18px auto;
   display: flex;
   flex-direction: column;

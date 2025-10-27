@@ -4,7 +4,8 @@ import '../styles/cadastro-endereco.css';
 import Logo from '../assets/logo_preciosos_lacos.png';
 
 const API_CEP = 'https://viacep.com.br/ws/';
-const API_URL = 'http://localhost:3000/enderecos';
+// Use backend endpoint for enderecos
+const API_URL = 'http://localhost:8080/enderecos';
 
 export default function CadastroEndereco() {
   const navigate = useNavigate();
@@ -51,6 +52,10 @@ export default function CadastroEndereco() {
     }
   };
 
+  // When using the backend API (Spring) the id is usually generated server-side —
+  // we don't need to compute next id on the client. Keep this function commented
+  // in case you need a client-side fallback for a different dev server.
+  /*
   const getNextId = async () => {
     try {
       const res = await fetch(API_URL);
@@ -62,6 +67,7 @@ export default function CadastroEndereco() {
       return Date.now();
     }
   };
+  */
 
   const handleSubmit = async () => {
     if (!cep || !uf || !cidade || !bairro || !rua || !numero) {
@@ -69,18 +75,17 @@ export default function CadastroEndereco() {
       return;
     }
 
-    const id = await getNextId();
-
+    // When posting to the backend we send the address fields expected by the
+    // server. The server will normally generate the primary key (id).
     const id_usuario = sessionStorage.id_usuario ? Number(sessionStorage.id_usuario) : 4;
 
     const novoEndereco = {
-      id: Number(id),
-      id_usuario,
+      usuario_id: id_usuario,
       cep,
       uf,
-      cidade,
+      localidade: cidade,
       bairro,
-      rua,
+      logradouro: rua,
       numero,
       complemento,
       padrao
