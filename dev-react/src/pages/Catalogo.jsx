@@ -28,45 +28,45 @@ const Catalogo = () => {
     const productos = [
         {
             id: 1,
-            image: '/src/assets/laco-neon-estrass.webp',
-            name: 'Laço Neon Strass',
-            collection: 'COLEÇÃO NEON',
-            price: 18.00
-        },
-        {
-            id: 2,
             image: '/src/assets/laco-neon-verde.webp',
             name: 'Laço Preciosos Neon',
             collection: 'COLEÇÃO NEON',
             price: 16.70
         },
         {
-            id: 3,
-            image: '/src/assets/laco-neon-cinza.webp',
-            name: 'Laço Neon Vibes',
+            id: 2,
+            image: '/src/assets/laco-neon-estrass.webp',
+            name: 'Laço Neon Strass',
             collection: 'COLEÇÃO NEON',
-            price: 15.00
+            price: 18.00
         },
         {
-            id: 4,
+            id: 3,
             image: '/src/assets/laco-neon-glitter.webp',
             name: 'Laço Neon Glitter',
             collection: 'COLEÇÃO NEON',
             price: 21.90
         },
         {
-            id: 5,
-            image: '/src/assets/laco-neon-branco.webp',
-            name: 'Laço pompom Neon',
+            id: 4,
+            image: '/src/assets/laco-neon-cinza.webp',
+            name: 'Laço Neon Vibes',
             collection: 'COLEÇÃO NEON',
-            price: 20.00
+            price: 15.00
         },
         {
-            id: 6,
+            id: 5,
             image: '/src/assets/laco-mia-neon.webp',
             name: 'Laço Mia Neon',
             collection: 'COLEÇÃO NEON',
             price: 23.70
+        },
+        {
+            id: 6,
+            image: '/src/assets/laco-neon-branco.webp',
+            name: 'Laço pompom Neon',
+            collection: 'COLEÇÃO NEON',
+            price: 20.00
         },
         {
             id: 7,
@@ -181,7 +181,7 @@ const Catalogo = () => {
         <div className="catalogo-page">
             <Header showOffcanvas={true} />
 
-            <main>
+            <main data-scroll-container>
                 <section className="promo-section">
                     <h2>Promoções atuais</h2>
                     <div id="promoCarousel" className="carousel slide promo-carousel" data-bs-ride="carousel">

@@ -1,0 +1,32 @@
+/* Estilo para o botão de atalho para Home (canto superior esquerdo) */
+.home-shortcut {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1200;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 40px;
+  background: transparent;
+  border-radius: 10px;
+  color: #71324e;
+  text-decoration: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.home-shortcut i {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.home-shortcut:hover {
+  background: rgba(113, 50, 78, 0.05);
+  transform: translateY(-1px);
+}
+
+.home-shortcut:active {
+  transform: translateY(0);
+}

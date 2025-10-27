@@ -1,21 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header.jsx';
+import Modal from '../components/Modal';
 import '../styles/PedidoEntregue.css';
+import { Link, useNavigate } from 'react-router-dom';
 
-const PedidoEntregue = ({ onNavigate }) => {
-  const comprarNovamente = () => {
-    onNavigate && onNavigate('catalogo');
+const PedidoEntregue = () => {
+  const navigate = useNavigate();
+
+  const comprarNovamente = (e) => {
+    // se chamado como handler, previne comportamento padrão
+    if (e && e.preventDefault) e.preventDefault();
+    navigate('/catalogo');
   };
 
-  const precisoDeAjuda = () => {
-    alert('Entre em contato pelo WhatsApp ou e-mail para suporte!');
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  const precisoDeAjuda = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setHelpOpen(true);
   };
 
   return (
     <div className="pedido-entregue-page">
       <Header showOffcanvas={true} />
 
-      <main>
+  <main data-scroll-container>
         <div className="pedido-section container">
           <h2 className="titulo">Detalhe da Compra</h2>
 
@@ -41,13 +50,27 @@ const PedidoEntregue = ({ onNavigate }) => {
           </div>
 
           <div className="botoes">
-            <button className="btn-primario" onClick={comprarNovamente}>
+            <Link to="/carrinho" className="btn-primario" onClick={comprarNovamente}>
               Comprar novamente
-            </button>
-            <button className="btn-secundario" onClick={precisoDeAjuda}>
+            </Link>
+            <Link to="#" className="btn-secundario" onClick={precisoDeAjuda}>
               Preciso de ajuda
-            </button>
+            </Link>
           </div>
+          <Modal
+            isOpen={helpOpen}
+            onClose={() => setHelpOpen(false)}
+            type="view"
+            viewContent={(
+              <div style={{ padding: 18, minWidth: 300 }}>
+                <h3>Precisa de ajuda?</h3>
+                <p>Entre em contato pelo WhatsApp ou e-mail para suporte!</p>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
+                  <button onClick={() => setHelpOpen(false)} style={{ padding: '8px 12px', borderRadius: 6 }}>Fechar</button>
+                </div>
+              </div>
+            )}
+          />
         </div>
       </main>
     </div>

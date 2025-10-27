@@ -1,25 +1,27 @@
+import React from 'react';
 import '../styles/Produto.css';
 import Header from '../components/Header.jsx';
-import imgPrincipal from '../assets/laco_bolinhas.png';
+import { Link } from 'react-router-dom';
+import imgPrincipal from '../assets/laco-neon-verde.webp';
 
 export default function Produto() {
   return (
     <>
       <Header />
-      <main className="produto-page">
+  <main data-scroll-container className="produto-page">
         <section className="produto-container">
           {/* Imagem principal */}
           <div className="produto-imagem">
-            <img src={imgPrincipal} alt="Laço com bolinhas" />
+            <img src={imgPrincipal} alt="Laço Preciosos Neon" />
           </div>
 
           {/* Informações do produto */}
           <div className="produto-info">
-            <h1 className="produto-titulo">Laço com bolinhas</h1>
+            <h1 className="produto-titulo">Laço Preciosos Neon</h1>
 
             <div className="produto-top">
               <span className="produto-preco">R$44,97</span>
-              <button className="btn-add-cart">Adicionar ao carrinho</button>
+              <Link to="/carrinho" className="btn-add-cart">Adicionar ao carrinho</Link>
             </div>
 
             <div className="produto-bloco">
@@ -47,9 +49,9 @@ export default function Produto() {
             <div className="produto-bloco">
               <h3 className="produto-subtitulo">Descrição</h3>
               <p className="produto-descricao">
-                Feito com tecido de cetim ou algodão, este laço é macio e confortável, com
-                detalhes como strass ou pérolas. Tem acabamento de costura reforçada e um laço
-                central bem estruturado, ideal para ocasiões especiais ou uso diário.
+                Feito com tecido de cetim ou algodão, este laço é macio e confortável. 
+                Tem acabamento de costura reforçada e um laço central bem estruturado, 
+                ideal para ocasiões especiais ou uso diário.
               </p>
             </div>
           </div>

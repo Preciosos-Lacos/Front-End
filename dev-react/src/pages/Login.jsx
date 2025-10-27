@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import '../styles/homeShortcut.css';
 import '../styles/login.css';
 import Logo from '../assets/logo_preciosos_lacos.png';
 
@@ -8,6 +9,7 @@ export default function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
 const login = async () => {
   console.log("Tentando login com:", { email, senha });
@@ -36,6 +38,7 @@ const login = async () => {
     if (onLoginSuccess) {
       onLoginSuccess();
     }
+    navigate('/catalogo');
   } catch (err) {
     setError(err.message);
     console.error("Erro no login:", err);
@@ -44,6 +47,9 @@ const login = async () => {
 
   return (
     <div className="login-container">
+      <Link to="/home" aria-label="Ir para a página inicial" className="home-shortcut">
+        <i className="bi bi-house-door"></i>
+      </Link>
       <section className="login-section">
         <div className="logo-login">
           <img src={Logo} alt="Logo Preciosos Laços" />

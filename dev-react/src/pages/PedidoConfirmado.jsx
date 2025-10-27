@@ -1,13 +1,15 @@
 import React from 'react';
 import Header from '../components/Header.jsx';
 import '../styles/PedidoConfirmado.css';
+import { useNavigate } from 'react-router-dom';
 
-const PedidoConfirmado = ({ onNavigate }) => {
+const PedidoConfirmado = () => {
+  const navigate = useNavigate();
   return (
     <div className="pedido-confirmado-page">
       <Header showOffcanvas={true} />
 
-      <main>
+  <main data-scroll-container>
         <section className="pedido-section">
           <h1>Pedido confirmado</h1>
 
@@ -28,10 +30,10 @@ const PedidoConfirmado = ({ onNavigate }) => {
             <p>CEP de Entrega: <strong>44019-830</strong></p>
             <small>*Os produtos têm prazo de 5 a 7 dias úteis para serem enviados.</small>
           </div>
-          
-          <button id="home" onClick={() => onNavigate && onNavigate('catalogo')}>
-            Voltar para o catálogo
-          </button>
+
+          {/* botão volta para catálogo */}
+          <button className="home" onClick={() => navigate('/catalogo')}>Voltar para o Catálogo</button>
+
         </section>
       </main>
     </div>

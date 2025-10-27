@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/cadastro-endereco.css';
 import Logo from '../assets/logo_preciosos_lacos.png';
 
@@ -6,6 +7,7 @@ const API_CEP = 'https://viacep.com.br/ws/';
 const API_URL = 'http://localhost:3000/enderecos';
 
 export default function CadastroEndereco() {
+  const navigate = useNavigate();
   const [cep, setCep] = useState('');
   const [uf, setUf] = useState('');
   const [cidade, setCidade] = useState('');
@@ -98,7 +100,8 @@ export default function CadastroEndereco() {
         setCep(''); setUf(''); setCidade(''); setBairro(''); setRua(''); setNumero(''); setComplemento(''); setPadrao(false);
         // redirecionar após 1.5s (comportamento parecido com versão original)
         setTimeout(() => {
-          window.location.href = '/carrinho/FinalizarCompra.html';
+          // navegar para a rota de finalizar compra
+          navigate('/finalizar-compra');
         }, 1500);
       } else {
         setMessage({ type: 'error', text: 'Erro ao cadastrar endereço. Tente novamente.' });
@@ -113,7 +116,7 @@ export default function CadastroEndereco() {
 
   return (
     <div className="cadastro-container">
-      <button type="button" className="btn-voltar" onClick={() => window.history.back()} title="Voltar">
+  <button type="button" className="btn-voltar" onClick={() => navigate(-1)} title="Voltar">
             <i className="bi bi-arrow-left-circle"></i>
           </button>
 

@@ -434,7 +434,7 @@
 }
 
 .btn-finalizar:hover {
-	background: var(--rosa, #F29DC3);
+	background:#297a44e5;
 	color: #fff;
 }
 

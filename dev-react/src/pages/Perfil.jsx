@@ -33,7 +33,7 @@ export default function Perfil() {
   };
 
   return (
-    <main>
+  <main data-scroll-container>
             <Header showOffcanvas={true} />
       <section className="perfil-section">
         <div className="foto-container">

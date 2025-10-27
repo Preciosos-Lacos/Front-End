@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import '../styles/homeShortcut.css';
 import '../styles/CadastroUsuario.css';
 import logo from '../assets/logo_preciosos_lacos.png';
 import { formatCPF } from '../utils/regexCPF';
 import { formatTelefone } from '../utils/regexTelefone';
 
 export default function CadastroUsuario() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     nome: '',
     telefone: '',
@@ -66,8 +68,8 @@ export default function CadastroUsuario() {
       }
 
       const data = await response.json();
-      alert(`Usuário cadastrado com sucesso! ID: ${data.id}`);
-      //  window.location.href = "/login";
+      alert(`Usuário cadastrado com sucesso!`);
+      navigate('/login');
     } catch (err) {
       setErrorMessage(err.message);
       console.error("Erro no Cadastro:", err);
@@ -75,7 +77,10 @@ export default function CadastroUsuario() {
   };
 
   return (
-    <main className="cadastro-main">
+    <main data-scroll-container className="cadastro-main">
+      <Link to="/home" aria-label="Ir para a página inicial" className="home-shortcut">
+        <i className="bi bi-house-door"></i>
+      </Link>
       <section className="cadastro-section">
         <div className="logo-cadastro">
           <img src={logo} alt="Logo Preciosos Laços" />

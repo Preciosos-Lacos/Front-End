@@ -5,6 +5,7 @@
   --rosa:#e78fb3;
   --rosa-hover:#e91e63;
   --verde:#4caf50;
+  --verde-hover:#173818;
 }
 
 .cart-page{
@@ -212,8 +213,12 @@
     border: none;
     padding: 12px 0;
     border-radius: 24px;
-    cursor: default; /* estático */
+    cursor: pointer;
     width: 100%;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    transition: background 160ms ease, color 160ms ease, transform 120ms ease;
   }
   .btn-finalize{
     background: var(--verde);
@@ -222,7 +227,30 @@
     border: none;
     padding: 12px 0;
     border-radius: 24px;
-    cursor: default; /* estático */
+    cursor: pointer;
     width: 100%;
-    }
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    transition: background 160ms ease, transform 120ms ease;
+  }
+
+  /* Remover estilo padrão de <a> quando usado como botão */
+  .action-buttons a.btn-continue,
+  .action-buttons a.btn-finalize {
+    text-decoration: none; /* remove underline */
+    color: inherit;       /* herda a cor do botão */
+    display: inline-block;
+  }
+
+  .action-buttons a.btn-continue:hover{ 
+    background: var(--rosa-hover);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+  .action-buttons a.btn-finalize:hover{
+    background: var(--verde-hover);
+    color: #fff;
+    transform: translateY(-2px);
+  }
 }

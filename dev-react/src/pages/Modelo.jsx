@@ -4,7 +4,7 @@ import '../styles/Modelo.css';
 
 // Mock de modelos (poderá ser substituído por fetch futuramente)
 const modelosIniciais = [
-	{ id: '1', nome: 'Laço Gravatinha', valor: 6.0, imagem: '/src/assets/laco_bolinhas.png' },
+	{ id: '1', nome: 'Laço Gravatinha', valor: 6.0, imagem: '/src/assets/laco_bolinha.png' },
 	{ id: '2', nome: 'Laço Jujuba', valor: 6.0, imagem: '/src/assets/laco-pink.webp' },
 	{ id: '3', nome: 'Laço Ursinhos Carinhosos', valor: 6.0, imagem: '/src/assets/laco-barbie.webp' },
 	{ id: '4', nome: 'Laço Girlie Shine', valor: 6.0, imagem: '/src/assets/laco-azul.webp' },

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/esqueciSenha.css';
 import logo from '../assets/logo_preciosos_lacos.png';
 
 export default function EsqueciSenha() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -34,7 +35,7 @@ export default function EsqueciSenha() {
           });
           if (updateResponse.ok) {
             alert('Senha redefinida com sucesso! Faça login com sua nova senha.');
-            window.location.href = '/login';
+            navigate('/login');
           } else {
             alert('Erro ao atualizar a senha. Tente novamente.');
           }

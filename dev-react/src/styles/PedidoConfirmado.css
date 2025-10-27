@@ -119,7 +119,7 @@
     font-size: 0.8rem;
 }
 
-.pedido-confirmado-page #home {
+.pedido-confirmado-page .home {
     margin-top: 1rem;
     margin-bottom: 1rem;
     border: 1.5px solid var(--rosa);

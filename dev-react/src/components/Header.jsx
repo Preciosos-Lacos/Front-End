@@ -9,35 +9,36 @@ const Header = ({ showOffcanvas = true }) => {
         <Link to="/catalogo" className="app-brand"> 
           <img src="/src/assets/logo_preciosos_lacos.png" alt="Preciosos Laços" />
         </Link>
-        <ul className="app-iconbar">
-          <li>
-            <Link to="/perfil">
-              <i className="bi bi-person-fill"></i>
-            </Link>
-          </li>
-          <li>
-            <Link to="/compras">
-              <i className="bi bi-bag"></i>
-            </Link>
-          </li>
-          <li>
-            <Link to="/favorito">
-              <i className="bi bi-heart"></i>
-            </Link>
-          </li>
-          <li>
-            <Link to="/carrinho">
-              <i className="bi bi-cart"></i>
-            </Link>
-          </li>
-        </ul>
+
+        {/* Desktop header: text labels (visible on desktop) */}
+        <nav className="header-desktop">
+          <ul className="desktop-nav">
+            <li><Link to="/catalogo">Catálogo</Link></li>
+            <li><Link to="/perfil">Perfil</Link></li>
+            <li><Link to="/minhas-compras">Compras</Link></li>
+            <li><Link to="/favoritos">Favoritos</Link></li>
+            <li><Link to="/carrinho">Carrinho</Link></li>
+          </ul>
+        </nav>
+
+        {/* Mobile/Tablet header: icons (visible on small screens) */}
+        <nav className="header-mobile">
+          <ul className="mobile-iconbar">
+            <li><Link to="/catalogo"><i className="bi bi-grid"></i></Link></li>
+            <li><Link to="/perfil"><i className="bi bi-person-fill"></i></Link></li>
+            <li><Link to="/minhas-compras"><i className="bi bi-bag"></i></Link></li>
+            <li><Link to="/favoritos"><i className="bi bi-heart"></i></Link></li>
+            <li><Link to="/carrinho"><i className="bi bi-cart"></i></Link></li>
+          </ul>
+        </nav>
+
         <div className="app-hamburguer-container">
           {showOffcanvas && (
             <button 
               className="app-hamburguer" 
               type="button" 
               data-bs-toggle="offcanvas" 
-              data-bs-target="/offcanvasMenu"
+              data-bs-target="#offcanvasMenu"
             >
               <i className="bi bi-list"></i>
             </button>
@@ -59,12 +60,12 @@ const Header = ({ showOffcanvas = true }) => {
                 </Link>
               </li>
               <li>
-                <Link to="/compras">
+                <Link to="/minhas-compras">
                   <i className="bi bi-bag"></i> Minhas Compras
                 </Link>
               </li>
               <li>
-                <Link to="/favorito">
+                <Link to="/favoritos">
                   <i className="bi bi-heart"></i> Favoritos
                 </Link>
               </li>
