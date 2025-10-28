@@ -241,6 +241,27 @@
   color: #d9534f;
 }
 
+.dashboard-status-pedido {
+  font-weight: bold;
+}
+
+.dashboard-tabela td.dashboard-cancelado {
+  color: #e63946 !important; /* vermelho */
+  font-weight: bold;
+}
+
+.dashboard-tabela td.dashboard-aguardando {
+  color: #ffcc00 !important; /* amarelo */
+  font-weight: bold;
+}
+
+.dashboard-tabela td.dashboard-concluido {
+  color: #2ecc71 !important; /* verde */
+  font-weight: bold;
+}
+
+
+
 /* RESPONSIVO */
 @media (max-width: 768px) {
   .dashboard-content {

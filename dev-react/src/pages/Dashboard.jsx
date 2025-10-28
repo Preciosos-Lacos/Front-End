@@ -78,7 +78,7 @@ const Dashboard = () => {
         </header>
 
 
-<section className="dashboard-kpis">
+        <section className="dashboard-kpis">
           <div className="dashboard-card">
             Pedidos (últimas 24h)
             <strong>12</strong>
@@ -175,25 +175,28 @@ const Dashboard = () => {
                     <td>R$ {p.total.toFixed(2).replace(".", ",")}</td>
                     <td>{p.formaPagamento}</td>
                     <td
-                      className={`dashboard-status-pagamento ${
-                        p.statusPagamento === "Atrasado"
-                          ? "dashboard-atrasado"
-                          : p.statusPagamento === "Aguardando"
-                          ? "dashboard-aguardando"
-                          : "dashboard-concluido"
-                      }`}
+                      className={`dashboard-status-pagamento ${p.statusPagamento === "Atrasado" || p.statusPagamento === "Cancelado"
+                          ? "dashboard-cancelado"
+                          : p.statusPagamento === "Pendente"
+                            ? "dashboard-aguardando"
+                            : "dashboard-concluido"
+                        }`}
                     >
                       {p.statusPagamento}
                     </td>
                     <td
-                      className={`dashboard-status-pedido ${
-                        p.statusPedido === "Concluído"
-                          ? "dashboard-concluido"
-                          : "dashboard-iniciado"
-                      }`}
+                      className={`dashboard-status-pedido ${p.statusPedido === "Cancelado"
+                          ? "dashboard-cancelado"
+                          : p.statusPedido === "Em andamento"
+                            ? "dashboard-aguardando"
+                            : p.statusPedido === "Entregue"
+                              ? "dashboard-concluido"
+                              : ""
+                        }`}
                     >
                       {p.statusPedido}
                     </td>
+
                   </tr>
                 ))
               ) : (
