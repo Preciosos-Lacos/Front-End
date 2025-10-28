@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import "../styles/Dashboard.css";
 
@@ -17,7 +17,27 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 
 const Dashboard = () => {
   const chartRef = useRef(null);
+  const [pedidos, setPedidos] = useState([]);
 
+  useEffect(() => {
+    // === Função para buscar pedidos do backend ===
+    const fetchPedidos = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/dashboard");
+        if (!response.ok) {
+          throw new Error("Erro ao buscar pedidos");
+        }
+        const data = await response.json();
+        setPedidos(data);
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    };
+
+    fetchPedidos();
+  }, []);
+
+  // === Gráfico (permanece igual) ===
   useEffect(() => {
     const ctx = chartRef.current.getContext("2d");
 
@@ -58,7 +78,7 @@ const Dashboard = () => {
         </header>
 
 
-        <section className="dashboard-kpis">
+<section className="dashboard-kpis">
           <div className="dashboard-card">
             Pedidos (últimas 24h)
             <strong>12</strong>
@@ -146,58 +166,41 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="dashboard-status-atrasado">
-                <td>Paloma Souza</td>
-                <td>11 94115-9057</td>
-                <td>23 Mar 2025</td>
-                <td>R$ 23,00</td>
-                <td>Débito</td>
-                <td className="dashboard-status-pagamento dashboard-atrasado">
-                  Atrasado
-                </td>
-                <td className="dashboard-status-pedido dashboard-concluido">
-                  Concluído
-                </td>
-              </tr>
-              <tr>
-                <td>Rodrigo Simões</td>
-                <td>11 94121-9217</td>
-                <td>24 Mar 2025</td>
-                <td>R$ 27,00</td>
-                <td>Débito</td>
-                <td className="dashboard-status-pagamento dashboard-aguardando">
-                  Aguardando
-                </td>
-                <td className="dashboard-status-pedido dashboard-iniciado">
-                  Iniciado
-                </td>
-              </tr>
-              <tr>
-                <td>Cleber Santana</td>
-                <td>11 92143-9232</td>
-                <td>23 Mar 2025</td>
-                <td>R$ 23,00</td>
-                <td>Crédito</td>
-                <td className="dashboard-status-pagamento dashboard-aguardando">
-                  Aguardando
-                </td>
-                <td className="dashboard-status-pedido dashboard-concluido">
-                  Concluído
-                </td>
-              </tr>
-              <tr>
-                <td>Ricardo Silva</td>
-                <td>11 91221-9232</td>
-                <td>23 Mar 2025</td>
-                <td>R$ 23,00</td>
-                <td>Crédito</td>
-                <td className="dashboard-status-pagamento dashboard-concluido">
-                  Concluído
-                </td>
-                <td className="dashboard-status-pedido dashboard-concluido">
-                  Concluído
-                </td>
-              </tr>
+              {pedidos.length > 0 ? (
+                pedidos.map((p, index) => (
+                  <tr key={index}>
+                    <td>{p.nomeCliente}</td>
+                    <td>{p.telefone}</td>
+                    <td>{p.dataPedido}</td>
+                    <td>R$ {p.total.toFixed(2).replace(".", ",")}</td>
+                    <td>{p.formaPagamento}</td>
+                    <td
+                      className={`dashboard-status-pagamento ${
+                        p.statusPagamento === "Atrasado"
+                          ? "dashboard-atrasado"
+                          : p.statusPagamento === "Aguardando"
+                          ? "dashboard-aguardando"
+                          : "dashboard-concluido"
+                      }`}
+                    >
+                      {p.statusPagamento}
+                    </td>
+                    <td
+                      className={`dashboard-status-pedido ${
+                        p.statusPedido === "Concluído"
+                          ? "dashboard-concluido"
+                          : "dashboard-iniciado"
+                      }`}
+                    >
+                      {p.statusPedido}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">Carregando pedidos...</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </section>
