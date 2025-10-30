@@ -69,6 +69,22 @@
   width: 100%;
 }
 
+/* Active / selected state for nav links */
+.sidebar ul li a.active {
+  background: var(--rosa);
+  color: #fff;
+}
+
+.sidebar ul li.active {
+  background: var(--rosa);
+  color: #fff;
+}
+.sidebar ul li.active i,
+.sidebar ul li.active span,
+.sidebar ul li.active a{
+  color: #fff;
+}
+
 .sidebar ul li i {
   font-size: 20px;
   margin-right: 15px;

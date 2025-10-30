@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../styles/Sidebar.css';
 import logo from '../assets/logo_preciosos_lacos.png';
 
@@ -33,6 +33,18 @@ const Sidebar = () => {
     }
   };
 
+  const location = useLocation();
+
+  const isActivePath = (path) => {
+    try {
+      const current = location.pathname || '/';
+      // consider exact match or startsWith for nested routes
+      return current === path || current.startsWith(path + '/') ;
+    } catch (e) {
+      return false;
+    }
+  };
+
   return (
     <>
       <button 
@@ -49,46 +61,46 @@ const Sidebar = () => {
       >
         <img src={logo} alt="Logo" />
         <ul>
-          <li onClick={handleItemClick}>
+          <li onClick={handleItemClick} className={isActivePath('/pedidos') ? 'active' : ''}>
             <Link to="/pedidos">
               <i className="bi bi-box"></i>
               <span>Pedidos</span>
             </Link>
           </li>
-          <li onClick={handleItemClick}>
+          <li onClick={handleItemClick} className={isActivePath('/dashboard') ? 'active' : ''}>
             <Link to="/dashboard">
               <i className="bi bi-bar-chart"></i>
               <span>Dashboard</span>
             </Link>
           </li>
-          <li onClick={handleItemClick}>
-            <Link to="/cadastro-modelo">
-              <i className="bi bi-tag"></i>
-              <span>Modelos</span>
-            </Link>
-          </li>
-          <li onClick={handleItemClick}>
+          <li onClick={handleItemClick} className={isActivePath('/cadastro-cor') ? 'active' : ''}>
             <Link to="/cadastro-cor">
               <i className="bi bi-palette"></i>
               <span>Cores</span>
             </Link>
           </li>
-          {/* <li onClick={handleItemClick}>
-            <Link to="/colecoes">
-              <i className="bi bi-archive"></i>
-              <span>Coleções</span>
-            </Link>
-          </li> */}
-          <li onClick={handleItemClick}>
+          <li onClick={handleItemClick} className={isActivePath('/cadastro-tipo-lacos') ? 'active' : ''}>
             <Link to="/cadastro-tipo-lacos">
               <i className="bi bi-scissors"></i>
               <span>Tipos de Laço</span>
             </Link>
           </li>
+          <li onClick={handleItemClick} className={isActivePath('/cadastro-modelo') ? 'active' : ''}>
+            <Link to="/cadastro-modelo">
+              <i className="bi bi-tag"></i>
+              <span>Modelos</span>
+            </Link>
+          </li>
+          <li onClick={handleItemClick} className={isActivePath('/colecoes') ? 'active' : ''}>
+            <Link to="/colecoes">
+              <i className="bi bi-archive"></i>
+              <span>Coleções</span>
+            </Link>
+          </li>
         </ul>
         <ul>
-          <li onClick={handleItemClick}>
-            <Link to="/home">
+          <li onClick={handleItemClick} className={isActivePath('/') ? 'active' : ''}>
+            <Link to="/">
               <i className="bi bi-box-arrow-right"></i>
               <span>Sair</span>
             </Link>

@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/Produto.css';
 import Header from '../components/Header.jsx';
 import { Link } from 'react-router-dom';
 import imgPrincipal from '../assets/laco-neon-verde.webp';
 
 export default function Produto() {
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedColorIndex, setSelectedColorIndex] = useState(0);
+  const [favorite, setFavorite] = useState(false);
+
+  const toggleTag = (tag) => {
+    setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  };
+
+  const selectColor = (index) => setSelectedColorIndex(index);
+
+  const toggleFavorite = () => setFavorite(f => !f);
+
   return (
     <>
       <Header />
@@ -21,28 +33,50 @@ export default function Produto() {
 
             <div className="produto-top">
               <span className="produto-preco">R$44,97</span>
-              <Link to="/carrinho" className="btn-add-cart">Adicionar ao carrinho</Link>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <Link to="/carrinho" className="btn-add-cart">Adicionar ao carrinho</Link>
+                <button
+                  type="button"
+                  className={`btn-fav ${favorite ? 'active' : ''}`}
+                  aria-pressed={favorite}
+                  onClick={toggleFavorite}
+                  title={favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+                >
+                  <i className={`bi ${favorite ? 'bi-heart-fill' : 'bi-heart'}`}></i>
+                </button>
+              </div>
             </div>
 
             <div className="produto-bloco">
               <h3 className="produto-subtitulo">Acabamento</h3>
               <div className="acabamento-tags">
-                <button className="tag">Meia de seda</button>
-                <button className="tag">Tiara</button>
-                <button className="tag">Bico de pato</button>
-                <button className="tag">Xuxa</button>
+                {['Meia de seda','Tiara','Bico de pato','Xuxa'].map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`tag ${selectedTags.includes(t) ? 'selected' : ''}`}
+                    onClick={() => toggleTag(t)}
+                    aria-pressed={selectedTags.includes(t)}
+                  >
+                    {t}
+                  </button>
+                ))}
               </div>
             </div>
 
             <div className="produto-bloco">
               <h3 className="produto-subtitulo">Cor</h3>
               <div className="cores">
-                <span className="cor selecionada" style={{ background: '#39D353' }} />
-                <span className="cor" style={{ background: '#FF5A5F' }} />
-                <span className="cor" style={{ background: '#FFD400' }} />
-                <span className="cor" style={{ background: '#00C2FF' }} />
-                <span className="cor" style={{ background: '#FFFFFF' }} />
-                <span className="cor" style={{ background: '#F29DC3' }} />
+                {['#39D353','#FF5A5F','#FFD400','#00C2FF','#FFFFFF','#F29DC3'].map((c, idx) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className={`cor ${selectedColorIndex === idx ? 'selecionada' : ''}`}
+                    style={{ background: c }}
+                    onClick={() => selectColor(idx)}
+                    aria-label={`Selecionar cor ${c}`}
+                  />
+                ))}
               </div>
             </div>
 

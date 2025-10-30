@@ -194,11 +194,11 @@
 	cursor: pointer;
 	font-size: 16px;
 	color: #222;
-	transition: transform .2s, color .2s;
+	/* transition: transform .2s, color .2s; */
 }
 
 .modelo-acoes i:hover {
-	transform: scale(1.1);
+	/* transform: scale(1.1); */
 	color: #5b5b5b;
 }
 

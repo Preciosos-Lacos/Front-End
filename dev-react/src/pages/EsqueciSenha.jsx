@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/esqueciSenha.css';
 import logo from '../assets/logo_preciosos_lacos.png';
 
 export default function EsqueciSenha() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -49,6 +50,17 @@ export default function EsqueciSenha() {
     }
   };
 
+  // If an email is passed via query param (e.g. /esqueciSenha?email=foo@example.com), prefill it
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      const e = params.get('email');
+      if (e) setEmail(e);
+    } catch (err) {
+      // ignore
+    }
+  }, [location.search]);
+
   return (
     <div className="esqueci-senha-bg">
       {/* Header removido para usar o header global, igual à tela de login */}
@@ -69,7 +81,7 @@ export default function EsqueciSenha() {
               value={email}
               onChange={e => setEmail(e.target.value)}
             />
-            <div className="input-group mt-3">
+            <div className="input-group">
               <input
                 type={showNovaSenha ? 'text' : 'password'}
                 id="novaSenha"
@@ -82,7 +94,7 @@ export default function EsqueciSenha() {
                 <i className={`bi ${showNovaSenha ? 'bi-eye-slash' : 'bi-eye'}`}></i>
               </span>
             </div>
-            <div className="input-group mt-2">
+            <div className="input-group">
               <input
                 type={showConfirmarSenha ? 'text' : 'password'}
                 id="confirmarSenha"

@@ -6,7 +6,7 @@ const Header = ({ showOffcanvas = true }) => {
   return (
     <header className="app-header">
       <div className="app-navbar">
-        <Link to="/catalogo" className="app-brand"> 
+        <Link to="/" className="app-brand"> 
           <img src="/src/assets/logo_preciosos_lacos.png" alt="Preciosos Laços" />
         </Link>
 
@@ -78,7 +78,7 @@ const Header = ({ showOffcanvas = true }) => {
             <hr />
             <ul className="list-unstyled">
               <li>
-                <Link to="/home">
+                <Link to="/">
                   <i className="bi bi-house-door"></i> Home
                 </Link>
               </li>

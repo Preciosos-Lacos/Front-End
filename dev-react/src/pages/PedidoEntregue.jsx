@@ -1,52 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header.jsx';
 import Modal from '../components/Modal';
 import '../styles/PedidoEntregue.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const PedidoEntregue = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const pedidoId = 2;
+
+  const [pedido, setPedido] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState(null);
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchPedido = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('Usuário não autenticado');
+
+        const response = await fetch(`http://localhost:8080/pedidos/resumo/${pedidoId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) throw new Error('Erro ao buscar o pedido');
+        const data = await response.json();
+        setPedido(data);
+      } catch (err) {
+        setErro(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPedido();
+  }, [pedidoId]);
 
   const comprarNovamente = (e) => {
-    // se chamado como handler, previne comportamento padrão
-    if (e && e.preventDefault) e.preventDefault();
+    e.preventDefault();
     navigate('/carrinho');
   };
 
-  const [helpOpen, setHelpOpen] = useState(false);
-
   const precisoDeAjuda = (e) => {
-    if (e && e.preventDefault) e.preventDefault();
+    e.preventDefault();
     setHelpOpen(true);
   };
+
+  if (loading) {
+    return (
+      <div className="pedido-entregue-page">
+        <Header showOffcanvas={true} />
+        <main>
+          <div className="pedido-section container">
+            <h2 className="titulo">Carregando pedido...</h2>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (erro || !pedido) {
+    return (
+      <div className="pedido-entregue-page">
+        <Header showOffcanvas={true} />
+        <main>
+          <div className="pedido-section container">
+            <h2 className="titulo">Erro: {erro || 'Pedido não encontrado'}</h2>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="pedido-entregue-page">
       <Header showOffcanvas={true} />
 
-  <main data-scroll-container>
+      <main>
         <div className="pedido-section container">
           <h2 className="titulo">Detalhe da Compra</h2>
 
           <div className="card pedido">
             <h4>Encomenda</h4>
-            <p><strong>Quantidade:</strong> 1</p>
-            <span className="status entregue">Entregue em 12 de Setembro</span>
-            <p><strong>Endereço:</strong> Rua Cosenza 26, Utinga, Santo André - SP</p>
+            <p><strong>ID do Pedido:</strong> {pedido.id}</p>
+            <span className="status entregue">Entregue com sucesso!</span>
           </div>
 
           <div className="card resumo">
             <h4>Resumo da Compra</h4>
-            <p><b>Produtos:</b></p>
-            <ul>
-              <li>Laço Bolinha - <span>R$ 14,99</span></li>
-              <li>Laço Vermelho - <span>R$ 14,99</span></li>
-              <li>Laço Azul - <span>R$ 14,99</span></li>
-            </ul>
-            <p><b>Subtotal:</b> R$ 44,97</p>
-            <p><b>Frete:</b> R$ 15,00</p>
-            <p className="total"><b>Total:</b> R$ 59,97</p>
-            <p><b>Forma de pagamento:</b> Pix</p>
+            <p><b>Total:</b> {pedido.total}</p>
+            <p><b>Forma de pagamento:</b> {pedido.formaPagamento}</p>
+            <p><b>Forma de envio:</b> {pedido.formaEnvio}</p>
+            <p><b>CEP de entrega:</b> {pedido.cepEntrega}</p>
           </div>
 
           <div className="botoes">
@@ -57,6 +107,7 @@ const PedidoEntregue = () => {
               Preciso de ajuda
             </Link>
           </div>
+
           <Modal
             isOpen={helpOpen}
             onClose={() => setHelpOpen(false)}
@@ -66,7 +117,12 @@ const PedidoEntregue = () => {
                 <h3>Precisa de ajuda?</h3>
                 <p>Entre em contato pelo WhatsApp ou e-mail para suporte!</p>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
-                  <button onClick={() => setHelpOpen(false)} style={{ padding: '8px 12px', borderRadius: 6 }}>Fechar</button>
+                  <button
+                    onClick={() => setHelpOpen(false)}
+                    style={{ padding: '8px 12px', borderRadius: 6 }}
+                  >
+                    Fechar
+                  </button>
                 </div>
               </div>
             )}

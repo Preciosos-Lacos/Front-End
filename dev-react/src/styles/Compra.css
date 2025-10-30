@@ -422,8 +422,8 @@
 
 .btn-finalizar {
 	width: 100%;
-	background: #3bbf68;
-	color: #fff;
+	background: var(--verde);
+    color: var(--texto);
 	border: none;
 	border-radius: 8px;
 	padding: 12px 0;
@@ -434,7 +434,7 @@
 }
 
 .btn-finalizar:hover {
-	background:#297a44e5;
+	background:#173818;
 	color: #fff;
 }
 
