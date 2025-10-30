@@ -32,7 +32,7 @@ export default function Produto() {
             <h1 className="produto-titulo">Laço Preciosos Neon</h1>
 
             <div className="produto-top">
-              <span className="produto-preco">R$44,97</span>
+              <span className="produto-preco">R$16,70</span>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 <Link to="/carrinho" className="btn-add-cart">Adicionar ao carrinho</Link>
                 <button

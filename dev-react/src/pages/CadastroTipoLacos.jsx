@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import BarraPesquisa from "../components/BarraPesquisa";
-import Modal from "../components/Modal"; // Você pode criar um Modal genérico ou adaptar do CadastroCor
+import ModalTipoLaco from "../components/ModalTipoLaco";
 import "../styles/CadastroTipoLaco.css";
 
 import bicoDePato from "../assets/bico de pato.svg";
@@ -158,7 +158,7 @@ export default function CadastroTipoLacos() {
         </div>
 
         {modalState.isOpen && (
-          <Modal
+          <ModalTipoLaco
             isOpen={modalState.isOpen}
             onClose={closeModal}
             type={modalState.type}

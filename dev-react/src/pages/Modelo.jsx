@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import BarraPesquisa from '../components/BarraPesquisa';
-import Modal from '../components/Modal';
+import ModalModelo from '../components/ModalModelo';
 import '../styles/Modelo.css';
 
 // Mock de modelos (poderá ser substituído por fetch futuramente)
@@ -21,38 +21,23 @@ const modelosIniciais = [
 const Modelo = () => {
 	const [modelos, setModelos] = useState(modelosIniciais);
 	const [pesquisa, setPesquisa] = useState('');
-	const [modalState, setModalState] = useState({ isOpen: false, type: null, modeloData: null });
-	const [modeloParaExcluir, setModeloParaExcluir] = useState(null);
+ const [modalState, setModalState] = useState({ isOpen: false, type: null, modeloData: null });
 
 	const filtrados = modelos.filter(m => m.nome.toLowerCase().includes(pesquisa.toLowerCase()));
 
-	const abrirModalExcluir = (modelo) => {
-		setModeloParaExcluir(modelo);
-		setModalState({ isOpen: true, type: 'delete', modeloData: modelo });
-	};
+	 const abrirModal = (type, modelo = null) => {
+		 setModalState({ isOpen: true, type, modeloData: modelo });
+	 };
 
-	const fecharModal = () => {
-		setModeloParaExcluir(null);
-		setModalState({ isOpen: false, type: null, modeloData: null });
-	};
+	 const fecharModal = () => setModalState({ isOpen: false, type: null, modeloData: null });
 
-	const confirmarExclusao = () => {
-		if (modeloParaExcluir) {
-			setModelos(prev => prev.filter(m => m.id !== modeloParaExcluir.id));
-		}
-		fecharModal();
-	};
+	 const confirmarExclusao = () => {
+		 const alvo = modalState.modeloData;
+		 if (alvo) setModelos(prev => prev.filter(m => m.id !== alvo.id));
+		 fecharModal();
+	 };
 
-	const handleCadastrar = () => {
-		// simple local create (keeps current behavior). Opens create modal could be implemented later.
-		const novo = {
-			id: String(Date.now()),
-			nome: 'Novo Modelo',
-			valor: 6.0,
-			imagem: '/src/assets/laco-personalizado.jpg'
-		};
-		setModelos(prev => [novo, ...prev]);
-	};
+	 const handleCadastrar = () => abrirModal('create', null);
 
 	return (
 		<div className="modelo-dashboard">
@@ -76,11 +61,11 @@ const Modelo = () => {
 							<div className="modelo-footer">
 								<p className="modelo-valor">Valor: R$ {mod.valor.toFixed(2)}</p>
 								<div className="modelo-acoes">
-									<i className="bi bi-pencil" title="Editar"></i>
+									<i className="bi bi-pencil" title="Editar" onClick={() => abrirModal('edit', mod)}></i>
 									<i
 										className="bi bi-trash"
 										title="Excluir"
-										onClick={() => abrirModalExcluir(mod)}
+										onClick={() => abrirModal('delete', mod)}
 									></i>
 								</div>
 							</div>
@@ -92,13 +77,22 @@ const Modelo = () => {
 				</div>
 			</div>
 
-			<Modal
-				isOpen={modalState.isOpen}
-				onClose={fecharModal}
-				type={modalState.type}
-				colorName={modeloParaExcluir?.nome}
-				onSubmit={confirmarExclusao}
-			/>
+						<ModalModelo
+								isOpen={modalState.isOpen}
+								onClose={fecharModal}
+								type={modalState.type}
+								modeloData={modalState.modeloData}
+								onSubmit={(form) => {
+									if (modalState.type === 'create') {
+										const novo = { id: String(Date.now()), nome: form.nome || 'Novo Modelo', valor: Number(form.valor) || 6.0, imagem: form.imagem || '/src/assets/laco-personalizado.jpg' };
+										setModelos(prev => [novo, ...prev]);
+									} else if (modalState.type === 'edit') {
+										setModelos(prev => prev.map(m => m.id === modalState.modeloData.id ? { ...m, ...form } : m));
+									} else if (modalState.type === 'delete') {
+										confirmarExclusao();
+									}
+								}}
+						/>
 		</div>
 	);
 }

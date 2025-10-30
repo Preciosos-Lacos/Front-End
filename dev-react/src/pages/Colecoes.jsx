@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import BarraPesquisa from '../components/BarraPesquisa';
-import Modal from '../components/Modal';
+import ModalColecoes from '../components/ModalColecoes';
 import CardColecao from '../components/CardColecao';
 import '../styles/Colecoes.css';
 
@@ -85,11 +85,11 @@ export default function Colecoes() {
       </div>
 
       {modalState.isOpen && (
-        <Modal
+        <ModalColecoes
           isOpen={modalState.isOpen}
           onClose={closeModal}
           type={modalState.type}
-          tipoData={modalState.data}
+          data={modalState.data}
           onSubmit={handleModalSubmit}
         />
       )}
