@@ -101,7 +101,7 @@ export default function Favoritos() {
                             });
                             if (rf.ok) {
                                 const data = await rf.json();
-                                if (data?.foto) fotosMap[m.idModelo] = `data:image/jpeg;base64,${data.foto}`;
+                                if (data?.foto) fotosMap[m.idModelo] = `data:image/jpeg;base64,${data.foto}`; // faz o mapeamento para encontrar a foto do modelo correto
                             }
                         } catch {}
                     })
