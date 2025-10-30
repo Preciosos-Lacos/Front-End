@@ -172,7 +172,7 @@ const Dashboard = () => {
         </div>
 
         <section className="dashboard-tabela">
-          <h2>Pedidos pendentes</h2>
+          <h2>Pedidos</h2>
           <table>
             <thead>
               <tr>

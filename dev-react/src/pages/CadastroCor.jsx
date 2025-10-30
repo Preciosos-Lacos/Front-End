@@ -17,44 +17,41 @@ const CadastroCor = () => {
 
   const API_URL = "http://localhost:8080/caracteristica-detalhe/cor";
 
-  // Normaliza os campos vindos do backend (Hibernate/Spring) para o formato usado no frontend
-  // Backend exemplo: { id, nomeDaCor, hexaDecimal, preco, imagem, listaModelos: [{...}] }
-  // Frontend esperado: { id, nome, cor, valor, imagem, modelos: string[] }
+
   const normalizeColor = (raw) => {
-    if (!raw) return null;
-    // Pega apenas o id do banco, nunca fallback
-    const id = raw.id ?? raw.idCaracteristicaDetalhe ?? raw.id_caracteristica_detalhe ?? raw.id_caracteristica ?? raw.idCor;
-    const nome = raw.nomeDaCor ?? raw.nome ?? raw.descricao ?? '';
-    const cor = raw.cor ?? raw.hexaDecimal ?? raw.hexa_decimal ?? '';
-    const valor = typeof raw.valor === 'number'
-      ? raw.valor
-      : (typeof raw.preco === 'number'
-          ? raw.preco
-          : parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$','').replace('.','').replace(',','.')) || 0);
-    const imagem = raw.imagem ?? null;
-    const modelosRaw = Array.isArray(raw.listaModelos) ? raw.listaModelos : (Array.isArray(raw.modelos) ? raw.modelos : []);
-    const modelos = modelosRaw
-      .map((m) => {
-        if (typeof m === 'string') return m;
-        if (!m || typeof m !== 'object') return null;
+  if (!raw) return null;
 
-        if (m.modelo) {
-          if (typeof m.modelo === 'string') return m.modelo;
-          if (typeof m.modelo === 'object') {
-            const nested = m.modelo.nome ?? m.modelo.descricao ?? Object.values(m.modelo).find(v => typeof v === 'string' && v.trim().length > 0) ?? null;
-            if (nested) return nested;
-          }
-        }
+  const id = raw.id ?? raw.idCaracteristicaDetalhe ?? raw.id_caracteristica_detalhe ?? raw.id_caracteristica ?? raw.idCor;
+  const nome = raw.nomeDaCor ?? raw.nome ?? raw.descricao ?? '';
+  const cor = raw.cor ?? raw.hexaDecimal ?? raw.hexa_decimal ?? '';
 
-        const direto = m.nome ?? m.nomeDoModelo ?? m.descricao ?? m.titulo ?? m.label ?? m.nomeCor ?? m.modeloNome ?? null;
-        if (direto) return direto;
+  const valor = typeof raw.valor === 'number'
+    ? raw.valor
+    : (typeof raw.preco === 'number'
+        ? raw.preco
+        : parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$', '').replace('.', '').replace(',', '.')) || 0);
 
-        const anyString = Object.values(m).find(v => typeof v === 'string' && v.trim().length > 0) ?? null;
-        return anyString;
-      })
-      .filter((v) => typeof v === 'string' && v.trim().length > 0);
-    return { id, nome, cor, valor, imagem, modelos };
-  };
+  const imagem = raw.imagem ?? null;
+
+  const modelosRaw = Array.isArray(raw.listaModelos)
+    ? raw.listaModelos
+    : (Array.isArray(raw.modelos) ? raw.modelos : []);
+
+  const modelos = modelosRaw
+    .map((m) => {
+      if (!m) return null;
+
+      if (m.modelo && typeof m.modelo === 'object') {
+        return m.modelo.nomeModelo ?? null;
+      }
+
+      return m.nomeModelo ?? null;
+    })
+    .filter((v) => typeof v === 'string' && v.trim().length > 0);
+
+  return { id, nome, cor, valor, imagem, modelos };
+};
+
 
   const showAlert = (tipo, mensagem) => {
     let bgColor = "#f0f0f0";
