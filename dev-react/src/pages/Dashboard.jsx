@@ -18,6 +18,7 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 const Dashboard = () => {
   const chartRef = useRef(null);
   const [pedidos, setPedidos] = useState([]);
+  const [entregasDoDia, setEntregasDoDia] = useState([]);
 
   useEffect(() => {
     // === Função para buscar pedidos do backend ===
@@ -35,6 +36,25 @@ const Dashboard = () => {
     };
 
     fetchPedidos();
+  }, []);
+
+  useEffect(() => {
+    // === Função para buscar entregas do dia do backend ===
+    const fetchEntregasDoDia = async () => {
+
+      try {
+        const response = await fetch("http://localhost:8080/dashboard/entregasDoDia");
+        if (!response.ok) {
+          throw new Error("Erro ao buscar entregas do dia");
+        }
+        const data = await response.json();
+        setEntregasDoDia(data);
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    };
+
+    fetchEntregasDoDia();
   }, []);
 
   // === Gráfico (permanece igual) ===
@@ -176,22 +196,22 @@ const Dashboard = () => {
                     <td>{p.formaPagamento}</td>
                     <td
                       className={`dashboard-status-pagamento ${p.statusPagamento === "Atrasado" || p.statusPagamento === "Cancelado"
-                          ? "dashboard-cancelado"
-                          : p.statusPagamento === "Pendente"
-                            ? "dashboard-aguardando"
-                            : "dashboard-concluido"
+                        ? "dashboard-cancelado"
+                        : p.statusPagamento === "Pendente"
+                          ? "dashboard-aguardando"
+                          : "dashboard-concluido"
                         }`}
                     >
                       {p.statusPagamento}
                     </td>
                     <td
                       className={`dashboard-status-pedido ${p.statusPedido === "Cancelado"
-                          ? "dashboard-cancelado"
-                          : p.statusPedido === "Em andamento"
-                            ? "dashboard-aguardando"
-                            : p.statusPedido === "Entregue"
-                              ? "dashboard-concluido"
-                              : ""
+                        ? "dashboard-cancelado"
+                        : p.statusPedido === "Em andamento"
+                          ? "dashboard-aguardando"
+                          : p.statusPedido === "Entregue"
+                            ? "dashboard-concluido"
+                            : ""
                         }`}
                     >
                       {p.statusPedido}
@@ -220,21 +240,37 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>#1024</td>
-                <td>Ana Souza</td>
-                <td style={{ color: "rgb(223, 36, 36)" }}>Atrasado</td>
-                <td>08/09/2025</td>
-              </tr>
-              <tr>
-                <td>#1023</td>
-                <td>Maria Oliveira</td>
-                <td>Em trânsito</td>
-                <td>09/09/2025</td>
-              </tr>
+              {entregasDoDia.length > 0 ? (
+                entregasDoDia.map((entrega, index) => (
+                  <tr key={index}>
+                    <td>#{entrega.id_pedido}</td>
+                    <td>{entrega.cliente}</td>
+                    <td
+                      className={`dashboard-status-pedido ${entrega.status?.toLowerCase().includes("Cancelado")
+                          ? "dashboard-cancelado"
+                          : entrega.status?.toLowerCase().includes("em trânsito")
+                            ? "dashboard-aguardando"
+                            : "dashboard-concluido"
+                        }`}
+                    >
+                      {entrega.status}
+                    </td>
+                    <td>
+                      {new Date(entrega.previsao_entrega).toLocaleDateString("pt-BR", {
+                        timeZone: "UTC",
+                      })}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">Carregando entregas...</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </section>
+
 
         <section className="dashboard-graficos">
           <h2>Vendas nos últimos 7 dias</h2>
