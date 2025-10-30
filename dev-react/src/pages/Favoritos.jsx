@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import '../styles/Favoritos.css';
 import Header from '../components/Header';
+import bolinhaImg from '../assets/laco-bolinha.webp';
+import neonImg from '../assets/laco-neon-verde.webp';
+import placeholderImg from '../assets/laco-personalizado.jpg';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -161,7 +164,15 @@ export default function Favoritos() {
                             {favoritos.map((m) => (
                                 <article className="fav-card" key={m.idModelo}>
                                     <div className="fav-image">
-                                        <img src={fotos[m.idModelo] || ''} alt={m.nomeModelo || 'Modelo'} />
+                                        {(() => {
+                                            // preferential mapping: if model name matches specific known names, use local asset
+                                            const name = String(m.nomeModelo || '').toLowerCase();
+                                            let mapped = null;
+                                            if (name.includes('bolinha') || name.includes('laço bolinha') || name.includes('laco bolinha')) mapped = bolinhaImg;
+                                            else if (name.includes('preciosos neon') || name.includes('preciosos-neon') || name.includes('neon')) mapped = neonImg;
+                                            const src = mapped || fotos[m.idModelo] || placeholderImg || '';
+                                            return <img src={src} alt={m.nomeModelo || 'Modelo'} />;
+                                        })()}
                                     </div>
                                     <div className="fav-info">
                                         <h3 className="fav-name">{m.nomeModelo}</h3>
