@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Modal.css';
 
 const ModalModelo = ({ isOpen, onClose, type, modeloData = null, onSubmit }) => {
-  const [form, setForm] = useState({ nome: '', descricao: '', valor: '', imagem: '' });
+  const [form, setForm] = useState({ nome: '', descricao: '', valor: '', imagem: '', imagemBase64: '' });
 
   useEffect(() => {
     if (type === 'edit' && modeloData) {
-      setForm({ nome: modeloData.nome || '', descricao: modeloData.descricao || '', valor: modeloData.valor || '', imagem: modeloData.imagem || '' });
+      setForm({ nome: modeloData.nome || '', descricao: modeloData.descricao || '', valor: modeloData.valor || '', imagem: modeloData.imagem || '', imagemBase64: '' });
     } else if (type === 'create') {
-      setForm({ nome: '', descricao: '', valor: '', imagem: '' });
+      setForm({ nome: '', descricao: '', valor: '', imagem: '', imagemBase64: '' });
     }
   }, [isOpen, type, modeloData]);
 
@@ -17,6 +17,23 @@ const ModalModelo = ({ isOpen, onClose, type, modeloData = null, onSubmit }) => 
     if (!form.nome) return alert('Preencha o nome do modelo');
     if (!form.valor) return alert('Preencha o valor do modelo');
     onSubmit(form);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setForm(prev => ({ ...prev, imagem: '', imagemBase64: '' }));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result; // data URL
+      if (typeof result === 'string') {
+        const base64 = result.split(',')[1] || '';
+        setForm(prev => ({ ...prev, imagem: file.name, imagemBase64: base64 }));
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   if (!isOpen) return null;
@@ -37,7 +54,7 @@ const ModalModelo = ({ isOpen, onClose, type, modeloData = null, onSubmit }) => 
             </div>
 
             <h3 className="titulo">Foto do Modelo:</h3>
-            <input type="file" accept="image/*" onChange={e => setForm({ ...form, imagem: e.target.files?.[0]?.name || '' })} />
+            <input type="file" accept="image/*" onChange={handleFileChange} />
 
             <button id="fecharModal" onClick={handleSubmit}>{type === 'create' ? 'Cadastrar Modelo' : 'Atualizar Modelo'}</button>
           </>
