@@ -57,36 +57,65 @@ const Dashboard = () => {
     fetchEntregasDoDia();
   }, []);
 
-  // === Gráfico (permanece igual) ===
-  useEffect(() => {
-    const ctx = chartRef.current.getContext("2d");
+   useEffect(() => {
+  const fetchVendas7Dias = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/dashboard/vendas7dias");
+      if (!response.ok) throw new Error("Erro ao buscar vendas");
+      const data = await response.json();
 
-    const chart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
-        datasets: [
-          {
-            label: "Vendas (R$)",
-            data: [120, 150, 180, 90, 200, 250, 320],
-            backgroundColor: "rgba(255, 105, 180, 0.2)",
-            borderColor: "#ff69b4",
-            borderWidth: 2,
-            fill: true,
-            tension: 0.3,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true },
+      // Ordena os dados pelo dia da semana (opcional)
+      const diasDaSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+      const vendasMap = {};
+      data.forEach(item => {
+        // Converte abreviação do backend para português se necessário
+        const dia = item.dia_semana === "Mon" ? "Seg" :
+                    item.dia_semana === "Tue" ? "Ter" :
+                    item.dia_semana === "Wed" ? "Qua" :
+                    item.dia_semana === "Thu" ? "Qui" :
+                    item.dia_semana === "Fri" ? "Sex" :
+                    item.dia_semana === "Sat" ? "Sáb" :
+                    item.dia_semana === "Sun" ? "Dom" : item.dia_semana;
+        vendasMap[dia] = item.total;
+      });
+
+      const labels = diasDaSemana;
+      const dataset = diasDaSemana.map(d => vendasMap[d] || 0); // coloca 0 se não tiver venda
+
+      // Cria o gráfico
+      const ctx = chartRef.current.getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Vendas (R$)",
+              data: dataset,
+              backgroundColor: "rgba(255, 105, 180, 0.2)",
+              borderColor: "#ff69b4",
+              borderWidth: 2,
+              fill: true,
+              tension: 0.3,
+            },
+          ],
         },
-      },
-    });
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true },
+          },
+        },
+      });
 
-    return () => chart.destroy();
-  }, []);
+      return () => chart.destroy();
+    } catch (error) {
+      console.error("Erro:", error);
+    }
+  };
+
+  fetchVendas7Dias();
+}, []);
 
   return (
     <div className="dashboard-container">
