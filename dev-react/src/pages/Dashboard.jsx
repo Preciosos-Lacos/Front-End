@@ -19,6 +19,22 @@ const Dashboard = () => {
   const chartRef = useRef(null);
   const [pedidos, setPedidos] = useState([]);
   const [entregasDoDia, setEntregasDoDia] = useState([]);
+  const [resumo, setResumo] = useState({});
+
+  useEffect(() => {
+    const fetchResumo = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/dashboard/resumo");
+        if (!response.ok) throw new Error("Erro ao buscar resumo");
+        const data = await response.json();
+        setResumo(data);
+      } catch (error) {
+        console.error("Erro ao carregar resumo:", error);
+      }
+    };
+
+    fetchResumo();
+  }, []);
 
   useEffect(() => {
     // === Função para buscar pedidos do backend ===
@@ -57,65 +73,65 @@ const Dashboard = () => {
     fetchEntregasDoDia();
   }, []);
 
-   useEffect(() => {
-  const fetchVendas7Dias = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/dashboard/vendas7dias");
-      if (!response.ok) throw new Error("Erro ao buscar vendas");
-      const data = await response.json();
+  useEffect(() => {
+    const fetchVendas7Dias = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/dashboard/vendas7dias");
+        if (!response.ok) throw new Error("Erro ao buscar vendas");
+        const data = await response.json();
 
-      // Ordena os dados pelo dia da semana (opcional)
-      const diasDaSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-      const vendasMap = {};
-      data.forEach(item => {
-        // Converte abreviação do backend para português se necessário
-        const dia = item.dia_semana === "Mon" ? "Seg" :
-                    item.dia_semana === "Tue" ? "Ter" :
-                    item.dia_semana === "Wed" ? "Qua" :
-                    item.dia_semana === "Thu" ? "Qui" :
-                    item.dia_semana === "Fri" ? "Sex" :
+        // Ordena os dados pelo dia da semana (opcional)
+        const diasDaSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+        const vendasMap = {};
+        data.forEach(item => {
+          // Converte abreviação do backend para português se necessário
+          const dia = item.dia_semana === "Mon" ? "Seg" :
+            item.dia_semana === "Tue" ? "Ter" :
+              item.dia_semana === "Wed" ? "Qua" :
+                item.dia_semana === "Thu" ? "Qui" :
+                  item.dia_semana === "Fri" ? "Sex" :
                     item.dia_semana === "Sat" ? "Sáb" :
-                    item.dia_semana === "Sun" ? "Dom" : item.dia_semana;
-        vendasMap[dia] = item.total;
-      });
+                      item.dia_semana === "Sun" ? "Dom" : item.dia_semana;
+          vendasMap[dia] = item.total;
+        });
 
-      const labels = diasDaSemana;
-      const dataset = diasDaSemana.map(d => vendasMap[d] || 0); // coloca 0 se não tiver venda
+        const labels = diasDaSemana;
+        const dataset = diasDaSemana.map(d => vendasMap[d] || 0); // coloca 0 se não tiver venda
 
-      // Cria o gráfico
-      const ctx = chartRef.current.getContext("2d");
-      const chart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Vendas (R$)",
-              data: dataset,
-              backgroundColor: "rgba(255, 105, 180, 0.2)",
-              borderColor: "#ff69b4",
-              borderWidth: 2,
-              fill: true,
-              tension: 0.3,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: { beginAtZero: true },
+        // Cria o gráfico
+        const ctx = chartRef.current.getContext("2d");
+        const chart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Vendas (R$)",
+                data: dataset,
+                backgroundColor: "rgba(255, 105, 180, 0.2)",
+                borderColor: "#ff69b4",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+              },
+            ],
           },
-        },
-      });
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true },
+            },
+          },
+        });
 
-      return () => chart.destroy();
-    } catch (error) {
-      console.error("Erro:", error);
-    }
-  };
+        return () => chart.destroy();
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    };
 
-  fetchVendas7Dias();
-}, []);
+    fetchVendas7Dias();
+  }, []);
 
   return (
     <div className="dashboard-container">
@@ -125,50 +141,59 @@ const Dashboard = () => {
           <h1 className="dashboard-title">Bem-vinda, Camila!</h1>
           <p className="dashboard-subtitle">Resumo das operações da Preciosos Laços</p>
         </header>
-
-
+        
         <section className="dashboard-kpis">
           <div className="dashboard-card">
             Pedidos (últimas 24h)
-            <strong>12</strong>
+            <strong>{resumo.pedidos24h ?? 0}</strong>
             <span className="dashboard-detalhe dashboard-positivo">
               ↑ +20% vs ontem
             </span>
           </div>
+
           <div className="dashboard-card">
             Entregas programadas
-            <strong>5</strong>
+            <strong>{resumo.entregasProgramadas ?? 0}</strong>
             <span className="dashboard-detalhe">3 concluídas (60%)</span>
           </div>
+
           <div className="dashboard-card dashboard-alerta">
             Entregas atrasadas
-            <strong>3</strong>
+            <strong>{resumo.entregasAtrasadas ?? 0}</strong>
             <span className="dashboard-detalhe dashboard-negativo">
               ↓ Atraso médio: 1,5 dia
             </span>
           </div>
+
           <div className="dashboard-card">
             Pedidos pendentes
-            <strong>4</strong>
+            <strong>{resumo.pedidosPendentes ?? 0}</strong>
             <span className="dashboard-detalhe">
               2 em separação, 2 aguardando pagamento
             </span>
           </div>
+
           <div className="dashboard-card">
             Vendas do dia
-            <strong>R$ 320,00</strong>
+            <strong>
+              R$ {resumo.vendasDia ? resumo.vendasDia.toFixed(2).replace(".", ",") : "0,00"}
+            </strong>
             <span className="dashboard-detalhe dashboard-positivo">
               ↑ +7% vs ontem
             </span>
           </div>
+
           <div className="dashboard-card">
             Ticket médio
-            <strong>R$ 40,00</strong>
+            <strong>
+              R$ {resumo.ticketMedio ? resumo.ticketMedio.toFixed(2).replace(".", ",") : "0,00"}
+            </strong>
             <span className="dashboard-detalhe dashboard-positivo">
               ↑ vs R$ 38 semana
             </span>
           </div>
         </section>
+
 
         <div className="dashboard-filtros-container">
           <div className="dashboard-filtros">
@@ -276,10 +301,10 @@ const Dashboard = () => {
                     <td>{entrega.cliente}</td>
                     <td
                       className={`dashboard-status-pedido ${entrega.status?.toLowerCase().includes("Cancelado")
-                          ? "dashboard-cancelado"
-                          : entrega.status?.toLowerCase().includes("em trânsito")
-                            ? "dashboard-aguardando"
-                            : "dashboard-concluido"
+                        ? "dashboard-cancelado"
+                        : entrega.status?.toLowerCase().includes("em trânsito")
+                          ? "dashboard-aguardando"
+                          : "dashboard-concluido"
                         }`}
                     >
                       {entrega.status}
