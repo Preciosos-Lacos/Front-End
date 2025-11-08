@@ -141,36 +141,40 @@ const Dashboard = () => {
           <h1 className="dashboard-title">Bem-vinda, Camila!</h1>
           <p className="dashboard-subtitle">Resumo das operações da Preciosos Laços</p>
         </header>
-        
+
         <section className="dashboard-kpis">
           <div className="dashboard-card">
             Pedidos (últimas 24h)
             <strong>{resumo.pedidos24h ?? 0}</strong>
-            <span className="dashboard-detalhe dashboard-positivo">
-              ↑ +20% vs ontem
+            <span
+              className={`dashboard-detalhe ${resumo.variacaoPedidos >= 0
+                  ? "dashboard-positivo"
+                  : "dashboard-negativo"
+                }`}
+            >
+              {resumo.variacaoPedidos >= 0 ? "↑" : "↓"}{" "}
+              {resumo.variacaoPedidos?.toFixed(1)}% vs ontem
             </span>
           </div>
 
           <div className="dashboard-card">
             Entregas programadas
             <strong>{resumo.entregasProgramadas ?? 0}</strong>
-            <span className="dashboard-detalhe">3 concluídas (60%)</span>
+            <span className="dashboard-detalhe">Dentro da 1ª semana</span>
           </div>
 
           <div className="dashboard-card dashboard-alerta">
             Entregas atrasadas
             <strong>{resumo.entregasAtrasadas ?? 0}</strong>
             <span className="dashboard-detalhe dashboard-negativo">
-              ↓ Atraso médio: 1,5 dia
+              Atraso médio: {resumo.atrasoMedioDias?.toFixed(1)} dias
             </span>
           </div>
 
           <div className="dashboard-card">
             Pedidos pendentes
             <strong>{resumo.pedidosPendentes ?? 0}</strong>
-            <span className="dashboard-detalhe">
-              2 em separação, 2 aguardando pagamento
-            </span>
+            <span className="dashboard-detalhe">Aguardando pagamento</span>
           </div>
 
           <div className="dashboard-card">
@@ -178,8 +182,14 @@ const Dashboard = () => {
             <strong>
               R$ {resumo.vendasDia ? resumo.vendasDia.toFixed(2).replace(".", ",") : "0,00"}
             </strong>
-            <span className="dashboard-detalhe dashboard-positivo">
-              ↑ +7% vs ontem
+            <span
+              className={`dashboard-detalhe ${resumo.variacaoVendas >= 0
+                  ? "dashboard-positivo"
+                  : "dashboard-negativo"
+                }`}
+            >
+              {resumo.variacaoVendas >= 0 ? "↑" : "↓"}{" "}
+              {resumo.variacaoVendas?.toFixed(1)}% vs ontem
             </span>
           </div>
 
@@ -188,11 +198,18 @@ const Dashboard = () => {
             <strong>
               R$ {resumo.ticketMedio ? resumo.ticketMedio.toFixed(2).replace(".", ",") : "0,00"}
             </strong>
-            <span className="dashboard-detalhe dashboard-positivo">
-              ↑ vs R$ 38 semana
+            <span
+              className={`dashboard-detalhe ${resumo.variacaoTicket >= 0
+                  ? "dashboard-positivo"
+                  : "dashboard-negativo"
+                }`}
+            >
+              {resumo.variacaoTicket >= 0 ? "↑" : "↓"} vs R$
+              {resumo.ticketSemana ? resumo.ticketSemana.toFixed(2).replace(".", ",") : "0,00"} semana
             </span>
           </div>
         </section>
+
 
 
         <div className="dashboard-filtros-container">
