@@ -20,6 +20,65 @@ const Dashboard = () => {
   const [pedidos, setPedidos] = useState([]);
   const [entregasDoDia, setEntregasDoDia] = useState([]);
   const [resumo, setResumo] = useState({});
+  const [filtros, setFiltros] = useState({
+    dataInicio: "",
+    dataFim: "",
+    statusPagamento: "",
+    statusPedido: "",
+  });
+
+  const aplicarFiltros = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (filtros.dataInicio) params.append("dataInicio", filtros.dataInicio);
+      if (filtros.dataFim) params.append("dataFim", filtros.dataFim);
+      if (filtros.statusPagamento !== "Todos") params.append("statusPagamento", filtros.statusPagamento);
+      if (filtros.statusPedido !== "Todos") params.append("statusPedido", filtros.statusPedido);
+
+      const response = await fetch(`http://localhost:8080/dashboard/filtrado?${params.toString()}`);
+      if (!response.ok) throw new Error("Erro ao aplicar filtros");
+
+      const data = await response.json();
+
+      setPedidos(data.pedidos || []);
+      setResumo(data.resumo || {});
+      setEntregasDoDia(data.entregas || []);
+
+      // Atualizar gráfico
+      const ctx = chartRef.current.getContext("2d");
+      if (ctx.chart) ctx.chart.destroy();
+
+      const diasDaSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+      const vendasMap = {};
+      (data.vendas7dias || []).forEach(item => {
+        const dia = item.dia_semana;
+        vendasMap[dia] = item.total;
+      });
+
+      const dataset = diasDaSemana.map(d => vendasMap[d] || 0);
+
+      ctx.chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: diasDaSemana,
+          datasets: [
+            {
+              label: "Vendas (R$)",
+              data: dataset,
+              borderColor: "#ff69b4",
+              backgroundColor: "rgba(255,105,180,0.2)",
+              borderWidth: 2,
+              tension: 0.3,
+            },
+          ],
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } },
+      });
+    } catch (error) {
+      console.error("Erro ao aplicar filtros:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchResumo = async () => {
@@ -148,8 +207,8 @@ const Dashboard = () => {
             <strong>{resumo.pedidos24h ?? 0}</strong>
             <span
               className={`dashboard-detalhe ${resumo.variacaoPedidos >= 0
-                  ? "dashboard-positivo"
-                  : "dashboard-negativo"
+                ? "dashboard-positivo"
+                : "dashboard-negativo"
                 }`}
             >
               {resumo.variacaoPedidos >= 0 ? "↑" : "↓"}{" "}
@@ -184,8 +243,8 @@ const Dashboard = () => {
             </strong>
             <span
               className={`dashboard-detalhe ${resumo.variacaoVendas >= 0
-                  ? "dashboard-positivo"
-                  : "dashboard-negativo"
+                ? "dashboard-positivo"
+                : "dashboard-negativo"
                 }`}
             >
               {resumo.variacaoVendas >= 0 ? "↑" : "↓"}{" "}
@@ -200,8 +259,8 @@ const Dashboard = () => {
             </strong>
             <span
               className={`dashboard-detalhe ${resumo.variacaoTicket >= 0
-                  ? "dashboard-positivo"
-                  : "dashboard-negativo"
+                ? "dashboard-positivo"
+                : "dashboard-negativo"
                 }`}
             >
               {resumo.variacaoTicket >= 0 ? "↑" : "↓"} vs R$
@@ -210,34 +269,53 @@ const Dashboard = () => {
           </div>
         </section>
 
-
-
         <div className="dashboard-filtros-container">
           <div className="dashboard-filtros">
             <div className="dashboard-filter-item">
               <label>Data Início</label>
-              <input type="date" defaultValue="2025-01-20" />
+              <input
+                type="date"
+                value={filtros.dataInicio}
+                onChange={(e) => setFiltros({ ...filtros, dataInicio: e.target.value })}
+              />
             </div>
             <div className="dashboard-filter-item">
               <label>Data Fim</label>
-              <input type="date" defaultValue="2025-06-27" />
+              <input
+                type="date"
+                value={filtros.dataFim}
+                onChange={(e) => setFiltros({ ...filtros, dataFim: e.target.value })}
+              />
             </div>
             <div className="dashboard-filter-item">
               <label>Status Pagamento</label>
-              <select>
+              <select
+                value={filtros.statusPagamento}
+                onChange={(e) => setFiltros({ ...filtros, statusPagamento: e.target.value })}
+              >
                 <option>Todos</option>
-                <option>Concluído</option>
-                <option>Aguardando</option>
-                <option>Atrasado</option>
+                <option>Pago</option>
+                <option>Pendente</option>
+                <option>Cancelado</option>
               </select>
             </div>
             <div className="dashboard-filter-item">
               <label>Status Pedido</label>
-              <select>
+              <select
+                value={filtros.statusPedido}
+                onChange={(e) => setFiltros({ ...filtros, statusPedido: e.target.value })}
+              >
                 <option>Todos</option>
+                <option>Entregue</option>
                 <option>Concluído</option>
-                <option>Iniciado</option>
+                <option>Em andamento</option>
+                <option>Cancelado</option>
               </select>
+            </div>
+            <div className="dashboard-filter-item">
+              <button className="dashboard-filtrar-btn" onClick={aplicarFiltros}>
+                Aplicar Filtros
+              </button>
             </div>
           </div>
         </div>

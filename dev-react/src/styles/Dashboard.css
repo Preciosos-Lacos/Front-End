@@ -279,3 +279,19 @@
 
   .dashboard-tabela table { min-width: 600px; }
 }
+
+.dashboard-filtrar-btn {
+  background-color: var(--dashboard-rosa-escuro);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 24px;
+}
+
+.dashboard-filtrar-btn:hover {
+  background-color: #ff85c1;
+}
