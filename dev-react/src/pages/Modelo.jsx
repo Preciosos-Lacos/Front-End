@@ -14,18 +14,25 @@ const Modelo = () => {
 	const normalizeModelo = (raw) => {
 		if (!raw) return null;
 		const id = raw.idModelo ?? raw.id ?? raw.id_modelo ?? raw.idmodelo;
-			const nome = raw.nomeModelo ?? raw.nome ?? raw.nome_modelo ?? '';
+		const nome = raw.nomeModelo ?? raw.nome ?? raw.nome_modelo ?? '';
 		const descricao = raw.descricao ?? raw.descricaoModelo ?? raw.descricao_modelo ?? '';
-			const valor = typeof raw.preco === 'number'
-				? raw.preco
-				: (typeof raw.valor === 'number'
-						? raw.valor
-						: parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$', '').replace('.', '').replace(',', '.')) || 0);
-			const favorito = Boolean(raw.favorito ?? false);
-		// imagem pode vir como base64 separado; aqui tentamos mapear algo disponível
-		const imagem = raw.imagem ?? raw.foto ?? null;
-			return { id, nome, descricao, valor, imagem, favorito };
+		const valor = typeof raw.preco === 'number'
+			? raw.preco
+			: (typeof raw.valor === 'number'
+				? raw.valor
+				: parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$', '').replace('.', '').replace(',', '.')) || 0);
+		const favorito = Boolean(raw.favorito ?? false);
+
+		let imagem = null;
+		if (raw.fotoBase64) {
+			imagem = `data:image/jpeg;base64,${raw.fotoBase64}`;
+		} else if (raw.foto) {
+			imagem = `data:image/jpeg;base64,${raw.foto}`;
+		}
+
+		return { id, nome, descricao, valor, imagem, favorito };
 	};
+
 
 	const showAlert = (tipo, mensagem) => {
 		let bgColor = '#f0f0f0';
@@ -72,10 +79,10 @@ const Modelo = () => {
 		try {
 			const precoNumerico = parseFloat(String(form.valor ?? form.preco ?? '').replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0.0;
 			const payload = {
-					nome: form.nome,
-					preco: precoNumerico,
-					descricao: form.descricao ?? '',
-					favorito: Boolean(form.favorito ?? false),
+				nome: form.nome,
+				preco: precoNumerico,
+				descricao: form.descricao ?? '',
+				favorito: Boolean(form.favorito ?? false),
 			};
 			const res = await fetch(API_URL, {
 				method: 'POST',
@@ -92,7 +99,7 @@ const Modelo = () => {
 						method: 'PATCH',
 						headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
 						body: JSON.stringify({ imagemBase64: form.imagemBase64 })
-					}).catch(() => {});
+					}).catch(() => { });
 				}
 				showAlert('sucesso', 'Modelo cadastrado com sucesso!');
 				fecharModal();
@@ -116,10 +123,10 @@ const Modelo = () => {
 			}
 			const precoNumerico = parseFloat(String(form.valor ?? form.preco ?? '').replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0.0;
 			const payload = {
-					nome: form.nome,
-					preco: precoNumerico,
-					descricao: form.descricao ?? '',
-					favorito: Boolean(modalState.modeloData?.favorito ?? form.favorito ?? false),
+				nome: form.nome,
+				preco: precoNumerico,
+				descricao: form.descricao ?? '',
+				favorito: Boolean(modalState.modeloData?.favorito ?? form.favorito ?? false),
 			};
 			const res = await fetch(`${API_URL}/${id}`, {
 				method: 'PUT',
@@ -132,7 +139,7 @@ const Modelo = () => {
 						method: 'PATCH',
 						headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
 						body: JSON.stringify({ imagemBase64: form.imagemBase64 })
-					}).catch(() => {});
+					}).catch(() => { });
 				}
 				showAlert('sucesso', 'Modelo atualizado com sucesso!');
 				fecharModal();
@@ -185,13 +192,13 @@ const Modelo = () => {
 	return (
 		<div className="modelo-dashboard">
 			<Sidebar />
-				<header>Modelos</header>
-				<BarraPesquisa
-					searchTerm={pesquisa}
-					onSearchChange={setPesquisa}
-					onAddClick={handleCadastrar}
-					addLabel="Cadastrar Modelo"
-				/>
+			<header>Modelos</header>
+			<BarraPesquisa
+				searchTerm={pesquisa}
+				onSearchChange={setPesquisa}
+				onAddClick={handleCadastrar}
+				addLabel="Cadastrar Modelo"
+			/>
 
 			<div className="modelo-main">
 				<div className="modelo-grid">
@@ -220,21 +227,21 @@ const Modelo = () => {
 				</div>
 			</div>
 
-						<ModalModelo
-								isOpen={modalState.isOpen}
-								onClose={fecharModal}
-								type={modalState.type}
-								modeloData={modalState.modeloData}
-								onSubmit={(form) => {
-									if (modalState.type === 'create') {
-										createModelo(form);
-									} else if (modalState.type === 'edit') {
-										updateModelo(form);
-									} else if (modalState.type === 'delete') {
-										deleteModelo();
-									}
-								}}
-						/>
+			<ModalModelo
+				isOpen={modalState.isOpen}
+				onClose={fecharModal}
+				type={modalState.type}
+				modeloData={modalState.modeloData}
+				onSubmit={(form) => {
+					if (modalState.type === 'create') {
+						createModelo(form);
+					} else if (modalState.type === 'edit') {
+						updateModelo(form);
+					} else if (modalState.type === 'delete') {
+						deleteModelo();
+					}
+				}}
+			/>
 		</div>
 	);
 }
