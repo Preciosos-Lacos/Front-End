@@ -50,17 +50,39 @@ const Modal = ({
       console.log('colorData recebido no modal:', colorData);
       console.log('availableModels carregados:', availableModels);
       let modelosIds = [];
+      
       if (Array.isArray(colorData.modelos) && colorData.modelos.length > 0) {
-        if (typeof colorData.modelos[0] === 'string') {
+        // Se os modelos são IDs (números)
+        if (typeof colorData.modelos[0] === 'number') {
+          modelosIds = colorData.modelos.filter(id => availableModels.some(m => m.id === id));
+        } 
+        // Se são strings (nomes dos modelos)
+        else if (typeof colorData.modelos[0] === 'string') {
           modelosIds = availableModels
             .filter(m => colorData.modelos.includes(m.nome))
             .map(m => m.id);
-        } else if (typeof colorData.modelos[0] === 'number') {
-          modelosIds = colorData.modelos;
-        } else if (typeof colorData.modelos[0] === 'object' && colorData.modelos[0].idModelo) {
-          modelosIds = colorData.modelos.map(m => m.idModelo);
+        } 
+        // Se são objetos com idModelo
+        else if (typeof colorData.modelos[0] === 'object') {
+          if (colorData.modelos[0].idModelo) {
+            modelosIds = colorData.modelos
+              .map(m => m.idModelo)
+              .filter(id => availableModels.some(m => m.id === id));
+          } else if (colorData.modelos[0].id) {
+            modelosIds = colorData.modelos
+              .map(m => m.id)
+              .filter(id => availableModels.some(m => m.id === id));
+          } else {
+            // Tentar mapear por nome
+            modelosIds = availableModels
+              .filter(m => colorData.modelos.some(modelo => modelo.nomeModelo === m.nome || modelo.nome === m.nome))
+              .map(m => m.id);
+          }
         }
       }
+      
+      console.log('Modelos IDs mapeados:', modelosIds);
+      
       setFormData({
         nome: colorData.nome || '',
         cor: colorData.cor || '#F29DC3',

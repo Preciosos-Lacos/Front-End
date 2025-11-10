@@ -22,15 +22,16 @@ import Dashboard from '../pages/Dashboard.jsx';
 import CadastroEndereco from '../pages/CadastroEndereco.jsx';
 import ScrollToTop from '../components/ScrollToTop.jsx';
 import Colecoes from '../pages/Colecoes.jsx';
+import CadastroBanner from '../pages/CadastroBanner.jsx';
+import ProtectedRoute from '../components/ProtectedRoute.jsx';
 
 export default function AppRoutes() {
   return (
-    <BrowserRouter>
+  <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ScrollToTop behavior="smooth" />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/catalogo" element={<Catalogo />} />
         <Route path="/produto" element={<Produto />} />
         <Route path="/favoritos" element={<Favoritos />} />
@@ -51,12 +52,44 @@ export default function AppRoutes() {
         <Route path="/cadastro-endereco" element={<CadastroEndereco />} />
 
         {/* Admin / Management flows */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/cadastro-cor" element={<CadastroCor />} />
-        <Route path="/cor/:id" element={<CadastroCor />} />
-        <Route path="/cadastro-tipo-lacos" element={<CadastroTipoLacos />} />
-        <Route path="/cadastro-modelo" element={<Modelo />} />
-        <Route path="/colecoes" element={<Colecoes />} />
+        <Route path="/admin/dashboard" element={
+            <ProtectedRoute requireAdmin={true}>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+        <Route path="/admin/cadastro-cor" element={
+            <ProtectedRoute requireAdmin={true}>
+              <CadastroCor />
+            </ProtectedRoute>
+          } />
+        <Route path="/admin/cadastro-cor/:id" element={
+            <ProtectedRoute requireAdmin={true}>
+              <CadastroCor />
+            </ProtectedRoute>
+          } />
+        <Route path="/admin/cadastro-tipo-lacos" element={
+            <ProtectedRoute requireAdmin={true}>
+              <CadastroTipoLacos />
+            </ProtectedRoute>
+          }/>
+        <Route path="/admin/cadastro-modelo" element={
+            <ProtectedRoute requireAdmin={true}>
+              <Modelo />
+            </ProtectedRoute>
+          }/>
+        <Route path="/admin/colecoes" element={
+            <ProtectedRoute requireAdmin={true}>
+              <Colecoes />
+            </ProtectedRoute>
+          } />
+        <Route
+          path="/admin/banner"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <CadastroBanner />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Fallback */}
         <Route path="*" element={<div style={{ padding: 20 }}>Página não encontrada</div>} />

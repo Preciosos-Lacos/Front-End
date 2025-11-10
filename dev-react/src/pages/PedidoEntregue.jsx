@@ -70,7 +70,7 @@ const PedidoEntregue = () => {
         <Header showOffcanvas={true} />
         <main>
           <div className="pedido-section container">
-            <h2 className="titulo">Erro: {erro || 'Pedido não encontrado'}</h2>
+            <h2 className="titulo">{'Pedido não encontrado'}</h2>
           </div>
         </main>
       </div>
@@ -88,7 +88,7 @@ const PedidoEntregue = () => {
           <div className="card pedido">
             <h4>Encomenda</h4>
             <p><strong>ID do Pedido:</strong> {pedido.id}</p>
-            <span className="status entregue">Entregue com sucesso!</span>
+            <span className="status entregue">Em Confecção!</span>
           </div>
 
           <div className="card resumo">

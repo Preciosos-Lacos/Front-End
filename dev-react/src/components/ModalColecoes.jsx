@@ -3,6 +3,7 @@ import '../styles/Modal.css';
 
 const ModalColecoes = ({ isOpen, onClose, type, data = null, onSubmit }) => {
   const [form, setForm] = useState({ nome: '', descricao: '', modelos: [], imagem: '' });
+  
   const modelosDisponiveis = ['Laço Padrão','Laço Linho','Laço Festa','Laço Infantil'];
 
   useEffect(() => {

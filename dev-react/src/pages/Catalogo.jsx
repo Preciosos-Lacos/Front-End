@@ -9,6 +9,11 @@ const Catalogo = () => {
     const [priceFilter, setPriceFilter] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [isSticky, setIsSticky] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [featuredProducts, setFeaturedProducts] = useState([]);
+    const [promotionalProducts, setPromotionalProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const filterBarRef = useRef(null);
 
     useEffect(() => {
@@ -23,6 +28,51 @@ const Catalogo = () => {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Fetch products from backend (raw fetch)
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
+                const [allRes, featRes, promoRes] = await Promise.all([
+                    fetch(`${BASE}/produtos`),
+                    fetch(`${BASE}/produtos/destaques`),
+                    fetch(`${BASE}/produtos/promocoes`),
+                ]);
+                if (!allRes.ok) throw new Error(`HTTP ${allRes.status}`);
+                const productsData = await allRes.json();
+                setProducts(Array.isArray(productsData) ? productsData : (productsData?.content || []));
+
+                if (featRes.ok) {
+                    const featuredData = await featRes.json();
+                    setFeaturedProducts(Array.isArray(featuredData) ? featuredData : (featuredData?.content || []));
+                } else {
+                    setFeaturedProducts([]);
+                }
+
+                if (promoRes.ok) {
+                    const promotionalData = await promoRes.json();
+                    setPromotionalProducts(Array.isArray(promotionalData) ? promotionalData : (promotionalData?.content || []));
+                } else {
+                    setPromotionalProducts([]);
+                }
+                
+            } catch (err) {
+                console.error('Error fetching products:', err);
+                setError('Servidor indisponível. Exibindo catálogo offline.');
+                // Fallback to hardcoded data if API fails
+                setProducts(productos);
+                setFeaturedProducts(productos.slice(0, 6));
+                setPromotionalProducts(productos.slice(6, 9));
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
     }, []);
 
     const productos = [
@@ -155,20 +205,21 @@ const Catalogo = () => {
     ];
 
     const filterProducts = () => {
-        return productos.filter(product => {
-            const name = product.name.toLowerCase();
-            const collection = product.collection.toLowerCase();
+        return products.filter(product => {
+            const name = product.nome?.toLowerCase() || '';
+            const collection = product.categoria?.nome?.toLowerCase() || '';
+            const cor = product.cor?.toLowerCase() || '';
 
             let show = true;
 
             if (categoryFilter && !collection.includes(categoryFilter.toLowerCase())) show = false;
-            if (colorFilter && !name.includes(colorFilter.toLowerCase())) show = false;
-            if (searchQuery && !name.includes(searchQuery.toLowerCase())) show = false;
+            if (colorFilter && !cor.includes(colorFilter.toLowerCase()) && !name.includes(colorFilter.toLowerCase())) show = false;
+            if (searchQuery && !name.includes(searchQuery.toLowerCase()) && !collection.includes(searchQuery.toLowerCase())) show = false;
 
             if (priceFilter) {
-                if (priceFilter === "20" && product.price > 20) show = false;
-                if (priceFilter === "20-50" && (product.price < 20 || product.price > 50)) show = false;
-                if (priceFilter === "50+" && product.price < 50) show = false;
+                if (priceFilter === "20" && product.preco > 20) show = false;
+                if (priceFilter === "20-50" && (product.preco < 20 || product.preco > 50)) show = false;
+                if (priceFilter === "50+" && product.preco < 50) show = false;
             }
 
             return show;
@@ -177,6 +228,41 @@ const Catalogo = () => {
 
     const filteredProducts = filterProducts();
 
+    if (loading) {
+        return (
+            <div className="catalogo-page">
+                <Header showOffcanvas={true} />
+                <main data-scroll-container>
+                    <div className="loading-container">
+                        <div className="spinner-border text-pink" role="status">
+                            <span className="visually-hidden">Carregando...</span>
+                        </div>
+                        <p className="loading-text">Carregando produtos...</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="catalogo-page">
+                <Header showOffcanvas={true} />
+                <main data-scroll-container>
+                    <div className="error-container">
+                        <div className="alert alert-warning" role="alert">
+                            <i className="bi bi-exclamation-triangle-fill"></i>
+                            {error}
+                        </div>
+                        <button className="btn btn-primary" onClick={() => window.location.reload()}>
+                            Tentar Novamente
+                        </button>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
     return (
         <div className="catalogo-page">
             <Header showOffcanvas={true} />
@@ -184,48 +270,56 @@ const Catalogo = () => {
             <main data-scroll-container>
                 <section className="promo-section">
                     <h2>Promoções atuais</h2>
-                    <div id="promoCarousel" className="carousel slide promo-carousel" data-bs-ride="carousel">
-                        <div className="carousel-inner">
-                            <div className="carousel-item active">
-                                <div className="row g-3 justify-content-center">
-                                    <div className="col-12 col-sm-6 col-md-4">
-                                        <img src="/src/assets/laco-panda.webp" className="d-block rounded" alt="Laço Panda" />
-                                        <p className="promo-caption text-center">Laço Panda em promoção!</p>
+                    {promotionalProducts.length > 0 ? (
+                        <div id="promoCarousel" className="carousel slide promo-carousel" data-bs-ride="carousel">
+                            <div className="carousel-inner">
+                                {promotionalProducts.map((product, index) => (
+                                    <div key={product.id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                                        <div className="row g-3 justify-content-center">
+                                            <div className="col-12 col-sm-6 col-md-4">
+                                                <img 
+                                                    src={product.imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                    className="d-block rounded" 
+                                                    alt={product.nome} 
+                                                />
+                                                <p className="promo-caption text-center">{product.nome} em promoção!</p>
+                                            </div>
+                                            {promotionalProducts[index + 1] && (
+                                                <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
+                                                    <img 
+                                                        src={promotionalProducts[index + 1].imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                        className="d-block rounded" 
+                                                        alt={promotionalProducts[index + 1].nome} 
+                                                    />
+                                                    <p className="promo-caption text-center">{promotionalProducts[index + 1].nome} especial!</p>
+                                                </div>
+                                            )}
+                                            {promotionalProducts[index + 2] && (
+                                                <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
+                                                    <img 
+                                                        src={promotionalProducts[index + 2].imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                        className="d-block rounded" 
+                                                        alt={promotionalProducts[index + 2].nome} 
+                                                    />
+                                                    <p className="promo-caption text-center">{promotionalProducts[index + 2].nome} tendência!</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
-                                        <img src="/src/assets/laco-unicornio.webp" className="d-block rounded" alt="Laço Unicórnio" />
-                                        <p className="promo-caption text-center">Laço Unicórnio especial!</p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
-                                        <img src="/src/assets/laco-jeans.webp" className="d-block rounded" alt="Laço Jeans" />
-                                        <p className="promo-caption text-center">Laço Jeans tendência!</p>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
-                            <div className="carousel-item">
-                                <div className="row g-3 justify-content-center">
-                                    <div className="col-12 col-sm-6 col-md-4">
-                                        <img src="/src/assets/laco-pink.webp" className="d-block rounded" alt="Laço Pink" />
-                                        <p className="promo-caption text-center">Laço Pink especial!</p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
-                                        <img src="/src/assets/laco-azul.webp" className="d-block rounded" alt="Laço Azul" />
-                                        <p className="promo-caption text-center">Laço Azul tendência!</p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
-                                        <img src="/src/assets/laco-neon-frutinhas.webp" className="d-block rounded" alt="Laço Neon Verde" />
-                                        <p className="promo-caption text-center">Laço Neon Verde promoção!</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <button className="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
+                                <span className="carousel-control-prev-icon"></span>
+                            </button>
+                            <button className="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+                                <span className="carousel-control-next-icon"></span>
+                            </button>
                         </div>
-                        <button className="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
-                            <span className="carousel-control-prev-icon"></span>
-                        </button>
-                        <button className="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
-                            <span className="carousel-control-next-icon"></span>
-                        </button>
-                    </div>
+                    ) : (
+                        <div className="no-promotions">
+                            <p>Nenhuma promoção disponível no momento.</p>
+                        </div>
+                    )}
                 </section>
 
                 <section className="catalogo">
@@ -356,70 +450,60 @@ const Catalogo = () => {
 
                         <div id="catalogoCarousel" className="carousel slide" data-bs-ride="carousel">
                             <h2 id="carrossel-catalogo">Mais Vendidos</h2>
-                            <div className="carousel-inner">
-                                <div className="carousel-item active">
-                                    <div className="row g-3">
-                                        <div className="col-12 col-sm-6 col-md-4">
-                                            <div className="produto-card">
-                                                <img src="/src/assets/kit-xuxinhas.jpg" alt="Produto" />
-                                                <div className="produto-info">
-                                                    <p>Kit Laços xuxinha - Coleção Tradicionais</p>
-                                                    <p className="produto-preco">R$22,50</p>
+                            {featuredProducts.length > 0 ? (
+                                <div className="carousel-inner">
+                                    {featuredProducts.map((product, index) => (
+                                        <div key={product.id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                                            <div className="row g-3">
+                                                <div className="col-12 col-sm-6 col-md-4">
+                                                    <div className="produto-card">
+                                                        <img 
+                                                            src={product.imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                            alt={product.nome} 
+                                                        />
+                                                        <div className="produto-info">
+                                                            <p>{product.nome} - {product.categoria?.nome || 'Coleção'}</p>
+                                                            <p className="produto-preco">R${product.preco?.toFixed(2).replace('.', ',')}</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                {featuredProducts[index + 1] && (
+                                                    <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
+                                                        <div className="produto-card">
+                                                            <img 
+                                                                src={featuredProducts[index + 1].imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                                alt={featuredProducts[index + 1].nome} 
+                                                            />
+                                                            <div className="produto-info">
+                                                                <p>{featuredProducts[index + 1].nome} - {featuredProducts[index + 1].categoria?.nome || 'Coleção'}</p>
+                                                                <p className="produto-preco">R${featuredProducts[index + 1].preco?.toFixed(2).replace('.', ',')}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {featuredProducts[index + 2] && (
+                                                    <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
+                                                        <div className="produto-card">
+                                                            <img 
+                                                                src={featuredProducts[index + 2].imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                                alt={featuredProducts[index + 2].nome} 
+                                                            />
+                                                            <div className="produto-info">
+                                                                <p>{featuredProducts[index + 2].nome} - {featuredProducts[index + 2].categoria?.nome || 'Coleção'}</p>
+                                                                <p className="produto-preco">R${featuredProducts[index + 2].preco?.toFixed(2).replace('.', ',')}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
-                                            <div className="produto-card">
-                                                <img src="/src/assets/laco-faixinhas.jpg" alt="Produto" />
-                                                <div className="produto-info">
-                                                    <p>Laços em Faixa - Coleção Tradicionais</p>
-                                                    <p className="produto-preco">R$25,90</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
-                                            <div className="produto-card">
-                                                <img src="/src/assets/laco-aramados.jpg" alt="Produto" />
-                                                <div className="produto-info">
-                                                    <p>Laços Aramados - Tendência</p>
-                                                    <p className="produto-preco">R$20,00</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    ))}
                                 </div>
-                                <div className="carousel-item">
-                                    <div className="row g-3">
-                                        <div className="col-12 col-sm-6 col-md-4">
-                                            <div className="produto-card">
-                                                <img src="/src/assets/laco-barbie-detalhado.jpg" alt="Produto" />
-                                                <div className="produto-info">
-                                                    <p>Laços Barbie - Coleção Barbie</p>
-                                                    <p className="produto-preco">R$17,99</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
-                                            <div className="produto-card">
-                                                <img src="/src/assets/laco-personalizado.jpg" alt="Produto" />
-                                                <div className="produto-info">
-                                                    <p>Laço Personalizado - Coleção Personalizados</p>
-                                                    <p className="produto-preco">R$30,00</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
-                                            <div className="produto-card">
-                                                <img src="/src/assets/laco-piscina.jpg" alt="Produto" />
-                                                <div className="produto-info">
-                                                    <p>Laço Neon Verde - Coleção Neon</p>
-                                                    <p className="produto-preco">R$18,99</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            ) : (
+                                <div className="no-featured-products">
+                                    <p>Nenhum produto em destaque no momento.</p>
                                 </div>
-                            </div>
+                            )}
                             <button className="carousel-control-prev" type="button" data-bs-target="#catalogoCarousel" data-bs-slide="prev">
                                 <span className="carousel-control-prev-icon"></span>
                             </button>
@@ -429,19 +513,43 @@ const Catalogo = () => {
                         </div>
 
                         <div className="card-container">
-                            {filteredProducts.map(product => (
-                                <div key={product.id} className="product-card">
-                                    <Link to="/produto">
-                                        <img src={product.image} alt={product.name} />
-                                        <div className="card-info">
-                                            <p className="product-name">
-                                                {product.name} - <span className="collection">{product.collection}</span>
-                                            </p>
-                                            <p className="price">R${product.price.toFixed(2).replace('.', ',')}</p>
-                                        </div>
-                                    </Link>
+                            {loading ? (
+                                <div className="loading-container">
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="visually-hidden">Carregando...</span>
+                                    </div>
+                                    <p>Carregando produtos...</p>
                                 </div>
-                            ))}
+                            ) : error ? (
+                                <div className="error-container">
+                                    <div className="alert alert-danger">
+                                        <p>Erro ao carregar produtos: {error}</p>
+                                        <button className="btn btn-danger" onClick={() => window.location.reload()}>
+                                            Tentar Novamente
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : filteredProducts.length > 0 ? (
+                                filteredProducts.map((product, index) => (
+                                    <div key={product.id || index} className="card-item">
+                                        <img 
+                                            src={product.imagens?.[0]?.urlImagem || product.image || '/src/assets/default-product.webp'} 
+                                            alt={product.nome || product.name} 
+                                            className="card-image" 
+                                        />
+                                        <div className="card-content">
+                                            <h3 className="card-title">{product.nome || product.name}</h3>
+                                            <p className="card-collection">{product.categoria?.nome || product.collection}</p>
+                                            <p className="card-price">R${(product.preco || product.price)?.toFixed(2).replace('.', ',')}</p>
+                                            <button className="btn btn-primary btn-sm">Ver Produto</button>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="no-results">
+                                    <p>Nenhum produto encontrado com os filtros selecionados.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </section>

@@ -33,21 +33,62 @@ const CadastroCor = () => {
 
   const imagem = raw.imagem ?? null;
 
-  const modelosRaw = Array.isArray(raw.listaModelos)
-    ? raw.listaModelos
-    : (Array.isArray(raw.modelos) ? raw.modelos : []);
+  // Extrair modelos de diferentes formatos possíveis
+  let modelosRaw = [];
+  
+  if (Array.isArray(raw.listaModelos)) {
+    modelosRaw = raw.listaModelos;
+  } else if (Array.isArray(raw.modelos)) {
+    modelosRaw = raw.modelos;
+  }
 
+  // Processar modelos - pode vir como objetos Modelo completos ou apenas IDs/nomes
   const modelos = modelosRaw
     .map((m) => {
       if (!m) return null;
 
-      if (m.modelo && typeof m.modelo === 'object') {
-        return m.modelo.nomeModelo ?? null;
+      // Se for objeto Modelo completo
+      if (typeof m === 'object') {
+        // Pode ter idModelo e nomeModelo diretamente
+        if (m.idModelo && m.nomeModelo) {
+          return m.nomeModelo;
+        }
+        // Ou pode estar aninhado
+        if (m.modelo && typeof m.modelo === 'object') {
+          return m.modelo.nomeModelo ?? null;
+        }
+        // Ou apenas nomeModelo
+        return m.nomeModelo ?? null;
       }
 
-      return m.nomeModelo ?? null;
+      // Se for string, retornar direto
+      if (typeof m === 'string') {
+        return m;
+      }
+
+      return null;
     })
-    .filter((v) => typeof v === 'string' && v.trim().length > 0);
+    .filter((v) => v !== null && (typeof v === 'string' ? v.trim().length > 0 : true));
+
+  // Se não encontrou nomes mas há objetos Modelo completos com IDs
+  if (modelos.length === 0 && raw.listaModelos && Array.isArray(raw.listaModelos) && raw.listaModelos.length > 0) {
+    // Se listaModelos contém objetos Modelo completos com idModelo
+    const objetosComIds = raw.listaModelos.filter(m => 
+      m && typeof m === 'object' && (m.idModelo !== undefined || m.id !== undefined)
+    );
+    if (objetosComIds.length > 0) {
+      // Extrair IDs dos objetos Modelo
+      const idsModelos = objetosComIds.map(m => m.idModelo ?? m.id);
+      // Manter os IDs para serem mapeados no modal com os modelos disponíveis
+      return { id, nome, cor, valor, imagem, modelos: idsModelos };
+    }
+    
+    // Se listaModelos contém apenas números (IDs diretos)
+    const idsNumericos = raw.listaModelos.filter(m => typeof m === 'number');
+    if (idsNumericos.length > 0) {
+      return { id, nome, cor, valor, imagem, modelos: idsNumericos };
+    }
+  }
 
   return { id, nome, cor, valor, imagem, modelos };
 };
@@ -138,7 +179,7 @@ const CadastroCor = () => {
             if (corId) {
               const modelosPayload = {
                 id: corId,
-                listaModelos: modelosArray
+                listaModelos: modelosArray.map((mid) => ({ id: mid }))
               };
               await fetch('http://localhost:8080/caracteristica-detalhe/corModelo', {
                 method: 'POST',
@@ -177,17 +218,35 @@ const CadastroCor = () => {
         body: JSON.stringify(payload)
       });
       if (response.ok) {
-        // Atualiza associação dos modelos
+        // Primeiro, remove associações antigas
+        try {
+          await fetch(`http://localhost:8080/caracteristica-detalhe/corModelo/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
+          });
+        } catch (e) {
+          console.warn('Erro ao remover associações antigas (pode não existir):', e);
+        }
+        
+        // Depois, adiciona novas associações
         const modelosArray = Array.isArray(formData.modelos) ? formData.modelos : [];
-        const modelosPayload = {
-          id: id,
-          listaModelos: modelosArray
-        };
-        await fetch('http://localhost:8080/caracteristica-detalhe/corModelo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(modelosPayload)
-        });
+        if (modelosArray.length > 0) {
+          const modelosPayload = {
+            id: id,
+            listaModelos: modelosArray.map((mid) => ({ id: mid }))
+          };
+          const resAssociacao = await fetch('http://localhost:8080/caracteristica-detalhe/corModelo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(modelosPayload)
+          });
+          
+          if (!resAssociacao.ok) {
+            const txt = await resAssociacao.text();
+            throw new Error(txt || 'Erro ao associar modelos');
+          }
+        }
+        
         showAlert('sucesso', 'Cor atualizada com sucesso!');
         closeModal();
         loadColors();
@@ -213,7 +272,7 @@ const CadastroCor = () => {
       const res = await fetch(`${API_URL}/${id}`, { 
         method: "DELETE" 
       });
-      if (!res.ok) throw new Error("Erro ao excluir");
+  if (!res.ok) throw new Error("Erro ao excluir");
       showAlert("sucesso", "Cor excluída com sucesso!");
       closeModal();
       loadColors();
@@ -239,10 +298,22 @@ const CadastroCor = () => {
         colorDataRaw = colors.find(c => (c.id ?? `${c.nome}-${c.cor}`) === id);
       }
       if (!colorDataRaw) {
-        // GET /caracteristica-detalhe/cor/{id}
-        const res = await fetch(`${API_URL}/${id}`);
-        if (!res.ok) throw new Error("Cor não encontrada");
-        colorDataRaw = await res.json();
+        // GET /caracteristica-detalhe/cor/{id}/completo - busca cor com modelos associados
+        const res = await fetch(`${API_URL}/${id}/completo`);
+        if (!res.ok) {
+          // Tenta primeiro endpoint antigo simples, depois o /completo
+          const resOld = await fetch(`${API_URL}/${id}`);
+          if (resOld.ok) {
+            colorDataRaw = await resOld.json();
+          } else {
+            // como último recurso, tenta novamente o /completo
+            const resAgain = await fetch(`${API_URL}/${id}/completo`);
+            if (!resAgain.ok) throw new Error("Cor não encontrada");
+            colorDataRaw = await resAgain.json();
+          }
+        } else {
+          colorDataRaw = await res.json();
+        }
       }
       const colorData = normalizeColor(colorDataRaw);
       setModalState({
@@ -251,7 +322,8 @@ const CadastroCor = () => {
         colorData: colorData,
         colorName: colorData.nome
       });
-    } catch {
+    } catch (error) {
+      console.error("Erro ao abrir modal de edição:", error);
       showAlert("erro", "Cor não encontrada!");
     }
   };

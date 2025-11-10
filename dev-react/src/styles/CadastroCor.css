@@ -40,8 +40,9 @@
 
 .card-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  padding: 70px 18px 60px 18px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 20px;
+  padding: 135px 18px 60px 18px;
   margin: 0 auto;
   max-width: 1200px;
 }

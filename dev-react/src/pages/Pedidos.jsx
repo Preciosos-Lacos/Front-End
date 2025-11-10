@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Modal from '../components/Modal';
 import '../styles/Pedidos.css';
@@ -6,6 +6,15 @@ import '../styles/Pedidos.css';
 const Pedidos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [modalState, setModalState] = useState({ isOpen: false, type: null, viewContent: null });
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({
+    startDate: '',
+    endDate: '',
+    statusPagamento: '',
+    statusPedido: ''
+  });
 
   const pedidosMock = [
     {
@@ -150,10 +159,67 @@ const Pedidos = () => {
 
   const closeModal = () => setModalState({ isOpen: false, type: null, viewContent: null });
 
-  const filtered = pedidosMock.filter(p =>
-    p.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.modelos.join(' ').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Fetch orders from backend
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const searchFilters = {
+        searchTerm: searchTerm || undefined,
+        startDate: filters.startDate || undefined,
+        endDate: filters.endDate || undefined,
+        statusPagamento: filters.statusPagamento || undefined,
+        statusPedido: filters.statusPedido || undefined
+      };
+      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
+      const params = new URLSearchParams();
+      Object.entries(searchFilters).forEach(([k, v]) => { if (v) params.append(k, v); });
+      const url = params.toString() ? `${BASE}/pedidos/search?${params.toString()}` : `${BASE}/pedidos`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setOrders(Array.isArray(data) ? data : (data?.content || []));
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      setError('Erro ao carregar pedidos. Usando dados locais.');
+      // Fallback to mock data
+      setOrders(pedidosMock);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load orders on component mount and when filters change
+  useEffect(() => {
+    fetchOrders();
+  }, [searchTerm, filters]);
+
+  // Handle filter changes
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
+  };
+
+  // Format order data for display
+  const formatOrderData = (order) => {
+    return {
+      ...order,
+      orderNumber: order.numeroPedido || `PL-${new Date(order.dataPedido).getFullYear()}-${String(order.id).padStart(3, '0')}`,
+      data: new Date(order.dataPedido).toLocaleDateString('pt-BR'),
+      valor: order.valorTotal || order.itens?.reduce((sum, item) => sum + (item.preco * item.quantidade), 0) || 0,
+      forma: order.formaPagamento || 'Não especificado',
+      statusPagamento: order.statusPagamento?.toLowerCase() || 'aguardando',
+      statusPedido: order.statusPedido?.toLowerCase() || 'iniciado',
+      modelos: order.itens?.map(item => item.nome) || [],
+      nome: order.cliente?.nome || 'Cliente não especificado',
+      telefone: order.cliente?.telefone || '',
+      endereco: order.enderecoEntrega || 'Endereço não especificado'
+    };
+  };
+
+  const filtered = orders.length > 0 ? orders.map(formatOrderData) : pedidosMock;
 
   return (
     <div className="pedidos-root">
@@ -180,62 +246,112 @@ const Pedidos = () => {
         <div className="row filter-group">
           <div className="col-md-3 mb-2 ">
             <label>Data Início</label>
-            <input type="date" className="form-control" />
+            <input 
+              type="date" 
+              className="form-control" 
+              value={filters.startDate}
+              onChange={(e) => handleFilterChange('startDate', e.target.value)}
+            />
           </div>
           <div className="col-md-3 mb-2 ">
             <label>Data Fim</label>
-            <input type="date" className="form-control" />
+            <input 
+              type="date" 
+              className="form-control" 
+              value={filters.endDate}
+              onChange={(e) => handleFilterChange('endDate', e.target.value)}
+            />
           </div>
           <div className="col-md-3 mb-2 ">
             <label>Status Pagamento</label>
-            <select className="form-control">
-              <option>Todos</option>
-              <option>Aguardando</option>
-              <option>Concluído</option>
-              <option>Atrasado</option>
+            <select 
+              className="form-control"
+              value={filters.statusPagamento}
+              onChange={(e) => handleFilterChange('statusPagamento', e.target.value)}
+            >
+              <option value="">Todos</option>
+              <option value="aguardando">Aguardando</option>
+              <option value="pago">Pago</option>
+              <option value="atrasado">Atrasado</option>
             </select>
           </div>
           <div className="col-md-3 mb-2 ">
             <label>Status Pedido</label>
-            <select className="form-control">
-              <option>Todos</option>
-              <option>Pendente</option>
-              <option>Produção</option>
-              <option>Enviado</option>
-              <option>Entregue</option>
-              <option>Cancelado</option>
+            <select 
+              className="form-control"
+              value={filters.statusPedido}
+              onChange={(e) => handleFilterChange('statusPedido', e.target.value)}
+            >
+              <option value="">Todos</option>
+              <option value="iniciado">Iniciado</option>
+              <option value="preparacao">Preparação</option>
+              <option value="enviado">Enviado</option>
+              <option value="entregue">Entregue</option>
+              <option value="cancelado">Cancelado</option>
             </select>
           </div>
         </div>
 
-        <div className="table-pedidos mt-3">
-          <div className="table-header">
-            <div>Cliente</div>
-            <div>Telefone</div>
-            <div>Data</div>
-            <div>Valor</div>
-            <div>Forma</div>
-            <div>Pagamento</div>
-            <div>Pedido</div>
-            <div>Ações</div>
-          </div>
-
-          {filtered.map(p => (
-            <div key={p.id} className="pedido-row" onClick={() => openDetails(p)}>
-              <div>{p.nome}</div>
-              <div>{p.telefone}</div>
-              <div>{p.data}</div>
-              <div>R$ {p.valor.toFixed(2).replace('.', ',')}</div>
-              <div>{p.forma}</div>
-              <div className={`status-badge status-pagamento ${p.statusPagamento}`}>{p.statusPagamento === 'aguardando' ? 'Aguardando' : p.statusPagamento === 'atrasado' ? 'Atrasado' : 'Concluído'}</div>
-              <div className={`status-badge status-pedido ${p.statusPedido}`}>{p.statusPedido === 'iniciado' ? 'Produção' : p.statusPedido === 'concluido' ? 'Concluído' : p.statusPedido}</div>
-              <div>
-                <button className="btn-sm btn-contato" title="WhatsApp"><i className="bi bi-whatsapp"></i></button>
-                <button className="btn-sm btn-contato" title="E-mail"><i className="bi bi-envelope"></i></button>
-              </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="loading-container">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Carregando...</span>
             </div>
-          ))}
-        </div>
+            <p>Carregando pedidos...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="error-container">
+            <div className="alert alert-warning">
+              <i className="bi bi-exclamation-triangle"></i> {error}
+            </div>
+            <button className="btn btn-warning" onClick={fetchOrders}>
+              Tentar Novamente
+            </button>
+          </div>
+        )}
+
+        {/* Orders Table */}
+        {!loading && !error && (
+          <div className="table-pedidos mt-3">
+            <div className="table-header">
+              <div>Cliente</div>
+              <div>Telefone</div>
+              <div>Data</div>
+              <div>Valor</div>
+              <div>Forma</div>
+              <div>Pagamento</div>
+              <div>Pedido</div>
+              <div>Ações</div>
+            </div>
+
+            {filtered.length > 0 ? (
+              filtered.map(p => (
+                <div key={p.id} className="pedido-row" onClick={() => openDetails(p)}>
+                  <div>{p.nome}</div>
+                  <div>{p.telefone}</div>
+                  <div>{p.data}</div>
+                  <div>R$ {p.valor.toFixed(2).replace('.', ',')}</div>
+                  <div>{p.forma}</div>
+                  <div className={`status-badge status-pagamento ${p.statusPagamento}`}>{p.statusPagamento === 'aguardando' ? 'Aguardando' : p.statusPagamento === 'atrasado' ? 'Atrasado' : 'Concluído'}</div>
+                  <div className={`status-badge status-pedido ${p.statusPedido}`}>{p.statusPedido === 'iniciado' ? 'Produção' : p.statusPedido === 'concluido' ? 'Concluído' : p.statusPedido}</div>
+                  <div>
+                    <button className="btn-sm btn-contato" title="WhatsApp"><i className="bi bi-whatsapp"></i></button>
+                    <button className="btn-sm btn-contato" title="E-mail"><i className="bi bi-envelope"></i></button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="no-results">
+                <i className="bi bi-inbox"></i>
+                <p>Nenhum pedido encontrado com os filtros aplicados.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <Modal isOpen={modalState.isOpen} onClose={closeModal} type={modalState.type} viewContent={modalState.viewContent} />

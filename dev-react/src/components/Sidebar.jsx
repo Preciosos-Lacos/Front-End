@@ -62,39 +62,45 @@ const Sidebar = () => {
         <img src={logo} alt="Logo" />
         <ul>
           <li onClick={handleItemClick} className={isActivePath('/pedidos') ? 'active' : ''}>
-            <Link to="/pedidos">
+            <Link to="/admin/pedidos">
               <i className="bi bi-box"></i>
               <span>Pedidos</span>
             </Link>
           </li>
           <li onClick={handleItemClick} className={isActivePath('/dashboard') ? 'active' : ''}>
-            <Link to="/dashboard">
+            <Link to="/admin/dashboard">
               <i className="bi bi-bar-chart"></i>
               <span>Dashboard</span>
             </Link>
           </li>
           <li onClick={handleItemClick} className={isActivePath('/cadastro-cor') ? 'active' : ''}>
-            <Link to="/cadastro-cor">
+            <Link to="/admin/cadastro-cor">
               <i className="bi bi-palette"></i>
               <span>Cores</span>
             </Link>
           </li>
           <li onClick={handleItemClick} className={isActivePath('/cadastro-tipo-lacos') ? 'active' : ''}>
-            <Link to="/cadastro-tipo-lacos">
+            <Link to="/admin/cadastro-tipo-lacos">
               <i className="bi bi-scissors"></i>
               <span>Tipos de Laço</span>
             </Link>
           </li>
           <li onClick={handleItemClick} className={isActivePath('/cadastro-modelo') ? 'active' : ''}>
-            <Link to="/cadastro-modelo">
+            <Link to="/admin/cadastro-modelo">
               <i className="bi bi-tag"></i>
               <span>Modelos</span>
             </Link>
           </li>
           <li onClick={handleItemClick} className={isActivePath('/colecoes') ? 'active' : ''}>
-            <Link to="/colecoes">
+            <Link to="/admin/colecoes">
               <i className="bi bi-archive"></i>
               <span>Coleções</span>
+            </Link>
+          </li>
+          <li onClick={handleItemClick} className={isActivePath('/admin/banner') ? 'active' : ''}>
+            <Link to="/admin/banner">
+              <i className="bi bi-image"></i>
+              <span>Banner Home</span>
             </Link>
           </li>
         </ul>

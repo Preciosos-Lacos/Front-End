@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Modal.css';
 
 const ModalModelo = ({ isOpen, onClose, type, modeloData = null, onSubmit }) => {
+  // Mantém suporte a upload base64 (campo imagemBase64) e inclui campos principais do modelo
   const [form, setForm] = useState({ nome: '', descricao: '', valor: '', imagem: '', imagemBase64: '' });
 
   useEffect(() => {

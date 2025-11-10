@@ -4,6 +4,7 @@ import '../styles/Modal.css';
 const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => {
   const [form, setForm] = useState({ nome: '', descricao: '', valor: '', modelos: [], imagem: '' });
   const [searchTerm, setSearchTerm] = useState('');
+  
 
   const modelosDisponiveis = [
     'Laço Padrão', 'Laço de Festa', 'Laço Infantil', 'Laço Princesa', 'Laço Piscina', 'Laço Silicone'

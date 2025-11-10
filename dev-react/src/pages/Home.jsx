@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/HomeUsuario.css';
 import '../styles/BannerHome.css';
@@ -9,8 +9,17 @@ import LacosUnicornio from '../assets/laco-kit-unicornio.webp';
 import LacoBarbie from '../assets/laco-barbie-detalhado.jpg';
 import LacoPanda from '../assets/laco-panda.webp';
 import banner from '../assets/banner_natal.png';
+import { getBannerUrl } from '../utils/bannerService';
 
 export default function Home() {
+  const [bannerUrl, setBannerUrl] = useState(banner);
+
+  useEffect(() => {
+    // Carregar banner dinâmico ao montar o componente
+    const dynamicBanner = getBannerUrl(banner);
+    setBannerUrl(dynamicBanner);
+  }, []);
+
   return (
     <div>
       <HeaderHome />
@@ -18,7 +27,7 @@ export default function Home() {
         <section className="banner">
           <div className="banner-content">
             <Link to="/catalogo">
-              <img src={banner} alt="Banner" />
+              <img src={bannerUrl} alt="Banner" />
             </Link>
           </div>
         </section>

@@ -18,14 +18,11 @@
 
 .modelo-main {
 	flex: 1;
-	padding: 120px 24px 40px 24px;
-	/* top padding to account for fixed header */
+	padding: 0;
 	margin-left: 0;
-	/* center main container like CadastroCor */
 	transition: margin-left .3s;
 	max-width: 1200px;
-	margin: 30px auto 40px auto;
-	/* center horizontally in viewport */
+	margin: 0 auto;
 }
 
 .modelo-dashboard header {
@@ -119,11 +116,11 @@
 
 .modelo-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 	gap: 20px;
 	max-width: 1200px;
-	margin: 20px auto 60px auto;
-	padding: 0 12px;
+	margin: 0 auto;
+	padding: 135px 18px 60px 18px;
 }
 
 .modelo-card {
@@ -135,18 +132,27 @@
 	align-items: stretch;
 	position: relative;
 	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+	width: 210px;
+	gap: 4px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modelo-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .modelo-img-wrapper {
 	width: 140px;
 	height: 120px;
-	border-radius: 8px;
+	border-radius: 10px;
 	background: #fff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	margin: 6px auto 10px auto;
+	margin: 0 auto 10px auto;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .modelo-img-wrapper img {
@@ -158,10 +164,10 @@
 .modelo-nome {
 	font-size: 16px;
 	text-align: center;
-	margin: 10px 4px 8px 4px;
+	margin: 0;
 	line-height: 1.2;
-	font-weight: bolder;
-	color: #2f2f2f;
+	font-weight: bold;
+	color: #3a3a3a;
 	min-height: 34px;
 	display: flex;
 	align-items: center;
@@ -171,17 +177,18 @@
 .modelo-footer {
 	width: 100%;
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: space-between;
 	align-items: center;
 	margin-top: auto;
 	padding: 0 4px;
-	flex-direction: row;
 	gap: 10px;
 }
 
 .modelo-valor {
 	font-size: 16px;
 	margin: 0;
+	font-weight: 500;
+	color: #3a3a3a;
 }
 
 .modelo-acoes {
@@ -194,11 +201,10 @@
 	cursor: pointer;
 	font-size: 16px;
 	color: #222;
-	/* transition: transform .2s, color .2s; */
+	transition: color 0.2s ease;
 }
 
 .modelo-acoes i:hover {
-	/* transform: scale(1.1); */
 	color: #5b5b5b;
 }
 

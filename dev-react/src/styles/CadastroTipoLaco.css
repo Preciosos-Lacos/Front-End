@@ -32,9 +32,9 @@
 
 .card-container-tipo-laco {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 20px;
-  padding: 120px 18px 60px 18px;
+  padding: 135px 18px 60px 18px;
   margin: 0 auto;
   max-width: 1200px;
 }
@@ -50,32 +50,45 @@
   gap: 4px;
   width: 210px;
   align-items: stretch;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card-custom h5 {
   text-align: center;
   font-weight: bold;
   margin: 0;
+  font-size: 16px;
+  color: var(--texto-escuro);
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-custom .tipo-laco-box {
   display: flex;
   justify-content: center;
-  margin: 6px 0 10px 0
+  margin: 0 auto 10px auto;
 }
 
 .card-custom .img-laco {
-  max-width: 140px;
+  width: 140px;
   height: 120px;
   object-fit: contain;
   border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .card-custom p {
-  margin: 8px 0
+  margin: 8px 0;
+  font-size: 14px;
 }
 
-/* Align list-associates styling with CardCor to avoid bold text and match appearance */
 .list-associates {
   border: 1px solid var(--rosa);
   border-radius: 10px;
@@ -84,6 +97,7 @@
   max-height: 90px;
   overflow-y: auto;
   font-size: 14px;
+  margin: 8px 0;
 }
 
 .list-associates ul {
@@ -97,7 +111,6 @@
   border-bottom: 1px solid var(--rosa);
   color: #fff;
   font-weight: 400;
-  /* ensure not bold; override container's 600 */
 }
 
 .list-associates li:last-child {
@@ -157,6 +170,39 @@
 }
 
 /* ======== Cards ======== */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding: 0 4px;
+  gap: 10px;
+}
+
+.card-footer p {
+  margin: 0;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--texto-escuro);
+}
+
+.icons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.icons i {
+  cursor: pointer;
+  font-size: 16px;
+  color: #222;
+  transition: color 0.2s ease;
+}
+
+.icons i:hover {
+  color: #5b5b5b;
+}
+
 /* ======== Modal ======== */
 
 .modal {

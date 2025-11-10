@@ -78,7 +78,7 @@ export default function CadastroUsuario() {
 
   return (
     <main data-scroll-container className="cadastro-main">
-      <Link to="/" aria-label="Ir para a página inicial" className="home-shortcut">
+      <Link to="" aria-label="Ir para a página inicial" className="home-shortcut">
         <i className="bi bi-house-door"></i>
       </Link>
       <section className="cadastro-section">

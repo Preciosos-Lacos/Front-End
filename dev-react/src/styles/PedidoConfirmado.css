@@ -189,3 +189,43 @@
         padding: 10px;
     }
 }
+
+/* Loading and Error States */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #5a2b40;
+    font-size: 1.1rem;
+    font-weight: 500;
+    min-height: 60vh;
+}
+
+.loading-container .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 20px;
+    color: #e78fb3;
+}
+
+.alert {
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    width: 66%;
+    text-align: center;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.alert i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
