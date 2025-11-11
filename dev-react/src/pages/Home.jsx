@@ -9,7 +9,6 @@ import LacosUnicornio from '../assets/laco-kit-unicornio.webp';
 import LacoBarbie from '../assets/laco-barbie-detalhado.jpg';
 import LacoPanda from '../assets/laco-panda.webp';
 import banner from '../assets/banner_natal.png';
-import { getBannerUrl } from '../utils/bannerService';
 
 export default function Home() {
   const [bannerUrl, setBannerUrl] = useState(banner);

@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
-import { isAdmin, isAuthenticated } from '../utils/auth';
-import { getBannerUrl, saveBannerUrl, resetBanner, fileToBase64, getBannerHistory, removeBannerFromHistory, clearBannerHistory, formatSavedAt, syncBannerHistory } from '../utils/bannerService';
-import { uploadFile } from '../utils/upload';
-import { getAuthToken } from '../utils/auth';
 import '../styles/cadastroBanner.css';
 
 const CadastroBanner = () => {

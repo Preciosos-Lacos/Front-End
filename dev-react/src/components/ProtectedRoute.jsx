@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { isAuthenticated, isAdmin } from '../utils/auth';
 
 /**
  * Componente para proteger rotas que requerem autenticação de admin
