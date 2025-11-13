@@ -1,6 +1,6 @@
 import React from 'react';
 import HeaderHome from '../components/HeaderHome.jsx';
-import BannerHome from '../components/BannerHome.jsx';
+// import BannerHome from '../components/BannerHome.jsx';
 // import CatalogoPreview from '../components/pagesatalogoHome.jsx';
 import QuemSouEu from '../components/QuemSouEu.jsx';
 import '../styles/HomeUsuario.css';

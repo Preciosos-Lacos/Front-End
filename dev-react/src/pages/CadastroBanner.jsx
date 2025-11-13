@@ -27,6 +27,7 @@ const CadastroBanner = () => {
     dataInicio: '',
     dataFim: ''
   });
+  const SERVER_ENABLED = (import.meta.env.VITE_ENABLE_BANNER_SERVER === 'true');
 
   useEffect(() => {
     // Verificar se é admin
@@ -54,6 +55,7 @@ const CadastroBanner = () => {
   }, [navigate]);
 
   const loadServerBanners = async () => {
+    if (!SERVER_ENABLED) return;
     try {
       const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
       const res = await fetch(`${BASE}/banners`);
@@ -67,6 +69,11 @@ const CadastroBanner = () => {
   };
 
   const handleCreateBanner = async () => {
+    if (!SERVER_ENABLED) {
+      setMessage({ text: 'Modo local: criação no servidor está desativada.', type: 'info' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 2500);
+      return;
+    }
     if (!file && !preview) {
       setMessage({ text: 'Selecione uma imagem primeiro.', type: 'error' });
       return;
@@ -115,6 +122,11 @@ const CadastroBanner = () => {
   };
 
   const handleDeleteServerBanner = async (bannerId) => {
+    if (!SERVER_ENABLED) {
+      setMessage({ text: 'Modo local: exclusão no servidor está desativada.', type: 'info' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 2500);
+      return;
+    }
     if (!window.confirm('Deseja realmente excluir este banner do servidor?')) {
       return;
     }
@@ -138,6 +150,11 @@ const CadastroBanner = () => {
   };
 
   const handleToggleBannerStatus = async (bannerId, currentStatus) => {
+    if (!SERVER_ENABLED) {
+      setMessage({ text: 'Modo local: alteração de status no servidor está desativada.', type: 'info' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 2500);
+      return;
+    }
     try {
       const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
       const token = getAuthToken();
@@ -419,6 +436,11 @@ const CadastroBanner = () => {
   };
 
   const handleUseServerBanner = (banner) => {
+    if (!SERVER_ENABLED) {
+      setMessage({ text: 'Modo local: uso de banners do servidor está desativado.', type: 'info' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 2500);
+      return;
+    }
     if (banner.imagemUrl) {
       const success = saveBannerUrl(banner.imagemUrl);
       if (success) {
@@ -580,9 +602,10 @@ const CadastroBanner = () => {
             <button
               className="admin-banner-btn admin-banner-btn--success"
               onClick={handleCreateBanner}
-              disabled={loading || (!file && !preview)}
+              disabled={loading || (!file && !preview) || !SERVER_ENABLED}
+              title={!SERVER_ENABLED ? 'Modo local: criação no servidor desativada' : ''}
             >
-              {loading ? 'Criando...' : 'Criar Banner no Servidor'}
+              {loading ? 'Criando...' : (SERVER_ENABLED ? 'Criar Banner no Servidor' : 'Criar no Servidor (desativado)')}
             </button>
             {(file || preview !== currentBanner) && (
               <button
@@ -603,9 +626,10 @@ const CadastroBanner = () => {
             <button
               className="admin-banner-btn admin-banner-btn--info"
               onClick={() => setShowServerBanners(!showServerBanners)}
-              disabled={loading}
+              disabled={loading || !SERVER_ENABLED}
+              title={!SERVER_ENABLED ? 'Modo local: visualização de servidores desativada' : ''}
             >
-              {showServerBanners ? 'Ocultar' : 'Ver'} Banners do Servidor
+              {showServerBanners ? 'Ocultar' : (SERVER_ENABLED ? 'Ver Banners do Servidor' : 'Ver Banners do Servidor (desativado)')}
             </button>
           </div>
         </section>

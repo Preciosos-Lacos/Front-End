@@ -4,6 +4,7 @@ import Header from '../components/Header.jsx';
 import '../styles/Catalogo.css';
 
 const Catalogo = () => {
+    const SERVER_ENABLED = (import.meta.env.VITE_ENABLE_CATALOG_SERVER === 'true');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [colorFilter, setColorFilter] = useState('');
     const [priceFilter, setPriceFilter] = useState('');
@@ -30,40 +31,59 @@ const Catalogo = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Fetch products from backend (raw fetch)
+    // Fetch products from backend (raw fetch). If server is disabled or fails,
+    // fall back to local `productos` array so the catalog never breaks.
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
                 setError(null);
+                if (!SERVER_ENABLED) {
+                    // server disabled by env flag — use local products
+                    setProducts(productos);
+                    setFeaturedProducts(productos.slice(0, 6));
+                    setPromotionalProducts(productos.slice(6, 9));
+                    return;
+                }
+
                 const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
                 const [allRes, featRes, promoRes] = await Promise.all([
-                    fetch(`${BASE}/produtos`),
-                    fetch(`${BASE}/produtos/destaques`),
-                    fetch(`${BASE}/produtos/promocoes`),
+                    fetch(`${BASE}/produtos`).catch(() => ({ ok: false })),
+                    fetch(`${BASE}/produtos/destaques`).catch(() => ({ ok: false })),
+                    fetch(`${BASE}/produtos/promocoes`).catch(() => ({ ok: false })),
                 ]);
-                if (!allRes.ok) throw new Error(`HTTP ${allRes.status}`);
-                const productsData = await allRes.json();
-                setProducts(Array.isArray(productsData) ? productsData : (productsData?.content || []));
 
-                if (featRes.ok) {
+                let productsData = [];
+                if (allRes && allRes.ok) {
+                    const body = await allRes.json();
+                    productsData = Array.isArray(body) ? body : (body?.content || []);
+                }
+
+                // if server returned nothing, fallback to local
+                if (!productsData || productsData.length === 0) {
+                    setProducts(productos);
+                } else {
+                    setProducts(productsData);
+                }
+
+                if (featRes && featRes.ok) {
                     const featuredData = await featRes.json();
                     setFeaturedProducts(Array.isArray(featuredData) ? featuredData : (featuredData?.content || []));
                 } else {
-                    setFeaturedProducts([]);
+                    setFeaturedProducts(productos.slice(0, 6));
                 }
 
-                if (promoRes.ok) {
+                if (promoRes && promoRes.ok) {
                     const promotionalData = await promoRes.json();
                     setPromotionalProducts(Array.isArray(promotionalData) ? promotionalData : (promotionalData?.content || []));
                 } else {
-                    setPromotionalProducts([]);
+                    setPromotionalProducts(productos.slice(6, 9));
                 }
                 
             } catch (err) {
                 console.error('Error fetching products:', err);
+                // Non-blocking error — show a warning but keep the local catalog
                 setError('Servidor indisponível. Exibindo catálogo offline.');
-                // Fallback to hardcoded data if API fails
                 setProducts(productos);
                 setFeaturedProducts(productos.slice(0, 6));
                 setPromotionalProducts(productos.slice(6, 9));
@@ -204,11 +224,16 @@ const Catalogo = () => {
         }
     ];
 
+    const getName = (product) => ((product.nome || product.name) || '').toString().toLowerCase();
+    const getCollection = (product) => ((product.categoria?.nome) || product.collection || '').toString().toLowerCase();
+    const getColor = (product) => ((product.cor || product.color) || '').toString().toLowerCase();
+    const getPrice = (product) => Number(product.preco ?? product.price ?? 0);
+
     const filterProducts = () => {
         return products.filter(product => {
-            const name = product.nome?.toLowerCase() || '';
-            const collection = product.categoria?.nome?.toLowerCase() || '';
-            const cor = product.cor?.toLowerCase() || '';
+            const name = getName(product);
+            const collection = getCollection(product);
+            const cor = getColor(product);
 
             let show = true;
 
@@ -216,10 +241,11 @@ const Catalogo = () => {
             if (colorFilter && !cor.includes(colorFilter.toLowerCase()) && !name.includes(colorFilter.toLowerCase())) show = false;
             if (searchQuery && !name.includes(searchQuery.toLowerCase()) && !collection.includes(searchQuery.toLowerCase())) show = false;
 
+            const price = getPrice(product);
             if (priceFilter) {
-                if (priceFilter === "20" && product.preco > 20) show = false;
-                if (priceFilter === "20-50" && (product.preco < 20 || product.preco > 50)) show = false;
-                if (priceFilter === "50+" && product.preco < 50) show = false;
+                if (priceFilter === "20" && price > 20) show = false;
+                if (priceFilter === "20-50" && (price < 20 || price > 50)) show = false;
+                if (priceFilter === "50+" && price < 50) show = false;
             }
 
             return show;
@@ -244,30 +270,24 @@ const Catalogo = () => {
         );
     }
 
-    if (error) {
-        return (
-            <div className="catalogo-page">
-                <Header showOffcanvas={true} />
-                <main data-scroll-container>
-                    <div className="error-container">
-                        <div className="alert alert-warning" role="alert">
-                            <i className="bi bi-exclamation-triangle-fill"></i>
-                            {error}
-                        </div>
-                        <button className="btn btn-primary" onClick={() => window.location.reload()}>
-                            Tentar Novamente
-                        </button>
-                    </div>
-                </main>
-            </div>
-        );
-    }
+    // Do not return on error; show a non-blocking alert and continue with local data
 
     return (
         <div className="catalogo-page">
             <Header showOffcanvas={true} />
 
             <main data-scroll-container>
+                {error && (
+                    <div className="container mt-3">
+                        <div className="alert alert-warning" role="alert">
+                            <i className="bi bi-exclamation-triangle-fill"></i>
+                            <span style={{ marginLeft: 8 }}>{error}</span>
+                            <button className="btn btn-sm btn-outline-secondary ms-3" onClick={() => window.location.reload()}>
+                                Tentar Novamente
+                            </button>
+                        </div>
+                    </div>
+                )}
                 <section className="promo-section">
                     <h2>Promoções atuais</h2>
                     {promotionalProducts.length > 0 ? (
@@ -278,30 +298,30 @@ const Catalogo = () => {
                                         <div className="row g-3 justify-content-center">
                                             <div className="col-12 col-sm-6 col-md-4">
                                                 <img 
-                                                    src={product.imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                    src={product.imagens?.[0]?.urlImagem || product.image || '/src/assets/default-product.webp'} 
                                                     className="d-block rounded" 
-                                                    alt={product.nome} 
+                                                    alt={product.nome || product.name} 
                                                 />
-                                                <p className="promo-caption text-center">{product.nome} em promoção!</p>
+                                                <p className="promo-caption text-center">{(product.nome || product.name)} em promoção!</p>
                                             </div>
                                             {promotionalProducts[index + 1] && (
                                                 <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
                                                     <img 
-                                                        src={promotionalProducts[index + 1].imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                        src={promotionalProducts[index + 1].imagens?.[0]?.urlImagem || promotionalProducts[index + 1].image || '/src/assets/default-product.webp'} 
                                                         className="d-block rounded" 
-                                                        alt={promotionalProducts[index + 1].nome} 
+                                                        alt={promotionalProducts[index + 1].nome || promotionalProducts[index + 1].name} 
                                                     />
-                                                    <p className="promo-caption text-center">{promotionalProducts[index + 1].nome} especial!</p>
+                                                    <p className="promo-caption text-center">{(promotionalProducts[index + 1].nome || promotionalProducts[index + 1].name)} especial!</p>
                                                 </div>
                                             )}
                                             {promotionalProducts[index + 2] && (
                                                 <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
                                                     <img 
-                                                        src={promotionalProducts[index + 2].imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
+                                                        src={promotionalProducts[index + 2].imagens?.[0]?.urlImagem || promotionalProducts[index + 2].image || '/src/assets/default-product.webp'} 
                                                         className="d-block rounded" 
-                                                        alt={promotionalProducts[index + 2].nome} 
+                                                        alt={promotionalProducts[index + 2].nome || promotionalProducts[index + 2].name} 
                                                     />
-                                                    <p className="promo-caption text-center">{promotionalProducts[index + 2].nome} tendência!</p>
+                                                    <p className="promo-caption text-center">{(promotionalProducts[index + 2].nome || promotionalProducts[index + 2].name)} tendência!</p>
                                                 </div>
                                             )}
                                         </div>
@@ -457,26 +477,26 @@ const Catalogo = () => {
                                             <div className="row g-3">
                                                 <div className="col-12 col-sm-6 col-md-4">
                                                     <div className="produto-card">
-                                                        <img 
-                                                            src={product.imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
-                                                            alt={product.nome} 
-                                                        />
-                                                        <div className="produto-info">
-                                                            <p>{product.nome} - {product.categoria?.nome || 'Coleção'}</p>
-                                                            <p className="produto-preco">R${product.preco?.toFixed(2).replace('.', ',')}</p>
-                                                        </div>
+                                                            <img 
+                                                                src={product.imagens?.[0]?.urlImagem || product.image || '/src/assets/default-product.webp'} 
+                                                                alt={product.nome || product.name} 
+                                                            />
+                                                            <div className="produto-info">
+                                                                <p>{(product.nome || product.name)} - {product.categoria?.nome || product.collection || 'Coleção'}</p>
+                                                                <p className="produto-preco">R${(product.preco ?? product.price)?.toFixed(2).replace('.', ',')}</p>
+                                                            </div>
                                                     </div>
                                                 </div>
                                                 {featuredProducts[index + 1] && (
                                                     <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
                                                         <div className="produto-card">
                                                             <img 
-                                                                src={featuredProducts[index + 1].imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
-                                                                alt={featuredProducts[index + 1].nome} 
+                                                                src={featuredProducts[index + 1].imagens?.[0]?.urlImagem || featuredProducts[index + 1].image || '/src/assets/default-product.webp'} 
+                                                                alt={featuredProducts[index + 1].nome || featuredProducts[index + 1].name} 
                                                             />
                                                             <div className="produto-info">
-                                                                <p>{featuredProducts[index + 1].nome} - {featuredProducts[index + 1].categoria?.nome || 'Coleção'}</p>
-                                                                <p className="produto-preco">R${featuredProducts[index + 1].preco?.toFixed(2).replace('.', ',')}</p>
+                                                                <p>{(featuredProducts[index + 1].nome || featuredProducts[index + 1].name)} - {featuredProducts[index + 1].categoria?.nome || featuredProducts[index + 1].collection || 'Coleção'}</p>
+                                                                <p className="produto-preco">R${(featuredProducts[index + 1].preco ?? featuredProducts[index + 1].price)?.toFixed(2).replace('.', ',')}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -485,12 +505,12 @@ const Catalogo = () => {
                                                     <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
                                                         <div className="produto-card">
                                                             <img 
-                                                                src={featuredProducts[index + 2].imagens?.[0]?.urlImagem || '/src/assets/default-product.webp'} 
-                                                                alt={featuredProducts[index + 2].nome} 
+                                                                src={featuredProducts[index + 2].imagens?.[0]?.urlImagem || featuredProducts[index + 2].image || '/src/assets/default-product.webp'} 
+                                                                alt={featuredProducts[index + 2].nome || featuredProducts[index + 2].name} 
                                                             />
                                                             <div className="produto-info">
-                                                                <p>{featuredProducts[index + 2].nome} - {featuredProducts[index + 2].categoria?.nome || 'Coleção'}</p>
-                                                                <p className="produto-preco">R${featuredProducts[index + 2].preco?.toFixed(2).replace('.', ',')}</p>
+                                                                <p>{(featuredProducts[index + 2].nome || featuredProducts[index + 2].name)} - {featuredProducts[index + 2].categoria?.nome || featuredProducts[index + 2].collection || 'Coleção'}</p>
+                                                                <p className="produto-preco">R${(featuredProducts[index + 2].preco ?? featuredProducts[index + 2].price)?.toFixed(2).replace('.', ',')}</p>
                                                             </div>
                                                         </div>
                                                     </div>
