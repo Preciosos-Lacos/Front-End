@@ -561,7 +561,12 @@ const Catalogo = () => {
                                             <h3 className="card-title">{product.nome || product.name}</h3>
                                             <p className="card-collection">{product.categoria?.nome || product.collection}</p>
                                             <p className="card-price">R${(product.preco || product.price)?.toFixed(2).replace('.', ',')}</p>
-                                            <button className="btn btn-primary btn-sm">Ver Produto</button>
+                                            <Link
+                                                to={`/produto${product.id ? `?id=${product.id}` : ''}`}
+                                                className="btn btn-primary btn-sm"
+                                            >
+                                                Ver Produto
+                                            </Link>
                                         </div>
                                     </div>
                                 ))
