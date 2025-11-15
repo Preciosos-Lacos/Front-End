@@ -115,6 +115,55 @@ export default function Perfil() {
     };
   }, []);
 
+  async function handleUpdate() {
+    try {
+      setLoading(true);
+
+      const token = getAuthToken();
+      if (!token) return alert("Token inválido");
+
+      const payload = decodeJwt(token);
+      const login = payload?.sub; // email atual
+
+      const params = new URLSearchParams();
+
+      if (campos.nome) params.append("nome", campos.nome);
+      if (campos.telefone) params.append("telefone", campos.telefone);
+      if (campos.cpf) params.append("cpf", campos.cpf);
+      if (campos.email) params.append("email", campos.email);
+      if (campos.senha && campos.senha !== "********")
+        params.append("senha", campos.senha);
+
+      const res = await fetch(`${BASE_URL}/usuarios/atualizar/${login}?` + params.toString(), {
+        method: "PUT",
+        mode: "cors",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Erro ao atualizar");
+      }
+
+      alert("Dados atualizados com sucesso!");
+
+      if (campos.email !== login) {
+        alert("Você mudou seu e-mail. Faça login novamente.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+
+
+
+    } catch (e) {
+      alert("Erro ao atualizar: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const handleEdit = (campo) => {
     setEditando({ ...editando, [campo]: true });
   };
@@ -227,6 +276,7 @@ export default function Perfil() {
               onClick={() => handleEdit("senha")}
             ></i>
           </div>
+          <button onClick={handleUpdate}>Atualizar Informacões</button>
         </div>
       </section>
     </main>
