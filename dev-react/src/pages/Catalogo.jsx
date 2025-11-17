@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+    import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header.jsx';
 import '../styles/Catalogo.css';
+
+const API = 'http://localhost:8080/api/produtos';
 
 const Catalogo = () => {
     const SERVER_ENABLED = (import.meta.env.VITE_ENABLE_CATALOG_SERVER === 'true');
@@ -13,8 +15,9 @@ const Catalogo = () => {
     const [products, setProducts] = useState([]);
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [promotionalProducts, setPromotionalProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [selectedProduct, setSelectedProduct] = useState(null);
     const filterBarRef = useRef(null);
 
     useEffect(() => {
@@ -37,7 +40,7 @@ const Catalogo = () => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-                setError(null);
+                setError('');
                 if (!SERVER_ENABLED) {
                     // server disabled by env flag — use local products
                     setProducts(productos);
@@ -82,7 +85,6 @@ const Catalogo = () => {
                 
             } catch (err) {
                 console.error('Error fetching products:', err);
-                // Non-blocking error — show a warning but keep the local catalog
                 setError('Servidor indisponível. Exibindo catálogo offline.');
                 setProducts(productos);
                 setFeaturedProducts(productos.slice(0, 6));
@@ -578,6 +580,28 @@ const Catalogo = () => {
                         </div>
                     </div>
                 </section>
+
+                {selectedProduct && (
+                    <div style={{
+                      position:'fixed',top:0,left:0,right:0,bottom:0,
+                      background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:9999
+                    }}
+                      onClick={() => setSelectedProduct(null)}
+                    >
+                      <div style={{background:'#fff',padding:32,borderRadius:8,minWidth:320}} onClick={e => e.stopPropagation()}>
+                        <h2>{selectedProduct.nome}</h2>
+                        <div>Preço: R$ {selectedProduct.preco.toFixed(2)}</div>
+                        <div>Cor: {selectedProduct.cor || 'N/A'}</div>
+                        <div>Categoria: {selectedProduct.categoria.nome}</div>
+                        <div style={{display:'flex',gap:8,marginTop:16}}>
+                          {selectedProduct.imagens.map((img, idx) => (
+                            <img key={idx} src={img.urlImagem} alt={selectedProduct.nome} width={120} style={{margin:8}} />
+                          ))}
+                        </div>
+                        <button onClick={() => setSelectedProduct(null)} style={{marginTop:16}}>Fechar</button>
+                      </div>
+                    </div>
+                  )}
             </main>
         </div>
     );
