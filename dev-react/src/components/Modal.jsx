@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Modal.css';
 
+// Função utilitária para garantir o valor correto do input
+function getValorCor(formData, colorData) {
+  if (formData.valor) return formData.valor;
+  if (colorData && colorData.valorNumerico !== undefined && colorData.valorNumerico !== null && colorData.valorNumerico !== '') {
+    return `R$ ${colorData.valorNumerico}`;
+  }
+  if (colorData && colorData.valor) return colorData.valor;
+  return "R$ 0,00";
+}
+// Defina a URL igual à usada em CadastroCor.jsx
+const API_URL = 'http://localhost:8080/caracteristica-detalhe/cor';
+import '../styles/Modal.css';
 const Modal = ({ 
   isOpen, 
   onClose, 
@@ -10,6 +21,23 @@ const Modal = ({
   colorName = '',
   viewContent = null
 }) => {
+  // ...existing code...
+  const [colorInfo, setColorInfo] = useState(null);
+  // Atualiza o valor do input assim que colorInfo é carregado
+  useEffect(() => {
+    if (
+      type === 'edit' &&
+      colorInfo &&
+      typeof colorInfo === 'object' &&
+      colorInfo.preco !== undefined &&
+      colorInfo.preco !== null
+    ) {
+      setFormData(prev => ({
+        ...prev,
+        valor: `R$ ${colorInfo.preco}`
+      }));
+    }
+  }, [type, colorInfo]);
   const [formData, setFormData] = useState({
     nome: '',
     cor: '#F29DC3',
@@ -21,6 +49,22 @@ const Modal = ({
   const [availableModels, setAvailableModels] = useState([]);
 
   useEffect(() => {
+      // Buscar informações da cor pelo id ao abrir modal de edição
+      const fetchColorById = async (id) => {
+        try {
+          const res = await fetch(`${API_URL}/${id}/completo`, { method: 'GET', headers: { Accept: 'application/json' } });
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          const data = await res.json();
+          setColorInfo(data);
+          console.log('Modal fetchColorById response:', data);
+        } catch (error) {
+          console.error('Erro ao carregar cor no modal:', error);
+          setColorInfo(null);
+        }
+      };
+      if (type === 'edit' && isOpen && colorData && colorData.id) {
+        fetchColorById(colorData.id);
+      }
     // Buscar modelos reais do backend
         const fetchModelos = async () => {
           try {
@@ -49,21 +93,16 @@ const Modal = ({
     if (type === 'edit' && colorData && availableModels.length > 0) {
       console.log('colorData recebido no modal:', colorData);
       console.log('availableModels carregados:', availableModels);
-      let modelosIds = [];
-      
-      if (Array.isArray(colorData.modelos) && colorData.modelos.length > 0) {
-        // Se os modelos são IDs (números)
+      // Usar modelosIds se existir, senão tentar mapear como antes
+      let modelosIds = Array.isArray(colorData.modelosIds) ? colorData.modelosIds : [];
+      if (modelosIds.length === 0 && Array.isArray(colorData.modelos) && colorData.modelos.length > 0) {
         if (typeof colorData.modelos[0] === 'number') {
           modelosIds = colorData.modelos.filter(id => availableModels.some(m => m.id === id));
-        } 
-        // Se são strings (nomes dos modelos)
-        else if (typeof colorData.modelos[0] === 'string') {
+        } else if (typeof colorData.modelos[0] === 'string') {
           modelosIds = availableModels
             .filter(m => colorData.modelos.includes(m.nome))
             .map(m => m.id);
-        } 
-        // Se são objetos com idModelo
-        else if (typeof colorData.modelos[0] === 'object') {
+        } else if (typeof colorData.modelos[0] === 'object') {
           if (colorData.modelos[0].idModelo) {
             modelosIds = colorData.modelos
               .map(m => m.idModelo)
@@ -73,20 +112,18 @@ const Modal = ({
               .map(m => m.id)
               .filter(id => availableModels.some(m => m.id === id));
           } else {
-            // Tentar mapear por nome
             modelosIds = availableModels
               .filter(m => colorData.modelos.some(modelo => modelo.nomeModelo === m.nome || modelo.nome === m.nome))
               .map(m => m.id);
           }
         }
       }
-      
       console.log('Modelos IDs mapeados:', modelosIds);
-      
+      // Usar valorNumerico do objeto normalizado
       setFormData({
         nome: colorData.nome || '',
         cor: colorData.cor || '#F29DC3',
-        valor: colorData.valor || '',
+        valor: colorData.valorNumerico ? `R$ ${colorData.valorNumerico}` : (colorData.valor || "R$ 0,00"),
         modelos: modelosIds
       });
       setSearchTerm('');
@@ -161,25 +198,26 @@ const Modal = ({
 
       <input
         type="text"
-        id='inpNome'
-        placeholder="Nome da cor: Verde-Água"
-        value={formData.nome}
-        onChange={(e) => handleInputChange('nome', e.target.value)}
-      />
-
-      <h3 className="titulo">Clique para escolher a cor:</h3>
-      <input
-        type="color"
-        value={formData.cor}
-        onChange={(e) => handleInputChange('cor', e.target.value)}
-      />
-
-      <input
-        type="text"
         id='inpValor'
+        value={(function() {
+          let valorInput = formData.valor;
+          if (colorInfo && typeof colorInfo === 'object' && colorInfo.preco !== undefined && colorInfo.preco !== null) {
+            valorInput = `R$ ${colorInfo.preco}`;
+          }
+          console.log('Valor exibido no input do modal:', valorInput);
+          return valorInput;
+        })()}
+        onChange={(e) => {
+          let v = e.target.value.replace(/[^\d,]/g, '');
+          setFormData(prev => ({ ...prev, valor: v }));
+        }}
+        onBlur={(e) => {
+          import('../utils/formatValor').then(({ formatValorBR }) => {
+            setFormData(prev => ({ ...prev, valor: formatValorBR(prev.valor) }));
+          });
+        }}
         placeholder="Valor: R$ 0,00"
-        value={formData.valor}
-        onChange={(e) => handleInputChange('valor', e.target.value)}
+        style={{ marginTop: '5px' }}
       />
 
       <h3 className="titulo">
@@ -223,21 +261,44 @@ const Modal = ({
       <span className="close" onClick={onClose}>&times;</span>
       <h2 className="tituloPopUp">Editar Cor</h2>
 
-      <input
-        type="text"
-        id='inpNome'
-        value={formData.nome}
-        readOnly
-      />
+      {/* Nome da cor */}
+      <div style={{ marginBottom: '10px' }}>
+        <label htmlFor="inpNome" style={{ fontWeight: 'bold' }}>Nome da cor:</label>
+        <input
+          type="text"
+          id='inpNome'
+          value={colorInfo?.descricao || formData.nome}
+          readOnly
+          style={{ backgroundColor: '#eee', color: '#888', cursor: 'not-allowed', marginTop: '5px' }}
+        />
+      </div>
 
-      <h3 className="titulo">Valor</h3>
-      <input
-        type="number"
-        id='inpValor'
-        value={formData.valor}
-        onChange={(e) => handleInputChange('valor', e.target.value)}
-      />
+      {/* Valor da cor */}
 
+      <div style={{ marginBottom: '10px' }}>
+        <label htmlFor="inpValor" style={{ fontWeight: 'bold' }}>Valor:</label>
+        <input
+          type="text"
+          id='inpValor'
+          value={formData.valor}
+          onChange={(e) => {
+            let v = e.target.value.replace(/[^\d,]/g, '');
+            setFormData(prev => ({ ...prev, valor: v }));
+          }}
+          onBlur={(e) => {
+            import('../utils/formatValor').then(({ formatValorBR }) => {
+              setFormData(prev => ({ ...prev, valor: formatValorBR(prev.valor) }));
+            });
+          }}
+          placeholder="Valor: R$ 0,00"
+          style={{ marginTop: '5px' }}
+        />
+      </div>
+
+
+
+
+      {/* Modelos associados */}
       <h3 className="titulo">
         Modelos Associados:
         <i className="bi bi-bookmark-plus-fill" style={{ color: '#000000', marginLeft: '5px' }}></i>

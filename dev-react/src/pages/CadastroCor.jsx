@@ -17,58 +17,112 @@ const CadastroCor = () => {
 
   const API_URL = "http://localhost:8080/caracteristica-detalhe/cor";
 
+  // Safe JSON parser: handles empty responses and invalid JSON gracefully
+  const safeParseJson = async (res) => {
+    try {
+      const text = await res.text();
+      if (!text) return null;
+      return JSON.parse(text);
+    } catch (e) {
+      console.warn('safeParseJson failed:', e);
+      return null;
+    }
+  };
 
   const normalizeColor = (raw) => {
+
   if (!raw) return null;
 
   const id = raw.id ?? raw.idCaracteristicaDetalhe ?? raw.id_caracteristica_detalhe ?? raw.id_caracteristica ?? raw.idCor;
   const nome = raw.nomeDaCor ?? raw.nome ?? raw.descricao ?? '';
   const cor = raw.cor ?? raw.hexaDecimal ?? raw.hexa_decimal ?? '';
 
-  const valor = typeof raw.valor === 'number'
-    ? raw.valor
-    : (typeof raw.preco === 'number'
-        ? raw.preco
-        : parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$', '').replace('.', '').replace(',', '.')) || 0);
+  // Formatar valor para moeda brasileira e valor puro para edição
+  let valor = '';
+  let valorNumerico = '';
+  const precoValido = raw.preco !== undefined && raw.preco !== null && raw.preco !== '' && raw.preco !== 0;
+  const valorValido = raw.valor !== undefined && raw.valor !== null && raw.valor !== '' && raw.valor !== 0;
+
+  if (precoValido) {
+    valorNumerico = String(raw.preco);
+    valor = `R$ ${raw.preco}`;
+  } else if (valorValido) {
+    valorNumerico = String(raw.valor);
+    valor = `R$ ${raw.valor}`;
+  } else {
+    valorNumerico = '0';
+    valor = 'R$ 0';
+  }
 
   const imagem = raw.imagem ?? null;
 
-  // Extrair modelos de diferentes formatos possíveis
+  // Definir modelosRaw corretamente
   let modelosRaw = [];
-  
-  if (Array.isArray(raw.listaModelos)) {
-    modelosRaw = raw.listaModelos;
-  } else if (Array.isArray(raw.modelos)) {
+  if (Array.isArray(raw.modelos)) {
     modelosRaw = raw.modelos;
+  } else if (Array.isArray(raw.listaModelos)) {
+    modelosRaw = raw.listaModelos;
+  } else if (Array.isArray(raw.modelosIds)) {
+    modelosRaw = raw.modelosIds;
   }
 
-  // Processar modelos - pode vir como objetos Modelo completos ou apenas IDs/nomes
-  const modelos = modelosRaw
-    .map((m) => {
-      if (!m) return null;
-
-      // Se for objeto Modelo completo
-      if (typeof m === 'object') {
-        // Pode ter idModelo e nomeModelo diretamente
-        if (m.idModelo && m.nomeModelo) {
-          return m.nomeModelo;
+  // Modelos associados: para o card, nomes; para o modal, IDs
+  let modelosNomes = [];
+  let modelosIds = [];
+  if (Array.isArray(modelosRaw)) {
+    modelosNomes = modelosRaw
+      .map((m) => {
+        if (m === null || m === undefined) return null;
+        if (typeof m === 'object') {
+          if (m.nomeModelo) return m.nomeModelo;
+          if (m.nome) return m.nome;
+          if (m.descricao) return m.descricao;
+          if (m.modelo && typeof m.modelo === 'object') {
+            if (m.modelo.nomeModelo) return m.modelo.nomeModelo;
+            if (m.modelo.nome) return m.modelo.nome;
+            if (m.modelo.descricao) return m.modelo.descricao;
+          }
+          const anyString = Object.values(m).find(v => typeof v === 'string' && v.trim().length > 0);
+          if (anyString) return anyString;
+          return null;
         }
-        // Ou pode estar aninhado
-        if (m.modelo && typeof m.modelo === 'object') {
-          return m.modelo.nomeModelo ?? null;
+        if (typeof m === 'string') return m;
+        return null;
+      })
+      .filter((v) => v !== null && typeof v === 'string' && v.trim().length > 0);
+
+    modelosIds = modelosRaw
+      .map((m) => {
+        if (m === null || m === undefined) return null;
+        if (typeof m === 'number') return m;
+        if (typeof m === 'object') {
+          if (m.idModelo !== undefined) return m.idModelo;
+          if (m.id !== undefined) return m.id;
+          if (m.modelo && typeof m.modelo === 'object') {
+            if (m.modelo.idModelo !== undefined) return m.modelo.idModelo;
+            if (m.modelo.id !== undefined) return m.modelo.id;
+          }
         }
-        // Ou apenas nomeModelo
-        return m.nomeModelo ?? null;
-      }
+        if (typeof m === 'string' && /^\d+$/.test(m)) return Number(m);
+        return null;
+      })
+      .filter((v) => v !== null && !isNaN(Number(v)));
+  }
 
-      // Se for string, retornar direto
-      if (typeof m === 'string') {
-        return m;
-      }
+  // Se vier modelos do backend como campo separado (ex: do /corModelo/{id}), sobrescrever modelosIds
+  if (raw.modelosIds && Array.isArray(raw.modelosIds)) {
+    modelosIds = raw.modelosIds.filter((v) => v !== null && !isNaN(Number(v)));
+  }
 
-      return null;
-    })
-    .filter((v) => v !== null && (typeof v === 'string' ? v.trim().length > 0 : true));
+  // Para o card, nomes; para o modal, IDs
+    // Garantir valorNumerico correto no retorno padrão
+    let valorNumericoPadrao = '';
+    if (raw.preco !== undefined && raw.preco !== null && raw.preco !== '') {
+      valorNumericoPadrao = raw.preco;
+    } else if (raw.valor !== undefined && raw.valor !== null && raw.valor !== '') {
+      valorNumericoPadrao = raw.valor;
+    }
+    return { id, nome, cor, valor, valorNumerico: valorNumericoPadrao, imagem, modelos: modelosNomes, modelosIds };
 
   // Se não encontrou nomes mas há objetos Modelo completos com IDs
   if (modelos.length === 0 && raw.listaModelos && Array.isArray(raw.listaModelos) && raw.listaModelos.length > 0) {
@@ -79,14 +133,26 @@ const CadastroCor = () => {
     if (objetosComIds.length > 0) {
       // Extrair IDs dos objetos Modelo
       const idsModelos = objetosComIds.map(m => m.idModelo ?? m.id);
-      // Manter os IDs para serem mapeados no modal com os modelos disponíveis
-      return { id, nome, cor, valor, imagem, modelos: idsModelos };
+      // Garantir valorNumerico correto
+      let valorNumerico = '';
+      if (raw.preco !== undefined && raw.preco !== null && raw.preco !== '') {
+        valorNumerico = raw.preco;
+      } else if (raw.valor !== undefined && raw.valor !== null && raw.valor !== '') {
+        valorNumerico = raw.valor;
+      }
+      return { id, nome, cor, valor, valorNumerico, imagem, modelos: idsModelos };
     }
     
     // Se listaModelos contém apenas números (IDs diretos)
     const idsNumericos = raw.listaModelos.filter(m => typeof m === 'number');
     if (idsNumericos.length > 0) {
-      return { id, nome, cor, valor, imagem, modelos: idsNumericos };
+      let valorNumerico = '';
+      if (raw.preco !== undefined && raw.preco !== null && raw.preco !== '') {
+        valorNumerico = raw.preco;
+      } else if (raw.valor !== undefined && raw.valor !== null && raw.valor !== '') {
+        valorNumerico = raw.valor;
+      }
+      return { id, nome, cor, valor, valorNumerico, imagem, modelos: idsNumericos };
     }
   }
 
@@ -123,13 +189,13 @@ const CadastroCor = () => {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      const data = await res.json();
+      const data = await safeParseJson(res);
       const list = Array.isArray(data)
         ? data
         : Array.isArray(data?.content)
           ? data.content
           : [];
-          console.log(data);
+      console.log('loadColors response:', data);
       setColors(list.map(normalizeColor).filter(Boolean));
     } catch (error) {
       console.error("Erro ao carregar cores:", error);
@@ -153,7 +219,8 @@ const CadastroCor = () => {
         hexaDecimal: formData.cor,
         preco: precoNumerico,
         imagem: formData.imagem ?? null,
-        listaModelos: modelosArray.map(id => ({ id }))
+        // enviar apenas array de IDs (backend espera inteiros, não objetos)
+        listaModelos: modelosArray
       };
       console.log('Payload enviado para cadastro de cor:', corPayload);
           // POST para cadastrar cor
@@ -168,7 +235,7 @@ const CadastroCor = () => {
             try {
               const resGet = await fetch(API_URL, { method: 'GET', headers: { Accept: 'application/json' } });
               if (resGet.ok) {
-                const data = await resGet.json();
+                const data = await safeParseJson(resGet);
                 const list = Array.isArray(data) ? data : Array.isArray(data?.content) ? data.content : [];
                 const corEncontrada = list.find(c => (c.nomeDaCor === formData.nome || c.nome === formData.nome) && (c.hexaDecimal === formData.cor || c.cor === formData.cor));
                 corId = corEncontrada?.id ?? null;
@@ -179,7 +246,8 @@ const CadastroCor = () => {
             if (corId) {
               const modelosPayload = {
                 id: corId,
-                listaModelos: modelosArray.map((mid) => ({ id: mid }))
+                // backend espera um array de inteiros
+                listaModelos: modelosArray
               };
               await fetch('http://localhost:8080/caracteristica-detalhe/corModelo', {
                 method: 'POST',
@@ -191,7 +259,17 @@ const CadastroCor = () => {
             closeModal();
             loadColors();
           } else {
-            showAlert('erro', 'Erro ao cadastrar cor no servidor!');
+            // Tenta ler o corpo da resposta (pode ajudar a debugar o 500)
+            let serverText = '';
+            try {
+              serverText = await response.text();
+            } catch (e) {
+              console.warn('Não foi possível ler o corpo da resposta do servidor', e);
+            }
+            console.error('createColor failed', response.status, serverText);
+            // Mostrar parte da mensagem no UI para ajudar debug (cortar para não poluir)
+            const short = serverText ? serverText.slice(0, 300) : '';
+            showAlert('erro', `Erro ao cadastrar cor no servidor: ${response.status}${short ? ' — ' + short : ''}`);
           }
     } catch (error) {
       console.error(error);
@@ -233,7 +311,7 @@ const CadastroCor = () => {
         if (modelosArray.length > 0) {
           const modelosPayload = {
             id: id,
-            listaModelos: modelosArray.map((mid) => ({ id: mid }))
+              listaModelos: modelosArray
           };
           const resAssociacao = await fetch('http://localhost:8080/caracteristica-detalhe/corModelo', {
             method: 'POST',
@@ -304,17 +382,75 @@ const CadastroCor = () => {
           // Tenta primeiro endpoint antigo simples, depois o /completo
           const resOld = await fetch(`${API_URL}/${id}`);
           if (resOld.ok) {
-            colorDataRaw = await resOld.json();
+            colorDataRaw = await safeParseJson(resOld) || null;
           } else {
             // como último recurso, tenta novamente o /completo
             const resAgain = await fetch(`${API_URL}/${id}/completo`);
             if (!resAgain.ok) throw new Error("Cor não encontrada");
-            colorDataRaw = await resAgain.json();
+            colorDataRaw = await safeParseJson(resAgain) || null;
           }
         } else {
-          colorDataRaw = await res.json();
+          colorDataRaw = await safeParseJson(res) || null;
+        }
+          console.log('[EDIT MODAL] Resposta /cor/{id}/completo:', colorDataRaw);
+
+        // Se o endpoint /completo ou /{id} não trouxe modelos, tentar buscar associações explicitamente
+        try {
+          // Normalizar qualquer listaModelos já presente na resposta para IDs numéricos
+          if (colorDataRaw && Array.isArray(colorDataRaw.listaModelos) && (!colorDataRaw.modelos || colorDataRaw.modelos.length === 0)) {
+            const normalizedFromLista = colorDataRaw.listaModelos
+              .map(m => {
+                if (m === null || m === undefined) return null;
+                if (typeof m === 'number') return m;
+                if (typeof m === 'string' && /^\d+$/.test(m)) return Number(m);
+                if (typeof m === 'object') return m.idModelo ?? m.id ?? (m.modelo && (m.modelo.idModelo ?? m.modelo.id)) ?? null;
+                return null;
+              })
+              .filter(v => v !== null && v !== undefined);
+            if (normalizedFromLista.length > 0) colorDataRaw.modelos = normalizedFromLista;
+          }
+
+          const assocRes = await fetch(`http://localhost:8080/caracteristica-detalhe/corModelo/${id}`);
+          if (assocRes.ok) {
+            const assocData = await safeParseJson(assocRes) || [];
+              console.log('[EDIT MODAL] Resposta /corModelo/{id}:', assocData);
+            let assocIds = [];
+            if (Array.isArray(assocData) && assocData.length > 0) {
+              const first = assocData[0];
+              if (typeof first === 'number') {
+                assocIds = assocData;
+              } else if (first && typeof first === 'object') {
+                // tentar vários formatos possíveis
+                if (first.idModelo !== undefined) assocIds = assocData.map(a => a.idModelo).filter(Boolean);
+                else if (first.id !== undefined) assocIds = assocData.map(a => a.id).filter(Boolean);
+                else if (first.modelo && first.modelo.idModelo !== undefined) assocIds = assocData.map(a => a.modelo.idModelo).filter(Boolean);
+              }
+            }
+            if (assocIds.length > 0) {
+              // garantir que colorDataRaw exista
+              colorDataRaw = colorDataRaw || {};
+              // combinar IDs já existentes (se houver) com os retornados pela associação
+              const existing = Array.isArray(colorDataRaw.modelos) ? colorDataRaw.modelos.map(v => Number(v)).filter(Boolean) : [];
+              const combined = Array.from(new Set([...existing, ...assocIds.map(Number).filter(Boolean)]));
+              colorDataRaw.modelos = combined;
+            }
+          }
+        } catch (e) {
+          // ignore assoc fetch errors - modal will handle missing associations gracefully
+          console.warn('Erro ao buscar associações de modelos para a cor:', e);
         }
       }
+      // Assegurar que colorDataRaw.modelos é um array de números (ou undefined)
+      if (colorDataRaw && Array.isArray(colorDataRaw.modelos)) {
+        colorDataRaw.modelos = colorDataRaw.modelos.map(m => {
+          if (typeof m === 'number') return m;
+          if (typeof m === 'string' && /^\d+$/.test(m)) return Number(m);
+          if (m && typeof m === 'object') return m.idModelo ?? m.id ?? (m.modelo && (m.modelo.idModelo ?? m.modelo.id)) ?? null;
+          return null;
+        }).filter(v => v !== null && v !== undefined);
+          console.log('[EDIT MODAL] IDs normalizados para checkboxes:', colorDataRaw.modelos);
+      }
+
       const colorData = normalizeColor(colorDataRaw);
       setModalState({
         isOpen: true,

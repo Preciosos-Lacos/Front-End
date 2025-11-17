@@ -48,7 +48,7 @@ export default function Login({ onLoginSuccess }) {
         if (attempts[normalizedEmail]) { delete attempts[normalizedEmail]; setAttemptsObj(attempts); }
 
         if (onLoginSuccess) onLoginSuccess();
-        if (normalizedEmail === 'camila.osterman@gmail.com') navigate('/pedidos');
+        if (normalizedEmail === 'camila.osterman@gmail.com') navigate('/admin/pedidos');
         else navigate('/catalogo');
         return;
       }
