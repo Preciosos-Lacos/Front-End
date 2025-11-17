@@ -43,7 +43,6 @@ export default function AppRoutes() {
 
         {/* User (authenticated) flows */}
         <Route path="/perfil" element={<Perfil />} />
-        <Route path="/pedidos" element={<Pedidos />} />
         <Route path="/minhas-compras" element={<MinhasCompras />} />
         <Route path="/finalizar-compra" element={<Compra />} />
         <Route path="/pedido-confirmado" element={<PedidoConfirmado />} />
@@ -52,6 +51,7 @@ export default function AppRoutes() {
         <Route path="/cadastro-endereco" element={<CadastroEndereco />} />
 
         {/* Admin / Management flows */}
+        <Route path="/admin/pedidos" element={<Pedidos />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/cadastro-cor" element={<CadastroCor />} />
         <Route path="/admin/cadastro-cor/:id" element={<CadastroCor />} />
