@@ -1,12 +1,11 @@
-    import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header.jsx';
 import '../styles/Catalogo.css';
 
-const API = 'http://localhost:8080/api/produtos';
+const API = 'http://localhost:8080/produtos';
 
 const Catalogo = () => {
-    const SERVER_ENABLED = (import.meta.env.VITE_ENABLE_CATALOG_SERVER === 'true');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [colorFilter, setColorFilter] = useState('');
     const [priceFilter, setPriceFilter] = useState('');
@@ -25,236 +24,68 @@ const Catalogo = () => {
             if (filterBarRef.current) {
                 const rect = filterBarRef.current.getBoundingClientRect();
                 const headerHeight = 86;
-
                 setIsSticky(rect.top <= headerHeight);
             }
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Fetch products from backend (raw fetch). If server is disabled or fails,
-    // fall back to local `productos` array so the catalog never breaks.
+    // Busca produtos filtrados do backend sempre que filtros mudam
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
                 setError('');
-                if (!SERVER_ENABLED) {
-                    // server disabled by env flag — use local products
-                    setProducts(productos);
-                    setFeaturedProducts(productos.slice(0, 6));
-                    setPromotionalProducts(productos.slice(6, 9));
-                    return;
+                // Monta query string dos filtros
+                const params = new URLSearchParams();
+                if (categoryFilter) params.append('categoria', categoryFilter);
+                if (colorFilter) params.append('cor', colorFilter);
+                if (priceFilter) {
+                    if (priceFilter === '20') {
+                        params.append('precoMax', '20');
+                    } else if (priceFilter === '20-50') {
+                        params.append('precoMin', '20');
+                        params.append('precoMax', '50');
+                    } else if (priceFilter === '50+') {
+                        params.append('precoMin', '50');
+                    }
                 }
-
-                const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
+                if (searchQuery) params.append('search', searchQuery);
                 const [allRes, featRes, promoRes] = await Promise.all([
-                    fetch(`${BASE}/produtos`).catch(() => ({ ok: false })),
-                    fetch(`${BASE}/produtos/destaques`).catch(() => ({ ok: false })),
-                    fetch(`${BASE}/produtos/promocoes`).catch(() => ({ ok: false })),
+                    fetch(`${API}?${params.toString()}`),
+                    fetch(`${API}/destaques`),
+                    fetch(`${API}/promocoes`),
                 ]);
-
                 let productsData = [];
-                if (allRes && allRes.ok) {
-                    const body = await allRes.json();
-                    productsData = Array.isArray(body) ? body : (body?.content || []);
+                if (allRes.ok) {
+                    productsData = await allRes.json();
                 }
-
-                // if server returned nothing, fallback to local
-                if (!productsData || productsData.length === 0) {
-                    setProducts(productos);
-                } else {
-                    setProducts(productsData);
+                setProducts(Array.isArray(productsData) ? productsData : []);
+                if (featRes.ok) {
+                    setFeaturedProducts(await featRes.json());
                 }
-
-                if (featRes && featRes.ok) {
-                    const featuredData = await featRes.json();
-                    setFeaturedProducts(Array.isArray(featuredData) ? featuredData : (featuredData?.content || []));
-                } else {
-                    setFeaturedProducts(productos.slice(0, 6));
+                if (promoRes.ok) {
+                    setPromotionalProducts(await promoRes.json());
                 }
-
-                if (promoRes && promoRes.ok) {
-                    const promotionalData = await promoRes.json();
-                    setPromotionalProducts(Array.isArray(promotionalData) ? promotionalData : (promotionalData?.content || []));
-                } else {
-                    setPromotionalProducts(productos.slice(6, 9));
-                }
-                
             } catch (err) {
-                console.error('Error fetching products:', err);
-                setError('Servidor indisponível. Exibindo catálogo offline.');
-                setProducts(productos);
-                setFeaturedProducts(productos.slice(0, 6));
-                setPromotionalProducts(productos.slice(6, 9));
+                setError('Servidor indisponível. Tente novamente mais tarde.');
             } finally {
                 setLoading(false);
             }
         };
-
         fetchProducts();
-    }, []);
+    }, [categoryFilter, colorFilter, priceFilter, searchQuery]);
 
-    const productos = [
-        {
-            id: 1,
-            image: '/src/assets/laco-neon-verde.webp',
-            name: 'Laço Preciosos Neon',
-            collection: 'COLEÇÃO NEON',
-            price: 16.70
-        },
-        {
-            id: 2,
-            image: '/src/assets/laco-neon-estrass.webp',
-            name: 'Laço Neon Strass',
-            collection: 'COLEÇÃO NEON',
-            price: 18.00
-        },
-        {
-            id: 3,
-            image: '/src/assets/laco-neon-glitter.webp',
-            name: 'Laço Neon Glitter',
-            collection: 'COLEÇÃO NEON',
-            price: 21.90
-        },
-        {
-            id: 4,
-            image: '/src/assets/laco-neon-cinza.webp',
-            name: 'Laço Neon Vibes',
-            collection: 'COLEÇÃO NEON',
-            price: 15.00
-        },
-        {
-            id: 5,
-            image: '/src/assets/laco-mia-neon.webp',
-            name: 'Laço Mia Neon',
-            collection: 'COLEÇÃO NEON',
-            price: 23.70
-        },
-        {
-            id: 6,
-            image: '/src/assets/laco-neon-branco.webp',
-            name: 'Laço pompom Neon',
-            collection: 'COLEÇÃO NEON',
-            price: 20.00
-        },
-        {
-            id: 7,
-            image: '/src/assets/laco-kit-6.webp',
-            name: 'Kit 6 laços multicolorido',
-            collection: 'COLEÇÃO TRADICIONAIS',
-            price: 52.20
-        },
-        {
-            id: 8,
-            image: '/src/assets/laco-kit-borboleta.webp',
-            name: 'Kit 5 laços Borboleta',
-            collection: 'COLEÇÃO TRADICIONAIS',
-            price: 37.90
-        },
-        {
-            id: 9,
-            image: '/src/assets/laco-kit-duplo.webp',
-            name: 'Kit laço Duplo Pompom',
-            collection: 'COLEÇÃO ESPECIAIS',
-            price: 39.90
-        },
-        {
-            id: 10,
-            image: '/src/assets/laco-kit-escolar.webp',
-            name: 'Kit 5 laços Escolares',
-            collection: 'COLEÇÃO ESCOLARES',
-            price: 82.30
-        },
-        {
-            id: 11,
-            image: '/src/assets/laco-kit-12.webp',
-            name: 'Kit 6 pares de laços multicoloridos',
-            collection: 'COLEÇÃO TRADICIONAIS',
-            price: 67.90
-        },
-        {
-            id: 12,
-            image: '/src/assets/laco-kit-unicornio.webp',
-            name: 'Kit 3 laços Unicornio',
-            collection: 'COLEÇÃO ESPECIAIS',
-            price: 49.90
-        },
-        {
-            id: 13,
-            image: '/src/assets/laco-bolinha.webp',
-            name: 'Laço Bolinha',
-            collection: 'COLEÇÃO TRADICIONAIS',
-            price: 44.97
-        },
-        {
-            id: 14,
-            image: '/src/assets/laco-escolar-pompom.webp',
-            name: 'Laço Escolar Pompom',
-            collection: 'COLEÇÃO ESCOLAR',
-            price: 18.90
-        },
-        {
-            id: 15,
-            image: '/src/assets/laco-flor.webp',
-            name: 'Laço Flor',
-            collection: 'COLEÇÃO ESPECIAIS',
-            price: 29.90
-        },
-        {
-            id: 16,
-            image: '/src/assets/laco-tricolor-escolar.webp',
-            name: 'Laço Tricolor Escolar',
-            collection: 'COLEÇÃO ESPECIAIS',
-            price: 27.90
-        },
-        {
-            id: 17,
-            image: '/src/assets/laco-barbie-glam.webp',
-            name: 'Laço Barbie Glam',
-            collection: 'COLEÇÃO BARBIE',
-            price: 23.00
-        },
-        {
-            id: 18,
-            image: '/src/assets/laco-barbie.webp',
-            name: 'Laço Barbie Lollipop',
-            collection: 'COLEÇÃO BARBIE',
-            price: 18.00
-        }
-    ];
+    // Funções utilitárias para extrair dados do ProdutoDTO
+    const getName = (product) => (product.nome || '').toString();
+    const getCollection = (product) => (product.categoria?.nome || '').toString();
+    const getColor = (product) => (product.cor || '').toString();
+    const getPrice = (product) => Number(product.preco ?? 0);
+    const getImage = (product) => product.imagens?.[0]?.urlImagem || '/src/assets/default-product.webp';
 
-    const getName = (product) => ((product.nome || product.name) || '').toString().toLowerCase();
-    const getCollection = (product) => ((product.categoria?.nome) || product.collection || '').toString().toLowerCase();
-    const getColor = (product) => ((product.cor || product.color) || '').toString().toLowerCase();
-    const getPrice = (product) => Number(product.preco ?? product.price ?? 0);
-
-    const filterProducts = () => {
-        return products.filter(product => {
-            const name = getName(product);
-            const collection = getCollection(product);
-            const cor = getColor(product);
-
-            let show = true;
-
-            if (categoryFilter && !collection.includes(categoryFilter.toLowerCase())) show = false;
-            if (colorFilter && !cor.includes(colorFilter.toLowerCase()) && !name.includes(colorFilter.toLowerCase())) show = false;
-            if (searchQuery && !name.includes(searchQuery.toLowerCase()) && !collection.includes(searchQuery.toLowerCase())) show = false;
-
-            const price = getPrice(product);
-            if (priceFilter) {
-                if (priceFilter === "20" && price > 20) show = false;
-                if (priceFilter === "20-50" && (price < 20 || price > 50)) show = false;
-                if (priceFilter === "50+" && price < 50) show = false;
-            }
-
-            return show;
-        });
-    };
-
-    const filteredProducts = filterProducts();
+    // Produtos já vêm filtrados do backend
+    const filteredProducts = products;
 
     if (loading) {
         return (
@@ -272,12 +103,9 @@ const Catalogo = () => {
         );
     }
 
-    // Do not return on error; show a non-blocking alert and continue with local data
-
     return (
         <div className="catalogo-page">
             <Header showOffcanvas={true} />
-
             <main data-scroll-container>
                 {error && (
                     <div className="container mt-3">
@@ -300,32 +128,12 @@ const Catalogo = () => {
                                         <div className="row g-3 justify-content-center">
                                             <div className="col-12 col-sm-6 col-md-4">
                                                 <img 
-                                                    src={product.imagens?.[0]?.urlImagem || product.image || '/src/assets/default-product.webp'} 
+                                                    src={getImage(product)} 
                                                     className="d-block rounded" 
-                                                    alt={product.nome || product.name} 
+                                                    alt={getName(product)} 
                                                 />
-                                                <p className="promo-caption text-center">{(product.nome || product.name)} em promoção!</p>
+                                                <p className="promo-caption text-center">{getName(product)} em promoção!</p>
                                             </div>
-                                            {promotionalProducts[index + 1] && (
-                                                <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
-                                                    <img 
-                                                        src={promotionalProducts[index + 1].imagens?.[0]?.urlImagem || promotionalProducts[index + 1].image || '/src/assets/default-product.webp'} 
-                                                        className="d-block rounded" 
-                                                        alt={promotionalProducts[index + 1].nome || promotionalProducts[index + 1].name} 
-                                                    />
-                                                    <p className="promo-caption text-center">{(promotionalProducts[index + 1].nome || promotionalProducts[index + 1].name)} especial!</p>
-                                                </div>
-                                            )}
-                                            {promotionalProducts[index + 2] && (
-                                                <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
-                                                    <img 
-                                                        src={promotionalProducts[index + 2].imagens?.[0]?.urlImagem || promotionalProducts[index + 2].image || '/src/assets/default-product.webp'} 
-                                                        className="d-block rounded" 
-                                                        alt={promotionalProducts[index + 2].nome || promotionalProducts[index + 2].name} 
-                                                    />
-                                                    <p className="promo-caption text-center">{(promotionalProducts[index + 2].nome || promotionalProducts[index + 2].name)} tendência!</p>
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -401,7 +209,6 @@ const Catalogo = () => {
                                 </button>
                             </div>
                         </div>
-
                         <div className="search-box d-flex d-md-none">
                             <input
                                 type="text"
@@ -414,13 +221,11 @@ const Catalogo = () => {
                                 <i className="bi bi-search"></i>
                             </button>
                         </div>
-
                         <div className="filter-mobile-btn d-md-none">
                             <button className="btn btn-dark w-100" data-bs-toggle="offcanvas" data-bs-target="#mobileFilters">
                                 <i className="bi bi-funnel"></i> Filtros
                             </button>
                         </div>
-
                         <div className="offcanvas offcanvas-bottom" tabIndex="-1" id="mobileFilters">
                             <div className="offcanvas-header">
                                 <h5 className="offcanvas-title">Filtros</h5>
@@ -465,107 +270,27 @@ const Catalogo = () => {
                                 </button>
                             </div>
                         </div>
-
                         <div id="linha"></div>
                         <h3 id="catalogo">CATÁLOGO</h3>
                         <div id="linha"></div>
-
-                        <div id="catalogoCarousel" className="carousel slide" data-bs-ride="carousel">
-                            <h2 id="carrossel-catalogo">Mais Vendidos</h2>
-                            {featuredProducts.length > 0 ? (
-                                <div className="carousel-inner">
-                                    {featuredProducts.map((product, index) => (
-                                        <div key={product.id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                            <div className="row g-3">
-                                                <div className="col-12 col-sm-6 col-md-4">
-                                                    <div className="produto-card">
-                                                            <img 
-                                                                src={product.imagens?.[0]?.urlImagem || product.image || '/src/assets/default-product.webp'} 
-                                                                alt={product.nome || product.name} 
-                                                            />
-                                                            <div className="produto-info">
-                                                                <p>{(product.nome || product.name)} - {product.categoria?.nome || product.collection || 'Coleção'}</p>
-                                                                <p className="produto-preco">R${(product.preco ?? product.price)?.toFixed(2).replace('.', ',')}</p>
-                                                            </div>
-                                                    </div>
-                                                </div>
-                                                {featuredProducts[index + 1] && (
-                                                    <div className="col-12 col-sm-6 col-md-4 d-none d-sm-block">
-                                                        <div className="produto-card">
-                                                            <img 
-                                                                src={featuredProducts[index + 1].imagens?.[0]?.urlImagem || featuredProducts[index + 1].image || '/src/assets/default-product.webp'} 
-                                                                alt={featuredProducts[index + 1].nome || featuredProducts[index + 1].name} 
-                                                            />
-                                                            <div className="produto-info">
-                                                                <p>{(featuredProducts[index + 1].nome || featuredProducts[index + 1].name)} - {featuredProducts[index + 1].categoria?.nome || featuredProducts[index + 1].collection || 'Coleção'}</p>
-                                                                <p className="produto-preco">R${(featuredProducts[index + 1].preco ?? featuredProducts[index + 1].price)?.toFixed(2).replace('.', ',')}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {featuredProducts[index + 2] && (
-                                                    <div className="col-12 col-sm-6 col-md-4 d-none d-md-block">
-                                                        <div className="produto-card">
-                                                            <img 
-                                                                src={featuredProducts[index + 2].imagens?.[0]?.urlImagem || featuredProducts[index + 2].image || '/src/assets/default-product.webp'} 
-                                                                alt={featuredProducts[index + 2].nome || featuredProducts[index + 2].name} 
-                                                            />
-                                                            <div className="produto-info">
-                                                                <p>{(featuredProducts[index + 2].nome || featuredProducts[index + 2].name)} - {featuredProducts[index + 2].categoria?.nome || featuredProducts[index + 2].collection || 'Coleção'}</p>
-                                                                <p className="produto-preco">R${(featuredProducts[index + 2].preco ?? featuredProducts[index + 2].price)?.toFixed(2).replace('.', ',')}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="no-featured-products">
-                                    <p>Nenhum produto em destaque no momento.</p>
-                                </div>
-                            )}
-                            <button className="carousel-control-prev" type="button" data-bs-target="#catalogoCarousel" data-bs-slide="prev">
-                                <span className="carousel-control-prev-icon"></span>
-                            </button>
-                            <button className="carousel-control-next" type="button" data-bs-target="#catalogoCarousel" data-bs-slide="next">
-                                <span className="carousel-control-next-icon"></span>
-                            </button>
-                        </div>
-
                         <div className="card-container">
-                            {loading ? (
-                                <div className="loading-container">
-                                    <div className="spinner-border text-primary" role="status">
-                                        <span className="visually-hidden">Carregando...</span>
-                                    </div>
-                                    <p>Carregando produtos...</p>
-                                </div>
-                            ) : error ? (
-                                <div className="error-container">
-                                    <div className="alert alert-danger">
-                                        <p>Erro ao carregar produtos: {error}</p>
-                                        <button className="btn btn-danger" onClick={() => window.location.reload()}>
-                                            Tentar Novamente
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : filteredProducts.length > 0 ? (
+                            {filteredProducts.length > 0 ? (
                                 filteredProducts.map((product, index) => (
                                     <div key={product.id || index} className="card-item">
                                         <img 
-                                            src={product.imagens?.[0]?.urlImagem || product.image || '/src/assets/default-product.webp'} 
-                                            alt={product.nome || product.name} 
+                                            src={getImage(product)} 
+                                            alt={getName(product)} 
                                             className="card-image" 
                                         />
                                         <div className="card-content">
-                                            <h3 className="card-title">{product.nome || product.name}</h3>
-                                            <p className="card-collection">{product.categoria?.nome || product.collection}</p>
-                                            <p className="card-price">R${(product.preco || product.price)?.toFixed(2).replace('.', ',')}</p>
+                                            <h3 className="card-title">{getName(product)}</h3>
+                                            <p className="card-collection">{getCollection(product)}</p>
+                                            <p className="card-color">Cor: {getColor(product) || 'N/A'}</p>
+                                            <p className="card-price">R${getPrice(product).toFixed(2).replace('.', ',')}</p>
                                             <Link
                                                 to={`/produto${product.id ? `?id=${product.id}` : ''}`}
                                                 className="btn btn-primary btn-sm"
+                                                onClick={() => setSelectedProduct(product)}
                                             >
                                                 Ver Produto
                                             </Link>
@@ -580,7 +305,6 @@ const Catalogo = () => {
                         </div>
                     </div>
                 </section>
-
                 {selectedProduct && (
                     <div style={{
                       position:'fixed',top:0,left:0,right:0,bottom:0,
@@ -589,14 +313,18 @@ const Catalogo = () => {
                       onClick={() => setSelectedProduct(null)}
                     >
                       <div style={{background:'#fff',padding:32,borderRadius:8,minWidth:320}} onClick={e => e.stopPropagation()}>
-                        <h2>{selectedProduct.nome}</h2>
-                        <div>Preço: R$ {selectedProduct.preco.toFixed(2)}</div>
-                        <div>Cor: {selectedProduct.cor || 'N/A'}</div>
-                        <div>Categoria: {selectedProduct.categoria.nome}</div>
+                        <h2>{getName(selectedProduct)}</h2>
+                        <div>Preço: R$ {getPrice(selectedProduct).toFixed(2)}</div>
+                        <div>Cor: {getColor(selectedProduct) || 'N/A'}</div>
+                        <div>Categoria: {getCollection(selectedProduct) || 'N/A'}</div>
                         <div style={{display:'flex',gap:8,marginTop:16}}>
-                          {selectedProduct.imagens.map((img, idx) => (
-                            <img key={idx} src={img.urlImagem} alt={selectedProduct.nome} width={120} style={{margin:8}} />
-                          ))}
+                          {selectedProduct.imagens && selectedProduct.imagens.length > 0 ? (
+                            selectedProduct.imagens.map((img, idx) => (
+                              <img key={idx} src={img.urlImagem} alt={getName(selectedProduct)} width={120} style={{margin:8}} />
+                            ))
+                          ) : (
+                            <img src={'/src/assets/default-product.webp'} alt={getName(selectedProduct)} width={120} style={{margin:8}} />
+                          )}
                         </div>
                         <button onClick={() => setSelectedProduct(null)} style={{marginTop:16}}>Fechar</button>
                       </div>
