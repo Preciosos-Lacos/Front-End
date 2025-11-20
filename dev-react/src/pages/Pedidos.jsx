@@ -1,286 +1,299 @@
 import React, { useState, useEffect } from 'react';
+// Função para normalizar status (pagamento/pedido)
+function normalizeStatus(str) {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\s+/g, '')
+    .replace(/[\u0300-\u036f]/g, '');
+}
 import Sidebar from '../components/Sidebar';
 import Modal from '../components/Modal';
 import '../styles/Pedidos.css';
 
+const API_URL = 'http://localhost:8080/pedidos';
+
+const statusPermitidos = ["Pendente", "Aprovado", "Recusado", "Estornado"];
+const statusPagamentoOptions = statusPermitidos.map(s => ({ value: s, label: s }));
+
+const mapStatusPagamentoBackendToSelect = (status) => {
+  switch ((status || '').toLowerCase()) {
+    case 'pendente': return 'Pendente';
+    case 'aprovado': return 'Aprovado';
+    case 'recusado': return 'Recusado';
+    case 'estornado': return 'Estornado';
+    default: return 'Pendente';
+  }
+};
+
+const statusOptions = [
+  { value: 'INICIADO', label: 'Iniciado' },
+  { value: 'PREPARACAO', label: 'Preparação' },
+  { value: 'ENVIADO', label: 'Enviado' },
+  { value: 'ENTREGUE', label: 'Entregue' },
+  { value: 'CANCELADO', label: 'Cancelado' }
+];
+
+const mapStatusBackendToSelect = (status) => {
+  switch (status?.toUpperCase()) {
+    case 'EM PROCESSAMENTO': return 'INICIADO';
+    case 'EM SEPARAÇÃO': return 'PREPARACAO';
+    case 'ENVIADO': return 'ENVIADO';
+    case 'ENTREGUE': return 'ENTREGUE';
+    case 'CANCELADO': return 'CANCELADO';
+    case 'INICIADO': return 'INICIADO';
+    case 'PREPARACAO': return 'PREPARACAO';
+    default: return 'INICIADO';
+  }
+};
+
 const Pedidos = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [modalState, setModalState] = useState({ isOpen: false, type: null, viewContent: null });
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     startDate: '',
     endDate: '',
     statusPagamento: '',
     statusPedido: ''
   });
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [modalState, setModalState] = useState({ isOpen: false, type: null, viewContent: null });
 
-  const pedidosMock = [
-    {
-      id: '1',
-      orderNumber: 'PL-2025-001',
-      nome: 'Paloma Souza',
-      telefone: '+55 (11) 94115-9057',
-      data: '23 Mar 2025',
-      itens: [
-        { sku: 'LX-GRV-01', nome: 'Laço Gravatinha', qtd: 2, preco: 19.95 },
-      ],
-      endereco: 'R. das Flores, 123 - Pinheiros, SP',
-      valor: 53.89,
-      forma: 'Débito',
-      statusPagamento: 'atrasado',
-      statusPedido: 'concluido',
-      modelos: ['Laço Gravatinha'],
-      tamanho: 'M',
-      cores: 'Vermelho'
-    },
-    {
-      id: '2',
-      orderNumber: 'PL-2025-002',
-      nome: 'Gabriela Simões',
-      telefone: '+55 (11) 94121-9217',
-      data: '24 Mar 2025',
-      itens: [
-        { sku: 'LX-PAD-02', nome: 'Laço Padrão', qtd: 1, preco: 18.9 },
-        { sku: 'LX-KIT-06', nome: 'Kit 6 laços', qtd: 1, preco: 33.3 }
-      ],
-      endereco: 'Av. Paulista, 2000 - Bela Vista, SP',
-      valor: 52.2,
-      forma: 'Débito',
-      statusPagamento: 'aguardando',
-      statusPedido: 'iniciado',
-      modelos: ['Laço Padrão'],
-      tamanho: 'M',
-      cores: 'Rosa'
-    },
-    {
-      id: '3',
-      orderNumber: 'PL-2025-003',
-      nome: 'Janete Santana',
-      telefone: '+55 (11) 92143-9232',
-      data: '02 Apr 2025',
-      itens: [
-        { sku: 'LX-FST-03', nome: 'Laço Festa', qtd: 3, preco: 23.0 }
-      ],
-      endereco: 'R. das Acácias, 45 - Moema, SP',
-      valor: 69.0,
-      forma: 'Crédito',
-      statusPagamento: 'aguardando',
-      statusPedido: 'concluido',
-      modelos: ['Laço Padrão'],
-      tamanho: 'M',
-      cores: 'Azul'
-    },
-    {
-      id: '4',
-      orderNumber: 'PL-2025-004',
-      nome: 'Julia Antunes',
-      telefone: '+55 (11) 99332-0923',
-      data: '20 Apr 2025',
-      itens: [
-        { sku: 'LX-ARN-04', nome: 'Laço Aramado', qtd: 1, preco: 20.0 }
-      ],
-      endereco: 'Rua Bela, 78 - Centro, RJ',
-      valor: 20.0,
-      forma: 'Crédito',
-      statusPagamento: 'aguardando',
-      statusPedido: 'concluido',
-      modelos: ['Laço Padrão'],
-      tamanho: 'M',
-      cores: 'Azul'
-    },
-    {
-      id: '5',
-      orderNumber: 'PL-2025-005',
-      nome: 'Maria Eduarda',
-      telefone: '+55 (11) 98283-2398',
-      data: '29 Apr 2025',
-      itens: [
-        { sku: 'LX-ESC-05', nome: 'Laço Escolar Pompom', qtd: 5, preco: 3.99 }
-      ],
-      endereco: 'Av. Brasil, 1000 - Centro, SP',
-      valor: 19.95,
-      forma: 'Crédito',
-      statusPagamento: 'aguardando',
-      statusPedido: 'concluido',
-      modelos: ['Laço Padrão'],
-      tamanho: 'M',
-      cores: 'Azul'
-    },
-    {
-      id: '6',
-      orderNumber: 'PL-2025-006',
-      nome: 'Paola Santos',
-      telefone: '+55 (11) 93483-2093',
-      data: '01 May 2025',
-      itens: [
-        { sku: 'LX-PRN-06', nome: 'Laço Princesa', qtd: 2, preco: 14.5 }
-      ],
-      endereco: 'R. das Orquídeas, 9 - Jardim América, SP',
-      valor: 29.0,
-      forma: 'Crédito',
-      statusPagamento: 'aguardando',
-      statusPedido: 'concluido',
-      modelos: ['Laço Padrão'],
-      tamanho: 'M',
-      cores: 'Azul'
-    }
-  ];
-
-  const openDetails = (pedido) => {
-    const content = (
-      <div>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h5>Detalhes do Pedido — {pedido.orderNumber}</h5>
-          <small>{pedido.data} • {pedido.forma}</small>
-        </div>
-
-        <div className="detalhe-item"><strong>Cliente:</strong> {pedido.nome} — {pedido.telefone}</div>
-        <div className="detalhe-item"><strong>Endereço:</strong> {pedido.endereco}</div>
-
-        <div style={{ marginTop: 12 }}>
-          <strong>Itens</strong>
-          <ul>
-            {pedido.itens.map((it, idx) => (
-              <li key={idx}>{it.qtd}× {it.nome} • R$ {it.preco.toFixed(2).replace('.', ',')}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="detalhe-item"><strong>Total:</strong> R$ {pedido.valor.toFixed(2).replace('.', ',')}</div>
-        <div className="detalhe-item"><strong>Status pagamento:</strong> {pedido.statusPagamento}</div>
-        <div className="detalhe-item"><strong>Status pedido:</strong> {pedido.statusPedido}</div>
-      </div>
-    );
-
-    setModalState({ isOpen: true, type: 'view', viewContent: content });
-  };
-
-  const closeModal = () => setModalState({ isOpen: false, type: null, viewContent: null });
-
-  // Fetch orders from backend
-  const fetchOrders = async () => {
+  const handleUpdatePagamento = async (id, statusPagamento) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      const searchFilters = {
-        searchTerm: searchTerm || undefined,
-        startDate: filters.startDate || undefined,
-        endDate: filters.endDate || undefined,
-        statusPagamento: filters.statusPagamento || undefined,
-        statusPedido: filters.statusPedido || undefined
-      };
-      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
-      const params = new URLSearchParams();
-      Object.entries(searchFilters).forEach(([k, v]) => { if (v) params.append(k, v); });
-      const url = params.toString() ? `${BASE}/pedidos/search?${params.toString()}` : `${BASE}/pedidos`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setOrders(Array.isArray(data) ? data : (data?.content || []));
+      const token = localStorage.getItem('token');
+      const statusToSend = statusPagamento.toUpperCase();
+      const res = await fetch(`http://localhost:8080/pedidos/${id}/pagamento`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ statusPagamento: statusToSend })
+      });
+      if (!res.ok) throw new Error('Erro ao atualizar pagamento');
+      setOrders(prevOrders => prevOrders.map(order =>
+        order.id === id ? { ...order, statusPagamento: statusToSend } : order
+      ));
+      await fetchOrders();
     } catch (err) {
-      console.error('Error fetching orders:', err);
-      setError('Erro ao carregar pedidos. Usando dados locais.');
-      // Fallback to mock data
-      setOrders(pedidosMock);
+      setError('Erro ao atualizar status do pagamento');
     } finally {
       setLoading(false);
     }
   };
 
-  // Load orders on component mount and when filters change
-  useEffect(() => {
-    fetchOrders();
-  }, [searchTerm, filters]);
-
-  // Handle filter changes
-  const handleFilterChange = (filterName, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [filterName]: value
-    }));
+  const handleDelete = async (id) => {
+    if (!window.confirm('Deseja realmente excluir este pedido?')) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erro ao excluir pedido');
+      fetchOrders();
+    } catch (err) {
+      setError('Erro ao excluir pedido');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Format order data for display
+  const handleUpdateStatus = async (id, statusPedido) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:8080/pedidos/${id}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ statusPedido })
+      });
+      if (!res.ok) throw new Error('Erro ao atualizar status');
+      await fetchOrders();
+    } catch (err) {
+      setError('Erro ao atualizar status do pedido');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closeModal = () => setModalState({ isOpen: false, type: null, viewContent: null });
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      // Carrega todos os pedidos SEM filtro na URL
+      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/pedidos').replace(/\/$/, '');
+      const url = `${BASE}`;
+      const token = localStorage.getItem('token');
+      const res = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setOrders(Array.isArray(data) ? data : (data?.content || []));
+    } catch (err) {
+      setError('Erro ao carregar pedidos.');
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
   const formatOrderData = (order) => {
+    const statusPag = (order.statusPagamento || '').trim().toUpperCase();
+    let statusPagamentoColor;
+    switch (statusPag) {
+      case 'PENDENTE':
+        statusPagamentoColor = '#F8E36B';
+        break;
+      case 'APROVADO':
+        statusPagamentoColor = '#4BB543';
+        break;
+      case 'RECUSADO':
+        statusPagamentoColor = '#D7263D';
+        break;
+      case 'ESTORNADO':
+        statusPagamentoColor = '#207ed6';
+        break;
+      case 'ATRASADO':
+        statusPagamentoColor = '#A4113A';
+        break;
+      default:
+        statusPagamentoColor = '#B0B0B0';
+    }
+
+    let statusPedidoColor = '#F8E36B';
+    const mappedStatus = mapStatusBackendToSelect(order.statusPedido);
+    if (mappedStatus === 'INICIADO') statusPedidoColor = '#B0B0B0';
+    if (mappedStatus === 'PREPARACAO') statusPedidoColor = '#FF7F11';
+    if (mappedStatus === 'ENVIADO') statusPedidoColor = '#207ed6';
+    if (mappedStatus === 'ENTREGUE') statusPedidoColor = '#7ED957';
+    if (mappedStatus === 'CANCELADO') statusPedidoColor = '#D7263D';
     return {
       ...order,
       orderNumber: order.numeroPedido || `PL-${new Date(order.dataPedido).getFullYear()}-${String(order.id).padStart(3, '0')}`,
       data: new Date(order.dataPedido).toLocaleDateString('pt-BR'),
       valor: order.valorTotal || order.itens?.reduce((sum, item) => sum + (item.preco * item.quantidade), 0) || 0,
       forma: order.formaPagamento || 'Não especificado',
-      statusPagamento: order.statusPagamento?.toLowerCase() || 'aguardando',
+      statusPagamento: order.statusPagamento?.toUpperCase() || 'AGUARDANDO',
       statusPedido: order.statusPedido?.toLowerCase() || 'iniciado',
       modelos: order.itens?.map(item => item.nome) || [],
       nome: order.cliente?.nome || 'Cliente não especificado',
       telefone: order.cliente?.telefone || '',
-      endereco: order.enderecoEntrega || 'Endereço não especificado'
+      endereco: order.enderecoEntrega || 'Endereço não especificado',
+      statusPagamentoColor,
+      statusPedidoColor
     };
   };
 
-  const filtered = orders.length > 0 ? orders.map(formatOrderData) : pedidosMock;
+  function getDateString(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    return d.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  }
+
+  const filtered = orders.length > 0
+    ? orders
+        .filter(order => {
+          const orderDateStr = getDateString(order.dataPedido);
+          // Diagnóstico de datas
+          console.log('[Filtro Data] Pedido:', order.dataPedido, '| Formatado:', orderDateStr, '| Início:', filters.startDate, '| Fim:', filters.endDate);
+          if (filters.startDate && orderDateStr && orderDateStr < filters.startDate) {
+            console.warn('[Filtro Data] Excluído por data início:', orderDateStr, '<', filters.startDate);
+            return false;
+          }
+          // Inclui pedidos na data exata do filtro de início
+          if (filters.startDate && orderDateStr && orderDateStr === filters.startDate) {
+            console.log('[Filtro Data] Incluído por igualdade início:', orderDateStr, '===', filters.startDate);
+          }
+          if (filters.endDate && orderDateStr && orderDateStr > filters.endDate) {
+            console.warn('[Filtro Data] Excluído por data fim:', orderDateStr, '>', filters.endDate);
+            return false;
+          }
+          // Inclui pedidos na data exata do filtro de fim
+          if (filters.endDate && orderDateStr && orderDateStr === filters.endDate) {
+            console.log('[Filtro Data] Incluído por igualdade fim:', orderDateStr, '===', filters.endDate);
+          }
+          // Filtro por status do pagamento
+          if (filters.statusPagamento && filters.statusPagamento !== "") {
+            if (mapStatusPagamentoBackendToSelect(order.statusPagamento) !== filters.statusPagamento) {
+              return false;
+            }
+          }
+          // Filtro por status do pedido
+          if (filters.statusPedido && filters.statusPedido !== "") {
+            if (mapStatusBackendToSelect(order.statusPedido) !== filters.statusPedido.toUpperCase()) {
+              return false;
+            }
+          }
+          return true;
+        })
+        .map(formatOrderData)
+    : [];
 
   return (
     <div className="pedidos-root">
       <Sidebar />
-
       <header>Pedidos</header>
-
       <div className="content">
-        <div className="row mb-3">
-          <div className="col-md-6">
-            <div className="search-input-wrapper">
-              <input
-                type="text"
-                className="form-control search-input"
-                placeholder="Buscar por nome ou modelo"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                aria-label="Buscar pedidos"
-              />
-              <i className="bi bi-search search-icon" aria-hidden="true"></i>
-            </div>
-          </div>
-        </div>
-        <div className="row filter-group">
-          <div className="col-md-3 mb-2 ">
-            <label>Data Início</label>
+        <div className="filter-bar" style={{ display: 'flex', gap: '32px', justifyContent: 'center', marginBottom: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 160 }}>
+            <label style={{ marginBottom: 8, fontWeight: 500, marginLeft: 8 }}>Data Início</label>
             <input 
               type="date" 
-              className="form-control" 
+              className="form-control search-input"
+              style={{ background: '#f8c4d6', borderRadius: 20, border: 'none', boxShadow: '0 2px 8px #e6b6c7', fontWeight: 500, width: 160, textAlign: 'center', padding: '12px 16px', fontSize: '1.1rem' }}
               value={filters.startDate}
-              onChange={(e) => handleFilterChange('startDate', e.target.value)}
+              onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value }))}
             />
           </div>
-          <div className="col-md-3 mb-2 ">
-            <label>Data Fim</label>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 160 }}>
+            <label style={{ marginBottom: 8, fontWeight: 500, marginLeft: 8 }}>Data Fim</label>
             <input 
               type="date" 
-              className="form-control" 
+              className="form-control search-input"
+              style={{ background: '#f8c4d6', borderRadius: 20, border: 'none', boxShadow: '0 2px 8px #e6b6c7', fontWeight: 500, width: 160, textAlign: 'center', padding: '12px 16px', fontSize: '1.1rem' }}
               value={filters.endDate}
-              onChange={(e) => handleFilterChange('endDate', e.target.value)}
+              onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value }))}
             />
           </div>
-          <div className="col-md-3 mb-2 ">
-            <label>Status Pagamento</label>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 160 }}>
+            <label style={{ marginBottom: 8, fontWeight: 500, marginLeft: 8 }}>Status Pagamento</label>
             <select 
-              className="form-control"
+              className="form-control search-input"
+              style={{ background: '#f8c4d6', borderRadius: 20, border: 'none', boxShadow: '0 2px 8px #e6b6c7', fontWeight: 500, width: 160, textAlign: 'center', padding: '12px 16px', fontSize: '1.1rem' }}
               value={filters.statusPagamento}
-              onChange={(e) => handleFilterChange('statusPagamento', e.target.value)}
+              onChange={(e) => setFilters(prev => ({ ...prev, statusPagamento: e.target.value }))}
             >
               <option value="">Todos</option>
-              <option value="aguardando">Aguardando</option>
-              <option value="pago">Pago</option>
-              <option value="atrasado">Atrasado</option>
+              {statusPagamentoOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
             </select>
           </div>
-          <div className="col-md-3 mb-2 ">
-            <label>Status Pedido</label>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 160 }}>
+            <label style={{ marginBottom: 8, fontWeight: 500, marginLeft: 8 }}>Status Pedido</label>
             <select 
-              className="form-control"
+              className="form-control search-input"
+              style={{ background: '#f8c4d6', borderRadius: 20, border: 'none', boxShadow: '0 2px 8px #e6b6c7', fontWeight: 500, width: 160, textAlign: 'center', padding: '12px 16px', fontSize: '1.1rem' }}
               value={filters.statusPedido}
-              onChange={(e) => handleFilterChange('statusPedido', e.target.value)}
+              onChange={(e) => setFilters(prev => ({ ...prev, statusPedido: e.target.value }))}
             >
               <option value="">Todos</option>
               <option value="iniciado">Iniciado</option>
@@ -291,8 +304,6 @@ const Pedidos = () => {
             </select>
           </div>
         </div>
-
-        {/* Loading State */}
         {loading && (
           <div className="loading-container">
             <div className="spinner-border text-primary" role="status">
@@ -301,8 +312,6 @@ const Pedidos = () => {
             <p>Carregando pedidos...</p>
           </div>
         )}
-
-        {/* Error State */}
         {error && (
           <div className="error-container">
             <div className="alert alert-warning">
@@ -313,47 +322,160 @@ const Pedidos = () => {
             </button>
           </div>
         )}
-
-        {/* Orders Table */}
         {!loading && !error && (
-          <div className="table-pedidos mt-3">
-            <div className="table-header">
-              <div>Cliente</div>
-              <div>Telefone</div>
-              <div>Data</div>
-              <div>Valor</div>
-              <div>Forma</div>
-              <div>Pagamento</div>
-              <div>Pedido</div>
-              <div>Ações</div>
-            </div>
-
-            {filtered.length > 0 ? (
-              filtered.map(p => (
-                <div key={p.id} className="pedido-row" onClick={() => openDetails(p)}>
-                  <div>{p.nome}</div>
-                  <div>{p.telefone}</div>
-                  <div>{p.data}</div>
-                  <div>R$ {p.valor.toFixed(2).replace('.', ',')}</div>
-                  <div>{p.forma}</div>
-                  <div className={`status-badge status-pagamento ${p.statusPagamento}`}>{p.statusPagamento === 'aguardando' ? 'Aguardando' : p.statusPagamento === 'atrasado' ? 'Atrasado' : 'Concluído'}</div>
-                  <div className={`status-badge status-pedido ${p.statusPedido}`}>{p.statusPedido === 'iniciado' ? 'Produção' : p.statusPedido === 'concluido' ? 'Concluído' : p.statusPedido}</div>
-                  <div>
-                    <button className="btn-sm btn-contato" title="WhatsApp"><i className="bi bi-whatsapp"></i></button>
-                    <button className="btn-sm btn-contato" title="E-mail"><i className="bi bi-envelope"></i></button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-results">
-                <i className="bi bi-inbox"></i>
-                <p>Nenhum pedido encontrado com os filtros aplicados.</p>
-              </div>
-            )}
+          <div className="table-pedidos mt-3" style={{ width: '100%', overflowX: 'auto' }}>
+            <table style={{
+              width: '100%',
+              borderCollapse: 'separate',
+              borderSpacing: 16,
+              background: 'transparent',
+              tableLayout: 'fixed'
+            }}>
+              <colgroup>
+                <col style={{ width: '15%' }} />
+                <col style={{ width: '12%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '13%' }} />
+                <col style={{ width: '13%' }} />
+                <col style={{ width: '17%' }} />
+              </colgroup>
+              <thead>
+                <tr style={{ color: '#6d2943', fontWeight: 600, fontSize: '1.1rem', background: 'transparent' }}>
+                  <th style={{padding: '16px 8px', textAlign: 'left'}}>Cliente</th>
+                  <th>Telefone</th>
+                  <th>Data</th>
+                  <th>Valor</th>
+                  <th>Forma</th>
+                  <th>Pagamento</th>
+                  <th>Pedido</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody style={{display: 'table-row-group'}}>
+                {filtered.length > 0 ? (
+                  filtered.map((p, idx) => (
+                    <tr
+                      key={p.id}
+                      style={{
+                        borderRadius: '24px',
+                        height: '64px',
+                        marginBottom: '18px',
+                        display: 'table-row',
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: '18px 8px',
+                          fontWeight: 500,
+                          cursor: 'pointer',
+                          borderRadius: '24px 0 0 24px',
+                          textAlign: 'left',
+                          verticalAlign: 'middle',
+                        }}
+                        onClick={() => openDetails(p)}
+                      >
+                        {p.nome}
+                      </td>
+                      <td style={{ verticalAlign: 'middle', textAlign: 'center' }}>{p.telefone}</td>
+                      <td style={{ verticalAlign: 'middle', textAlign: 'center' }}>{p.data}</td>
+                      <td style={{ verticalAlign: 'middle', textAlign: 'center' }}>R$ {p.valor.toFixed(2).replace('.', ',')}</td>
+                      <td style={{ verticalAlign: 'middle', textAlign: 'center' }}>{p.forma}</td>
+                      <td style={{ verticalAlign: 'middle', textAlign: 'center' }}>
+                        <select
+                          className="status-badge status-pagamento"
+                          style={{
+                            backgroundColor: p.statusPagamentoColor,
+                            color: [
+                              '#D7263D',
+                              '#207ed6',
+                              '#A4113A',
+                              '#4BB543'
+                            ].includes(p.statusPagamentoColor)
+                              ? '#fff'
+                              : '#222',
+                            fontWeight: 'bold',
+                            fontSize: '1.15rem',
+                            borderRadius: '30px',
+                            boxShadow: '0 2px 8px #e6b6c7',
+                            width: 140,
+                            textAlign: 'center',
+                            textTransform: 'capitalize',
+                            border: 'none',
+                            padding: '8px 12px',
+                            marginTop: 0,
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none',
+                            transition: 'background-color 0.2s, color 0.2s',
+                          }}
+                          value={mapStatusPagamentoBackendToSelect(p.statusPagamento)}
+                          onChange={e => handleUpdatePagamento(p.id, e.target.value)}
+                        >
+                          {statusPagamentoOptions.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td style={{ verticalAlign: 'middle', textAlign: 'center' }}>
+                        <select
+                          className="status-badge status-pedido"
+                          style={{
+                            backgroundColor: p.statusPedidoColor,
+                            color: '#222',
+                            fontWeight: 'bold',
+                            fontSize: '1.15rem',
+                            borderRadius: '30px',
+                            boxShadow: '0 2px 8px #e6b6c7',
+                            width: 140,
+                            textAlign: 'center',
+                            textTransform: 'lowercase',
+                            border: 'none',
+                            padding: '8px 12px',
+                            marginTop: 0,
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none',
+                          }}
+                          value={mapStatusBackendToSelect(p.statusPedido)}
+                          onChange={e => handleUpdateStatus(p.id, e.target.value)}
+                        >
+                          {statusOptions.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td
+                        style={{
+                          borderRadius: '0 24px 24px 0',
+                          verticalAlign: 'middle',
+                          textAlign: 'center',
+                        }}
+                      >
+                        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                          <button className="btn-sm btn-contato" title="WhatsApp" onClick={() => window.open(`https://wa.me/55${p.telefone.replace(/\D/g, '')}`)}><i className="bi bi-whatsapp"></i></button>
+                          <button className="btn-sm btn-contato" title="E-mail" onClick={() => window.open(`mailto:${p.cliente?.email || ''}`)}><i className="bi bi-envelope"></i></button>
+                          <button className="btn-sm btn-danger" title="Excluir" onClick={() => handleDelete(p.id)}><i className="bi bi-trash"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={8} style={{ textAlign: 'center', padding: '24px 0' }}>
+                      <div className="no-results">
+                        <i className="bi bi-inbox"></i>
+                        <p>Nenhum pedido encontrado com os filtros aplicados.</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
-
       <Modal isOpen={modalState.isOpen} onClose={closeModal} type={modalState.type} viewContent={modalState.viewContent} />
     </div>
   );

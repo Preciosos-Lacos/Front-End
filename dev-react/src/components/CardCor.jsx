@@ -3,7 +3,8 @@ import '../styles/CardCor.css';
 
 const CardCor = ({ color, onEdit, onDelete }) => {
   const { id, nome, cor, modelos = [], valor } = color;
-  const formattedValue = Number(valor || 0).toFixed(2);
+  // Se valor já vem como string 'R$ ...', só mostra
+  const formattedValue = typeof valor === 'string' ? valor.replace(/^R\$\s*/, '') : valor;
 
   // Só considera id real do banco (número)
   const realId = typeof id === 'number' || (!isNaN(Number(id)) && String(Number(id)) === String(id)) ? Number(id) : null;
@@ -52,7 +53,7 @@ const CardCor = ({ color, onEdit, onDelete }) => {
         )}
       </div>
       <div className="card-footer">
-        <p className="valor">Valor: R$ {formattedValue}</p>
+        <p className="valor">Valor: {typeof valor === 'string' ? valor : `R$ ${valor}`}</p>
         <div className="icons">
           <i
             className="bi bi-pencil"

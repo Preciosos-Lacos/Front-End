@@ -30,25 +30,11 @@ const CadastroBanner = () => {
   const SERVER_ENABLED = (import.meta.env.VITE_ENABLE_BANNER_SERVER === 'true');
 
   useEffect(() => {
-    // Verificar se é admin
-    if (!isAuthenticated() || !isAdmin()) {
-      navigate('/', { replace: true });
-      return;
-    }
 
-    // Carregar banner atual (sem banner padrão, só o salvo)
-    const savedBanner = getBannerUrl();
-    if (savedBanner) {
-      setCurrentBanner(savedBanner);
-      setPreview(savedBanner);
-    }
-    // load history
-    try {
-      const h = getBannerHistory();
-      setHistory(h);
-    } catch (e) {
-      console.warn('Não foi possível carregar histórico de banners', e);
-    }
+    // Carregar banner padrão local
+    setCurrentBanner('');
+    setPreview('');
+    setHistory([]);
 
     // Load server banners
     loadServerBanners();

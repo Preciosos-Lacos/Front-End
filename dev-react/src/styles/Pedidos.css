@@ -166,17 +166,18 @@
 }
 
 .pedidos-root .pedido-row {
-    background-color: #f58bb0;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    padding: 12px;
+    background-color: #f29dc3;
+    border-radius: 25px;
+    margin-bottom: 18px;
+    padding: 18px 12px;
     display: grid;
     grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1fr 1fr 0.9fr;
     gap: 12px;
     align-items: center;
-    font-size: 0.98rem;
+    font-size: 1.08rem;
     color: #000;
     cursor: pointer;
+    box-shadow: 0 2px 12px rgba(242,157,195,0.18);
     transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
@@ -187,10 +188,11 @@
 
 .pedidos-root .status-badge {
     border-radius: 25px;
-    padding: 5px 15px;
+    padding: 8px 24px;
     font-weight: bold;
     color: #fff;
-    font-size: 0.95rem;
+    font-size: 1.08rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
 
 .pedidos-root .status-pagamento.aguardando {
