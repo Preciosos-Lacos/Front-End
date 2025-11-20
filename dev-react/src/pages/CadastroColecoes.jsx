@@ -5,7 +5,7 @@ import Logo from '../assets/logo_preciosos_lacos.png';
 
 /**
  * Tela "Cadastro - Coleções"
- * - grade responsiva de cards
+ * - grade responsiva de cards-
  * - botão "Cadastrar Coleções"
  * - busca simples
  * - editar / apagar (local state)

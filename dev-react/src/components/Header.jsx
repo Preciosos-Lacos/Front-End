@@ -1,12 +1,40 @@
+// ...existing code...
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Header.css';
 
 const Header = ({ showOffcanvas = true }) => {
+  const navigate = useNavigate();
+
+  // const handleLogout = async () => {
+  //   if (!window.confirm('Deseja sair da conta?')) return;
+
+  //   try {
+  //     const base = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+  //     // notify backend if endpoint exists (optional)
+  //     await fetch(`${base}/auth/logout`, {
+  //       method: 'POST',
+  //       credentials: 'include'
+  //     }).catch(() => {});
+  //   } catch (err) {
+  //     console.warn('Logout backend falhou (ignorando):', err);
+  //   }
+
+  //   try {
+  //     sessionStorage.clear();
+  //     localStorage.removeItem('token');
+  //     localStorage.removeItem('user');
+  //   } catch (e) {
+  //     console.warn('Erro ao limpar storage:', e);
+  //   }
+
+  //   navigate('/');
+  // };
+
   return (
     <header className="app-header">
       <div className="app-navbar">
-        <Link to="" className="app-brand"> 
+        <Link to="" className="app-brand">
           <img src="/src/assets/logo_preciosos_lacos.png" alt="Preciosos Laços" />
         </Link>
 
@@ -18,6 +46,12 @@ const Header = ({ showOffcanvas = true }) => {
             <li><Link to="/minhas-compras">Compras</Link></li>
             <li><Link to="/favoritos">Favoritos</Link></li>
             <li><Link to="/carrinho">Carrinho</Link></li>
+            <li><Link to="/cadastro-endereco">Cadastrar Endereço</Link></li>
+            {/* <li>
+              <button type="button" className="link-button" onClick={handleLogout} aria-label="Sair">
+                Sair
+              </button>
+            </li> */}
           </ul>
         </nav>
 
@@ -34,10 +68,10 @@ const Header = ({ showOffcanvas = true }) => {
 
         <div className="app-hamburguer-container">
           {showOffcanvas && (
-            <button 
-              className="app-hamburguer" 
-              type="button" 
-              data-bs-toggle="offcanvas" 
+            <button
+              className="app-hamburguer"
+              type="button"
+              data-bs-toggle="offcanvas"
               data-bs-target="#offcanvasMenu"
             >
               <i className="bi bi-list"></i>
@@ -74,6 +108,12 @@ const Header = ({ showOffcanvas = true }) => {
                   <i className="bi bi-cart"></i> Carrinho
                 </Link>
               </li>
+
+              <li>
+                <Link to="/cadastro-endereco">
+                  <i className="bi bi-geo-alt"></i> Cadastrar Endereço
+                </Link>
+              </li>
             </ul>
             <hr />
             <ul className="list-unstyled">
@@ -87,6 +127,11 @@ const Header = ({ showOffcanvas = true }) => {
                   <i className="bi bi-grid"></i> Catálogo
                 </Link>
               </li>
+              {/* <li>
+                <button type="button" className="btn-logout-offcanvas" onClick={handleLogout}>
+                  <i className="bi bi-box-arrow-right"></i> Sair
+                </button>
+              </li> */}
             </ul>
           </div>
         </div>

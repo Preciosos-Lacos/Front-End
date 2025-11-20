@@ -1,3 +1,4 @@
+// ...existing code...
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header.jsx';
@@ -258,6 +259,9 @@ const Catalogo = () => {
         return (
             <div className="catalogo-page">
                 <Header showOffcanvas={true} />
+
+                
+
                 <main data-scroll-container>
                     <div className="loading-container">
                         <div className="spinner-border text-pink" role="status">
@@ -425,6 +429,11 @@ const Catalogo = () => {
                                 <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
                             </div>
                             <div className="offcanvas-body">
+                                {/* Link para cadastro de endereço dentro dos filtros mobile */}
+                                <Link to="/cadastro-endereco" className="btn btn-secondary w-100 mb-3" data-bs-dismiss="offcanvas">
+                                    Cadastrar Endereço
+                                </Link>
+
                                 <select
                                     className="form-select mb-3"
                                     value={categoryFilter}
