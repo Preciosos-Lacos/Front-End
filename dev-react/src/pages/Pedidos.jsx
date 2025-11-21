@@ -388,8 +388,9 @@ const Pedidos = () => {
                           style={{
                             backgroundColor: p.statusPagamentoColor,
                             color: [
-                              '#D7263D',
-                              '#207ed6',
+                              '#D7263D', // vermelho
+                              '#FF7F11', // laranja
+                              '#207ed6', // azul
                               '#A4113A',
                               '#4BB543'
                             ].includes(p.statusPagamentoColor)
@@ -423,7 +424,13 @@ const Pedidos = () => {
                           className="status-badge status-pedido"
                           style={{
                             backgroundColor: p.statusPedidoColor,
-                            color: '#222',
+                            color: [
+                              '#D7263D', // vermelho
+                              '#FF7F11', // laranja
+                              '#207ed6'  // azul
+                            ].includes(p.statusPedidoColor)
+                              ? '#fff'
+                              : '#222',
                             fontWeight: 'bold',
                             fontSize: '1.15rem',
                             borderRadius: '30px',
@@ -453,10 +460,9 @@ const Pedidos = () => {
                           textAlign: 'center',
                         }}
                       >
-                        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
                           <button className="btn-sm btn-contato" title="WhatsApp" onClick={() => window.open(`https://wa.me/55${p.telefone.replace(/\D/g, '')}`)}><i className="bi bi-whatsapp"></i></button>
                           <button className="btn-sm btn-contato" title="E-mail" onClick={() => window.open(`mailto:${p.cliente?.email || ''}`)}><i className="bi bi-envelope"></i></button>
-                          <button className="btn-sm btn-danger" title="Excluir" onClick={() => handleDelete(p.id)}><i className="bi bi-trash"></i></button>
                         </div>
                       </td>
                     </tr>

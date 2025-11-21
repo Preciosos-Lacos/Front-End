@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import RequireAuthModal from '../components/RequireAuthModal';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header.jsx';
 import '../styles/Catalogo.css';
@@ -6,6 +7,7 @@ import '../styles/Catalogo.css';
 const API = 'http://localhost:8080/produtos';
 
 const Catalogo = () => {
+    const [showAuthModal, setShowAuthModal] = useState(false);
     const [categoryFilter, setCategoryFilter] = useState('');
     const [colorFilter, setColorFilter] = useState('');
     const [priceFilter, setPriceFilter] = useState('');
@@ -20,6 +22,11 @@ const Catalogo = () => {
     const filterBarRef = useRef(null);
 
     useEffect(() => {
+        // Verifica autenticação
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setShowAuthModal(true);
+        }
         const handleScroll = () => {
             if (filterBarRef.current) {
                 const rect = filterBarRef.current.getBoundingClientRect();
@@ -77,16 +84,19 @@ const Catalogo = () => {
         fetchProducts();
     }, [categoryFilter, colorFilter, priceFilter, searchQuery]);
 
-    // Funções utilitárias para extrair dados do ProdutoDTO
+    // Funções utilitárias para extrair dados do Produto
     const getName = (product) => (product.nome || '').toString();
-    const getCollection = (product) => (product.categoria?.nome || '').toString();
+    const getCollection = (product) => (product.categoria || '').toString();
     const getColor = (product) => (product.cor || '').toString();
     const getPrice = (product) => Number(product.preco ?? 0);
-    const getImage = (product) => product.imagens?.[0]?.urlImagem || '/src/assets/default-product.webp';
+    const getImage = (product) => product.imagens && product.imagens.length > 0 ? product.imagens[0].urlImagem : '/src/assets/default-product.webp';
 
     // Produtos já vêm filtrados do backend
     const filteredProducts = products;
 
+    if (showAuthModal) {
+        return <RequireAuthModal show={true} message="Você precisa estar logado para visualizar o catálogo de produtos." />;
+    }
     if (loading) {
         return (
             <div className="catalogo-page">
@@ -276,11 +286,11 @@ const Catalogo = () => {
                         <div className="card-container">
                             {filteredProducts.length > 0 ? (
                                 filteredProducts.map((product, index) => (
-                                    <div key={product.id || index} className="card-item">
-                                        <img 
-                                            src={getImage(product)} 
-                                            alt={getName(product)} 
-                                            className="card-image" 
+                                    <div key={product.id} className="card-item">
+                                        <img
+                                            src={product.fotoModelo ? `data:image/jpeg;base64,${product.fotoModelo}` : getImage(product)}
+                                            alt={getName(product)}
+                                            className="card-image"
                                         />
                                         <div className="card-content">
                                             <h3 className="card-title">{getName(product)}</h3>

@@ -61,37 +61,37 @@ const Sidebar = () => {
       >
         <img src={logo} alt="Logo" />
         <ul>
-          <li onClick={handleItemClick} className={isActivePath('/pedidos') ? 'active' : ''}>
+          <li onClick={handleItemClick} className={isActivePath('/admin/pedidos') ? 'active' : ''}>
             <Link to="/admin/pedidos">
               <i className="bi bi-box"></i>
               <span>Pedidos</span>
             </Link>
           </li>
-          <li onClick={handleItemClick} className={isActivePath('/dashboard') ? 'active' : ''}>
+          <li onClick={handleItemClick} className={isActivePath('/admin/dashboard') ? 'active' : ''}>
             <Link to="/admin/dashboard">
               <i className="bi bi-bar-chart"></i>
               <span>Dashboard</span>
             </Link>
           </li>
-          <li onClick={handleItemClick} className={isActivePath('/cadastro-cor') ? 'active' : ''}>
+          <li onClick={handleItemClick} className={isActivePath('/admin/cadastro-cor') ? 'active' : ''}>
             <Link to="/admin/cadastro-cor">
               <i className="bi bi-palette"></i>
               <span>Cores</span>
             </Link>
           </li>
-          <li onClick={handleItemClick} className={isActivePath('/cadastro-tipo-lacos') ? 'active' : ''}>
+          <li onClick={handleItemClick} className={isActivePath('/admin/cadastro-tipo-lacos') ? 'active' : ''}>
             <Link to="/admin/cadastro-tipo-lacos">
               <i className="bi bi-scissors"></i>
               <span>Tipos de Laço</span>
             </Link>
           </li>
-          <li onClick={handleItemClick} className={isActivePath('/cadastro-modelo') ? 'active' : ''}>
+          <li onClick={handleItemClick} className={isActivePath('/admin/cadastro-modelo') ? 'active' : ''}>
             <Link to="/admin/cadastro-modelo">
               <i className="bi bi-tag"></i>
               <span>Modelos</span>
             </Link>
           </li>
-          <li onClick={handleItemClick} className={isActivePath('/colecoes') ? 'active' : ''}>
+          <li onClick={handleItemClick} className={isActivePath('/admin/colecoes') ? 'active' : ''}>
             <Link to="/admin/colecoes">
               <i className="bi bi-archive"></i>
               <span>Coleções</span>
