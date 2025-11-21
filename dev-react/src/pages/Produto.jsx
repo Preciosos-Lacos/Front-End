@@ -132,15 +132,28 @@ export default function Produto() {
       const dto = {
         nome: `${modelo.nomeModelo} Personalizado`,
         tamanho: 'P',
-        material: selecionados.tipo?.descricao || 'Fita',
-        cor: selecionados.cor?.descricao || 'Vermelho',
-        acabamento: selecionados.colecao?.descricao || 'Padrão',
+        material: selecionados.tipo?.descricao || '',
+        cor: selecionados.cor?.idCaracteristicaDetalhe || null,
+        acabamento: selecionados.colecao?.idCaracteristicaDetalhe || null,
         preco: Number(modelo.preco || 0) + precoExtra,
         idModelo: modelo.idModelo
       };
       const res = await fetch(`${BASE_URL}/produtos`, { method:'POST', mode:'cors', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }, body: JSON.stringify(dto) });
       if (!res.ok && res.status !== 201) throw new Error(await res.text() || 'Falha ao criar produto');
-      alert('Produto criado com sucesso!');
+      const created = await res.json();
+      // Vincular ao carrinho (pedido com carrinho=true)
+      try {
+        if (usuario?.idUsuario && created?.idProduto) {
+          const cartRes = await fetch(`${BASE_URL}/pedidos/carrinho`, {
+            method:'POST',
+            mode:'cors',
+            headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+            body: JSON.stringify({ idUsuario: usuario.idUsuario, idProduto: created.idProduto })
+          });
+          if (!cartRes.ok) console.warn('Falha ao adicionar ao carrinho');
+        }
+      } catch(e){ console.warn('Erro carrinho', e); }
+      alert('Produto criado e adicionado ao carrinho!');
     } catch (e) { console.error(e); alert(e.message || 'Erro ao criar produto'); }
   }
 
@@ -161,29 +174,40 @@ export default function Produto() {
           </div>
           <div className="produto-info">
             <h1 className="produto-titulo">{loading ? 'Carregando…' : (modelo?.nomeModelo || 'Modelo')}</h1>
-            <h2 style={{ fontSize:'1rem', fontWeight:400, marginTop:4, color:'#666' }}>
-              {selecionados.colecao?.descricao ? `Coleção: ${selecionados.colecao.descricao}` : 'Escolha uma Coleção'}
-            </h2>
-            <div className="produto-top">
-              <span className="produto-preco">{loading ? '—' : precoFinal}</span>
-              <div style={{ display:'flex', gap:12, alignItems:'center' }}>
-                <button type="button" className={`btn-fav ${favorite ? 'active' : ''}`} disabled={loading||!!error||!modelo} onClick={toggleFavoriteBackend}>
-                  <i className={`bi ${favorite ? 'bi-heart-fill' : 'bi-heart'}`}></i>
-                </button>
-              </div>
+            <div className="produto-top" style={{ justifyContent:'flex-start' }}>
+              <span className="produto-preco" style={{ marginRight:24 }}>{loading ? '—' : precoFinal}</span>
+              <button type="button" className="btn-add-cart inline" disabled={loading||!!error||!modelo} onClick={criarProduto}>Adicionar ao carrinho</button>
+              <button type="button" aria-label="Favorito" className={`btn-fav ${favorite ? 'active' : ''}`} disabled={loading||!!error||!modelo} onClick={toggleFavoriteBackend} style={{ marginLeft:12 }}>
+                <i className={`bi ${favorite ? 'bi-heart-fill' : 'bi-heart'}`}></i>
+              </button>
             </div>
-            <p style={{ marginTop:12, fontSize:'0.95rem', lineHeight:1.4 }}>{modelo?.descricao}</p>
-            <div className="produto-bloco" style={{ marginTop:16 }}>
-              <h3 className="produto-subtitulo">Personalize</h3>
+            <div className="produto-bloco" style={{ marginTop:28 }}>
               {error && <p style={{ color:'red' }}>{error}</p>}
               {!error && (
                 <>
-                  {/* Cor */}
-                  <div className="personaliza-grupo">
-                    <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+                  {/* Acabamento (usando Tipo de laço) */}
+                  <div className="personaliza-grupo" style={{ marginBottom:24 }}>
+                    <h4 style={{ marginBottom:10 }}>Acabamento</h4>
+                    <div className="opcoes-flex">
+                      {grupos['Tipo de laço'].map(d => (
+                        <button key={d.idCaracteristicaDetalhe} type="button" className={`tag ${selecionados.tipo?.idCaracteristicaDetalhe===d.idCaracteristicaDetalhe?'selected':''}`} onClick={()=>escolher('tipo', d)}>
+                          {d.descricao}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Cor + slider acessibilidade ao lado do título */}
+                  <div className="personaliza-grupo" style={{ marginBottom:24 }}>
+                    <div className="cor-header" style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
                       <h4 style={{ margin:0 }}>Cor</h4>
-                      <label className="a11y-toggle">
-                        <input type="checkbox" checked={a11yEnabled} onChange={(e)=>setA11yEnabled(e.target.checked)} aria-label="Ativar modo acessível de cores" />
+                      <label className="a11y-toggle" aria-label="Alternar padrões de acessibilidade de cores" style={{ margin:0 }}>
+                        <input
+                          type="checkbox"
+                          role="switch"
+                          aria-checked={a11yEnabled}
+                          checked={a11yEnabled}
+                          onChange={() => setA11yEnabled(v => !v)}
+                        />
                         <span className="slider" />
                         <span className="a11y-label">Acessibilidade</span>
                       </label>
@@ -228,33 +252,13 @@ export default function Produto() {
                       })}
                     </div>
                   </div>
-                  {/* Tipo de laço */}
-                  <div className="personaliza-grupo">
-                    <h4>Tipo de laço</h4>
-                    <div className="opcoes-flex">
-                      {grupos['Tipo de laço'].map(d => (
-                        <button key={d.idCaracteristicaDetalhe} type="button" className={`tag ${selecionados.tipo?.idCaracteristicaDetalhe===d.idCaracteristicaDetalhe?'selected':''}`} onClick={()=>escolher('tipo', d)}>
-                          {d.descricao}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  {/* Coleções */}
-                  <div className="personaliza-grupo">
-                    <h4>Coleções</h4>
-                    <div className="opcoes-flex">
-                      {grupos.Coleções.map(d => (
-                        <button key={d.idCaracteristicaDetalhe} type="button" className={`tag ${selecionados.colecao?.idCaracteristicaDetalhe===d.idCaracteristicaDetalhe?'selected':''}`} onClick={()=>escolher('colecao', d)}>
-                          {d.descricao}
-                        </button>
-                      ))}
-                    </div>
+                  {/* Descrição */}
+                  <div className="personaliza-grupo descricao-grupo">
+                    <h4 style={{ marginBottom:10 }}>Descrição</h4>
+                    <p style={{ fontSize:'0.95rem', lineHeight:1.5, margin:0 }}>{modelo?.descricao}</p>
                   </div>
                 </>
               )}
-            </div>
-            <div className="produto-bloco" style={{ marginTop:24 }}>
-              <button type="button" className="btn-add-cart" disabled={loading||!!error||!modelo} onClick={criarProduto}>Adicionar ao carrinho</button>
             </div>
           </div>
         </section>

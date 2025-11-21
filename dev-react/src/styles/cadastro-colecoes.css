@@ -1,0 +1,116 @@
+/* cores e layout inspirado na imagem */
+:root{
+  --bg:#f7f7f7;
+  --panel:#fff;
+  --pink:#f8c0d8;
+  --dark:#222;
+  --muted:#777;
+}
+
+*{box-sizing:border-box}
+body,html,#root{height:100%}
+
+.admin-layout{
+  display:flex;
+  min-height:100vh;
+  background:var(--bg);
+  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:var(--dark);
+}
+
+/* SIDEBAR */
+.admin-sidebar{
+  width:220px;
+  background:#fff;
+  border-right:1px solid #e6e6e6;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:18px 14px;
+}
+.sidebar-logo{width:140px; display:block; margin:0 auto 8px}
+.sidebar-nav ul{list-style:none;padding:0;margin:0;font-size:14px}
+.sidebar-nav li{padding:10px 8px;color:var(--muted);cursor:default}
+.sidebar-nav li.has-sub > ul{margin-top:6px;padding-left:14px}
+.sidebar-nav li.active, .sidebar-nav li:hover{color:#000; font-weight:600}
+.sidebar-bottom{padding:10px 8px;color:var(--muted)}
+
+/* MAIN */
+.admin-main{flex:1;padding:22px 28px}
+.admin-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+  gap:12px;
+}
+.admin-header h1{margin:0;font-size:20px}
+.header-actions{display:flex;align-items:center;gap:12px}
+.btn{border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
+.btn-primary{background:var(--pink);color:#000;font-weight:600}
+.btn-cadastrar{background:#ffbfd6;color:#000;border-radius:18px;padding:8px 16px}
+
+/* search */
+.search-wrap{display:flex;align-items:center;background:#fff;padding:6px;border-radius:20px;border:1px solid #eee}
+.search-wrap input{border:0;outline:none;padding:6px 8px;width:220px;background:transparent}
+.btn-search{background:transparent;border:0;color:var(--muted);padding:6px}
+
+/* GRID */
+.colecoes-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:18px;
+  margin-top:12px;
+}
+
+/* CARD */
+.colecao-card{
+  background:var(--pink);
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  box-shadow:0 3px 8px rgba(0,0,0,0.05);
+  transition:transform .12s ease;
+}
+.colecao-card:hover{transform:translateY(-6px)}
+.card-img{
+  background:#fff;
+  border-radius:8px;
+  padding:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:130px;
+  overflow:hidden;
+}
+.card-img img{max-width:100%; max-height:100%; object-fit:cover; border-radius:6px}
+
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.card-title{font-weight:700;color:#000}
+.card-actions{display:flex;gap:6px}
+
+.icon-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;height:34px;
+  border-radius:8px;
+  border:0;
+  cursor:pointer;
+  background:rgba(0,0,0,0.06);
+  color:#000;
+}
+.icon-btn.edit{background:rgba(0,123,255,0.08);color:#0b5ed7}
+.icon-btn.delete{background:rgba(220,53,69,0.08);color:#c82333}
+
+/* empty state */
+.empty{padding:28px;background:var(--panel);border-radius:10px;text-align:center;color:var(--muted)}
+
+/* responsive */
+@media (max-width:900px){
+  .admin-sidebar{display:none}
+  .admin-main{padding:14px}
+  .search-wrap input{width:140px}
+}

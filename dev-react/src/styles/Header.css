@@ -261,6 +261,80 @@
     font-size: 24px;
 }
 
+
+/* Logout button (desktop header) - looks like a subtle pill link */
+/* Ajustado para usar as mesmas fontes/padronização do menu (herdar do container) */
+.link-button{
+  background: transparent;
+  border: none;
+  color: #222;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: background .15s ease, color .15s ease, transform .06s ease;
+  font-family: inherit;     /* usa mesma fonte do menu */
+  font-size: 0.95rem;       /* tamanho alinhado ao menu */
+  line-height: 1;
+  letter-spacing: 0.2px;
+}
+.link-button:hover,
+.link-button:focus{
+  background: rgba(255, 192, 203, 0.18); /* light pink hover */
+  color: #000;
+  outline: none;
+  transform: translateY(-1px);
+}
+.link-button:active{
+  transform: translateY(0);
+}
+
+/* Logout button inside offcanvas (mobile) - full width, same tipografia do menu */
+.btn-logout-offcanvas{
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
+  background: #ff6fa3; /* primary pink */
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s ease, box-shadow .12s ease, transform .06s ease;
+  font-family: inherit;   /* usa mesma fonte do menu */
+  font-size: 0.95rem;     /* tamanho alinhado ao menu */
+}
+.btn-logout-offcanvas:hover{
+  background: #ff4f86;
+}
+.btn-logout-offcanvas:focus{
+  box-shadow: 0 0 0 4px rgba(255,111,163,0.16);
+  outline: none;
+}
+
+/* Sidebar logout (if used) - tipografia alinhada ao menu */
+.btn-sair{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: background .12s ease, transform .06s ease;
+  font-family: inherit;   /* usa mesma fonte do menu */
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.btn-sair:hover{
+  background: rgba(255,192,203,0.12);
+}
+
+
 @media (max-width: 768px) {
     .app-navbar {
         padding: 0 4%;
