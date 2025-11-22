@@ -7,6 +7,8 @@ import '../styles/Catalogo.css';
 const API = 'http://localhost:8080/produtos';
 
 const Catalogo = () => {
+        // Função utilitária para converter base64 blob em URL
+    const getImageFromBlob = (blob) => blob ? `data:image/png;base64,${blob}` : '/src/assets/default-product.webp';
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [categoryFilter, setCategoryFilter] = useState('');
     const [colorFilter, setColorFilter] = useState('');
@@ -137,7 +139,7 @@ const Catalogo = () => {
                         <div id="promoCarousel" className="carousel slide promo-carousel" data-bs-ride="carousel">
                             <div className="carousel-inner">
                                 {promotionalProducts.map((product, index) => (
-                                    <div key={product.id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                                    <div key={`promo-${product.id ? product.id : `${product.nome}-${index}`}`} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
                                         <div className="row g-3 justify-content-center">
                                             <div className="col-12 col-sm-6 col-md-4">
                                                 <img 
@@ -294,9 +296,15 @@ const Catalogo = () => {
                         <div className="card-container">
                             {filteredProducts.length > 0 ? (
                                 filteredProducts.map((product, index) => (
-                                    <div key={product.id} className="card-item">
+                                    <div key={`card-${product.id ? product.id : `${product.nome}-${index}`}`} className="card-item">
                                         <img
-                                            src={product.fotoModelo ? `data:image/jpeg;base64,${product.fotoModelo}` : getImage(product)}
+                                            src={
+                                                product.fotoModelo
+                                                    ? `data:image/png;base64,${product.fotoModelo}`
+                                                    : (product.imagens && product.imagens.length > 0 && product.imagens[0].blob)
+                                                        ? getImageFromBlob(product.imagens[0].blob)
+                                                        : getImage(product)
+                                            }
                                             alt={getName(product)}
                                             className="card-image"
                                         />
@@ -338,7 +346,13 @@ const Catalogo = () => {
                         <div style={{display:'flex',gap:8,marginTop:16}}>
                           {selectedProduct.imagens && selectedProduct.imagens.length > 0 ? (
                             selectedProduct.imagens.map((img, idx) => (
-                              <img key={idx} src={img.urlImagem} alt={getName(selectedProduct)} width={120} style={{margin:8}} />
+                                <img
+                                    key={`img-${img.id || idx}`}
+                                    src={getImageFromBlob(img.blob)}
+                                    alt={getName(selectedProduct)}
+                                    width={120}
+                                    style={{margin:8}}
+                                />
                             ))
                           ) : (
                             <img src={'/src/assets/default-product.webp'} alt={getName(selectedProduct)} width={120} style={{margin:8}} />
