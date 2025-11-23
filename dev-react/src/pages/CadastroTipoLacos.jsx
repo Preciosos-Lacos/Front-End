@@ -42,8 +42,8 @@ export default function CadastroTipoLacos() {
 
       const dados = await response.json();
 
-      const tiposFormatados = dados.map((item, index) => ({
-        id: index + 1,
+      const tiposFormatados = dados.map((item) => ({
+        id: item.id,
         nome: item.descricao,
         preco: item.preco,
         imagem: item.imagem ? `data:image/png;base64,${item.imagem}` : null,
@@ -103,13 +103,40 @@ export default function CadastroTipoLacos() {
 
       showAlert("sucesso", "Tipo de laço cadastrado com sucesso!");
       closeModal();
-      carregarTiposDeLaco(); // recarregar lista usando o back-end
+      carregarTiposDeLaco(); 
 
     } catch (err) {
       console.error(err);
       showAlert("erro", "Erro inesperado. Tente novamente.");
     }
   };
+  
+  async function deletarTipoLaco(id) {
+    try {
+      const token = getAuthToken();
+
+      const response = await fetch(`${BASE_URL}/tipo-laco/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const msg = await response.text();
+        showAlert("erro", msg || "Erro ao excluir o tipo de laço.");
+        return;
+      }
+
+      showAlert("sucesso", "Tipo de laço excluído com sucesso!");
+      closeModal();
+      carregarTiposDeLaco();
+
+    } catch (err) {
+      console.error(err);
+      showAlert("erro", "Erro inesperado ao excluir.");
+    }
+  }
 
   const openModal = (type, tipo = null) => {
     setModalState({ isOpen: true, type, tipoData: tipo });
@@ -150,9 +177,7 @@ export default function CadastroTipoLacos() {
                 )}
               </div>
 
-              <p>
-                <strong>Modelos Associados:</strong>
-              </p>
+              <p><strong>Modelos Associados:</strong></p>
 
               <div className="list-associates">
                 <ul>
@@ -189,7 +214,11 @@ export default function CadastroTipoLacos() {
             onClose={closeModal}
             type={modalState.type}
             tipoData={modalState.tipoData}
-            onSubmit={handleModalSubmit}
+            onSubmit={
+              modalState.type === "delete"
+                ? () => deletarTipoLaco(modalState.tipoData.id)
+                : handleModalSubmit
+            }
           />
         )}
       </div>

@@ -6,7 +6,7 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
   const [form, setForm] = useState({
     nome: '',
     descricao: '',
-    valor: '',
+    preco: '',
     modelos: [],
     imagem: '',            
     previewImagem: '',   
@@ -29,7 +29,7 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
       setForm({
         nome: tipoData.nome || '',
         descricao: tipoData.descricao || '',
-        valor: tipoData.valor || '',
+        preco: tipoData.preco || '',
         modelos: Array.isArray(tipoData.modelos) ? tipoData.modelos : [],
         imagem: '',
         previewImagem: tipoData.imagem || '',
@@ -39,7 +39,7 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
       setForm({
         nome: '',
         descricao: '',
-        valor: '',
+        preco: '',
         modelos: [],
         imagem: '',
         previewImagem: '',
@@ -94,7 +94,7 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
     onSubmit({
       nome: form.nome,
       descricao: form.descricao,
-      preco: Number(form.valor),
+      preco: Number(form.preco),
       modelos: form.modelos,
       imagemBase64: form.imagemBase64
     });
@@ -135,8 +135,8 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
               <label>Valor: R$</label>
               <input
                 type="number"
-                value={form.valor}
-                onChange={e => handleChange('valor', e.target.value)}
+                value={form.preco}
+                onChange={e => handleChange('preco', e.target.value)}
               />
             </div>
 
