@@ -9,42 +9,43 @@ function normalizeStatus(str) {
     .replace(/[\u0300-\u036f]/g, '');
 }
 import Sidebar from '../components/Sidebar';
+import StatusDropdown from '../components/StatusDropdown';
 import Modal from '../components/Modal';
 import '../styles/Pedidos.css';
 
 const API_URL = 'http://localhost:8080/pedidos';
 
-const statusPermitidos = ["Pendente", "Aprovado", "Recusado", "Estornado"];
-const statusPagamentoOptions = statusPermitidos.map(s => ({ value: s, label: s }));
+const statusPagamentoOptions = [
+  { value: 'Pendente', label: '🕒', alt: 'Pagamento pendente' },
+  { value: 'Pago', label: '💳', alt: 'Pagamento realizado' },
+  { value: 'Cancelado', label: '❌', alt: 'Pagamento cancelado' },
+  { value: 'Estornado', label: '↩️', alt: 'Pagamento estornado' }
+];
 
 const mapStatusPagamentoBackendToSelect = (status) => {
   switch ((status || '').toLowerCase()) {
     case 'pendente': return 'Pendente';
-    case 'aprovado': return 'Aprovado';
-    case 'recusado': return 'Recusado';
+    case 'pago': return 'Pago';
+    case 'cancelado': return 'Cancelado';
     case 'estornado': return 'Estornado';
     default: return 'Pendente';
   }
 };
 
 const statusOptions = [
-  { value: 'INICIADO', label: 'Iniciado' },
-  { value: 'PREPARACAO', label: 'Preparação' },
-  { value: 'ENVIADO', label: 'Enviado' },
-  { value: 'ENTREGUE', label: 'Entregue' },
-  { value: 'CANCELADO', label: 'Cancelado' }
+  { value: 'EM ANDAMENTO', label: '🧑‍🔧', alt: 'Pedido em andamento' },
+  { value: 'ENTREGUE', label: '✅', alt: 'Pedido entregue' },
+  { value: 'CANCELADO', label: '❌', alt: 'Pedido cancelado' },
+  { value: 'CONCLUIDO', label: '📦', alt: 'Pedido concluído' }
 ];
 
 const mapStatusBackendToSelect = (status) => {
   switch (status?.toUpperCase()) {
-    case 'EM PROCESSAMENTO': return 'INICIADO';
-    case 'EM SEPARAÇÃO': return 'PREPARACAO';
-    case 'ENVIADO': return 'ENVIADO';
+    case 'EM ANDAMENTO': return 'EM ANDAMENTO';
     case 'ENTREGUE': return 'ENTREGUE';
     case 'CANCELADO': return 'CANCELADO';
-    case 'INICIADO': return 'INICIADO';
-    case 'PREPARACAO': return 'PREPARACAO';
-    default: return 'INICIADO';
+    case 'CONCLUIDO': return 'CONCLUIDO';
+    default: return 'EM ANDAMENTO';
   }
 };
 
@@ -162,17 +163,14 @@ const Pedidos = () => {
       case 'PENDENTE':
         statusPagamentoColor = '#F8E36B';
         break;
-      case 'APROVADO':
+      case 'PAGO':
         statusPagamentoColor = '#4BB543';
         break;
-      case 'RECUSADO':
+      case 'CANCELADO':
         statusPagamentoColor = '#D7263D';
         break;
       case 'ESTORNADO':
         statusPagamentoColor = '#207ed6';
-        break;
-      case 'ATRASADO':
-        statusPagamentoColor = '#A4113A';
         break;
       default:
         statusPagamentoColor = '#B0B0B0';
@@ -180,19 +178,18 @@ const Pedidos = () => {
 
     let statusPedidoColor = '#F8E36B';
     const mappedStatus = mapStatusBackendToSelect(order.statusPedido);
-    if (mappedStatus === 'INICIADO') statusPedidoColor = '#B0B0B0';
-    if (mappedStatus === 'PREPARACAO') statusPedidoColor = '#FF7F11';
-    if (mappedStatus === 'ENVIADO') statusPedidoColor = '#207ed6';
+    if (mappedStatus === 'EM ANDAMENTO') statusPedidoColor = '#B0B0B0';
     if (mappedStatus === 'ENTREGUE') statusPedidoColor = '#7ED957';
     if (mappedStatus === 'CANCELADO') statusPedidoColor = '#D7263D';
+    if (mappedStatus === 'CONCLUIDO') statusPedidoColor = '#4BB543';
     return {
       ...order,
       orderNumber: order.numeroPedido || `PL-${new Date(order.dataPedido).getFullYear()}-${String(order.id).padStart(3, '0')}`,
       data: new Date(order.dataPedido).toLocaleDateString('pt-BR'),
       valor: order.valorTotal || order.itens?.reduce((sum, item) => sum + (item.preco * item.quantidade), 0) || 0,
       forma: order.formaPagamento || 'Não especificado',
-      statusPagamento: order.statusPagamento?.toUpperCase() || 'AGUARDANDO',
-      statusPedido: order.statusPedido?.toLowerCase() || 'iniciado',
+      statusPagamento: mapStatusPagamentoBackendToSelect(order.statusPagamento),
+      statusPedido: mapStatusBackendToSelect(order.statusPedido),
       modelos: order.itens?.map(item => item.nome) || [],
       nome: order.cliente?.nome || 'Cliente não especificado',
       telefone: order.cliente?.telefone || '',
@@ -205,6 +202,7 @@ const Pedidos = () => {
   function getDateString(date) {
     if (!date) return '';
     const d = new Date(date);
+    if (isNaN(d.getTime())) return 'Data inválida';
     return d.toISOString().slice(0, 10); // 'YYYY-MM-DD'
   }
 
@@ -252,6 +250,26 @@ const Pedidos = () => {
       <Sidebar />
       <header>Pedidos</header>
       <div className="content">
+        {/* Legenda minimalista dos emojis de status */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '32px',
+          fontSize: '0.95rem',
+          color: '#6d2943',
+          marginBottom: 8,
+          marginTop: 8,
+          opacity: 0.85,
+        }}>
+          <span title="Pagamento pendente">🕒 Pendente</span>
+          <span title="Pagamento realizado">💳 Pago</span>
+          <span title="Pagamento cancelado">❌ Cancelado</span>
+          <span title="Pagamento estornado">↩️ Estornado</span>
+          <span title="Pedido em andamento">🧑‍🔧 Em andamento</span>
+          <span title="Pedido entregue">✅ Entregue</span>
+          <span title="Pedido concluído">📦 Concluído</span>
+        </div>
         <div className="filter-bar" style={{ display: 'flex', gap: '32px', justifyContent: 'center', marginBottom: 24 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 160 }}>
             <label style={{ marginBottom: 8, fontWeight: 500, marginLeft: 8 }}>Data Início</label>
@@ -386,36 +404,27 @@ const Pedidos = () => {
                         <select
                           className="status-badge status-pagamento"
                           style={{
-                            backgroundColor: p.statusPagamentoColor,
-                            color: [
-                              '#D7263D', // vermelho
-                              '#FF7F11', // laranja
-                              '#207ed6', // azul
-                              '#A4113A',
-                              '#4BB543'
-                            ].includes(p.statusPagamentoColor)
-                              ? '#fff'
-                              : '#222',
                             fontWeight: 'bold',
                             fontSize: '1.15rem',
                             borderRadius: '30px',
                             boxShadow: '0 2px 8px #e6b6c7',
-                            width: 140,
+                            width: 80,
                             textAlign: 'center',
-                            textTransform: 'capitalize',
                             border: 'none',
                             padding: '8px 12px',
                             marginTop: 0,
                             appearance: 'none',
                             WebkitAppearance: 'none',
                             MozAppearance: 'none',
-                            transition: 'background-color 0.2s, color 0.2s',
+                            background: '#fff',
+                            color: '#222',
                           }}
                           value={mapStatusPagamentoBackendToSelect(p.statusPagamento)}
                           onChange={e => handleUpdatePagamento(p.id, e.target.value)}
+                          aria-label="Status do pagamento"
                         >
                           {statusPagamentoOptions.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            <option key={opt.value} value={opt.value} title={opt.alt} aria-label={opt.alt}>{opt.label}</option>
                           ))}
                         </select>
                       </td>
@@ -423,33 +432,27 @@ const Pedidos = () => {
                         <select
                           className="status-badge status-pedido"
                           style={{
-                            backgroundColor: p.statusPedidoColor,
-                            color: [
-                              '#D7263D', // vermelho
-                              '#FF7F11', // laranja
-                              '#207ed6'  // azul
-                            ].includes(p.statusPedidoColor)
-                              ? '#fff'
-                              : '#222',
                             fontWeight: 'bold',
                             fontSize: '1.15rem',
                             borderRadius: '30px',
                             boxShadow: '0 2px 8px #e6b6c7',
-                            width: 140,
+                            width: 80,
                             textAlign: 'center',
-                            textTransform: 'lowercase',
                             border: 'none',
                             padding: '8px 12px',
                             marginTop: 0,
                             appearance: 'none',
                             WebkitAppearance: 'none',
                             MozAppearance: 'none',
+                            background: '#fff',
+                            color: '#222',
                           }}
                           value={mapStatusBackendToSelect(p.statusPedido)}
                           onChange={e => handleUpdateStatus(p.id, e.target.value)}
+                          aria-label="Status do pedido"
                         >
                           {statusOptions.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            <option key={opt.value} value={opt.value} title={opt.alt} aria-label={opt.alt}>{opt.label}</option>
                           ))}
                         </select>
                       </td>

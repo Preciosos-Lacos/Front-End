@@ -1,3 +1,8 @@
+/* Garante que o li não corte a barra animada */
+.desktop-nav li {
+    position: relative;
+    overflow: visible;
+}
 /* fonts imported globally in index.css */
 
 :root {
@@ -224,12 +229,60 @@
     transition: transform 0.2s ease;
     font-family: 'Quicksand', Arial, sans-serif;
     letter-spacing: 0.6px;
+    position: relative;
 }
 
 .desktop-nav a:hover {
     transition: transform 0.2s ease;
     transform: scale(1.1);
     color: var(--rosa);
+    position: relative;
+}
+.desktop-nav a:not(.nav-active):hover::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 6px;
+    background: #F29DC3;
+    border-radius: 3px;
+    margin-top: 8px;
+    animation: barra-ativa-grow 0.5s cubic-bezier(.4,0,.2,1);
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    z-index: 0;
+}
+
+.desktop-nav .nav-active {
+    color: var(--rosa) !important;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+.desktop-nav .nav-active::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 6px;
+    background: #F29DC3;
+    border-radius: 3px;
+    margin-top: 8px;
+    animation: barra-ativa-grow 0.5s cubic-bezier(.4,0,.2,1);
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    z-index: 0;
+}
+
+@keyframes barra-ativa-grow {
+    from {
+        width: 0;
+        opacity: 0.5;
+    }
+    to {
+        width: 100%;
+        opacity: 1;
+    }
 }
 
 .header-mobile {

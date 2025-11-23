@@ -1,10 +1,29 @@
 // ...existing code...
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Header.css';
 
 const Header = ({ showOffcanvas = true }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Fecha o offcanvas e restaura o scroll ao trocar de rota
+  useEffect(() => {
+    // Remove classes e estilos do body que travam o scroll
+    document.body.classList.remove('offcanvas-backdrop', 'modal-open');
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.paddingRight = '';
+    // Remove backdrop do Bootstrap
+    document.querySelectorAll('.offcanvas-backdrop, .modal-backdrop').forEach(el => el.remove());
+    // Fecha o offcanvas se estiver aberto
+    const offcanvas = document.getElementById('offcanvasMenu');
+    if (offcanvas && offcanvas.classList.contains('show')) {
+      offcanvas.classList.remove('show');
+      offcanvas.setAttribute('aria-hidden', 'true');
+      offcanvas.style.visibility = 'hidden';
+    }
+  }, [location.pathname]);
 
   // const handleLogout = async () => {
   //   if (!window.confirm('Deseja sair da conta?')) return;
@@ -34,19 +53,28 @@ const Header = ({ showOffcanvas = true }) => {
   return (
     <header className="app-header">
       <div className="app-navbar">
-        <Link to="" className="app-brand">
+        <Link to="/" className="app-brand">
           <img src="/src/assets/logo_preciosos_lacos.png" alt="Preciosos Laços" />
         </Link>
 
         {/* Desktop header: text labels (visible on desktop) */}
         <nav className="header-desktop">
           <ul className="desktop-nav">
-            <li><Link to="/catalogo">Catálogo</Link></li>
-            <li><Link to="/perfil">Perfil</Link></li>
-            <li><Link to="/minhas-compras">Compras</Link></li>
-            <li><Link to="/favoritos">Favoritos</Link></li>
-            <li><Link to="/carrinho">Carrinho</Link></li>
-            <li><Link to="/cadastro-endereco">Cadastrar Endereço</Link></li>
+            <li>
+              <Link to="/catalogo" className={location.pathname === '/catalogo' ? 'nav-active' : ''}>Catálogo</Link>
+            </li>
+            <li>
+              <Link to="/perfil" className={location.pathname === '/perfil' ? 'nav-active' : ''}>Perfil</Link>
+            </li>
+            <li>
+              <Link to="/minhas-compras" className={location.pathname === '/minhas-compras' ? 'nav-active' : ''}>Compras</Link>
+            </li>
+            <li>
+              <Link to="/favoritos" className={location.pathname === '/favoritos' ? 'nav-active' : ''}>Favoritos</Link>
+            </li>
+            <li>
+              <Link to="/carrinho" className={location.pathname === '/carrinho' ? 'nav-active' : ''}>Carrinho</Link>
+            </li>
             {/* <li>
               <button type="button" className="link-button" onClick={handleLogout} aria-label="Sair">
                 Sair
@@ -109,11 +137,7 @@ const Header = ({ showOffcanvas = true }) => {
                 </Link>
               </li>
 
-              <li>
-                <Link to="/cadastro-endereco">
-                  <i className="bi bi-geo-alt"></i> Cadastrar Endereço
-                </Link>
-              </li>
+              {/* Cadastro Endereço removido do menu */}
             </ul>
             <hr />
             <ul className="list-unstyled">
