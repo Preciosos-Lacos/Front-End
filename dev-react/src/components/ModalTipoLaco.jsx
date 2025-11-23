@@ -8,9 +8,9 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
     descricao: '',
     preco: '',
     modelos: [],
-    imagem: '',            
-    previewImagem: '',   
-    imagemBase64: ''      
+    imagem: '',
+    previewImagem: '',
+    imagemBase64: ''
   });
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,7 +33,7 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
         modelos: Array.isArray(tipoData.modelos) ? tipoData.modelos : [],
         imagem: '',
         previewImagem: tipoData.imagem || '',
-        imagemBase64: ''         
+        imagemBase64: ''
       });
     } else if (type === 'create') {
       setForm({
@@ -104,7 +104,7 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
 
   return (
     <div className="modal">
-      <div className="modal-content">
+      <div className="modal-content modal-content-fix">
 
         <span className="close" onClick={onClose}>&times;</span>
 
