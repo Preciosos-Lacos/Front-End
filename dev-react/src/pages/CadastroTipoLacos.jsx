@@ -103,14 +103,47 @@ export default function CadastroTipoLacos() {
 
       showAlert("sucesso", "Tipo de laço cadastrado com sucesso!");
       closeModal();
-      carregarTiposDeLaco(); 
+      carregarTiposDeLaco();
 
     } catch (err) {
       console.error(err);
       showAlert("erro", "Erro inesperado. Tente novamente.");
     }
   };
-  
+
+  const handleUpdate = async (data, id) => {
+    try {
+      const token = getAuthToken();
+
+      const response = await fetch(`${BASE_URL}/tipo-laco/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nome: data.nome,
+          preco: Number(data.preco),
+          imagemBase64: data.imagemBase64 || null
+        })
+      });
+
+      if (!response.ok) {
+        const msg = await response.text();
+        showAlert("erro", msg || "Erro ao atualizar tipo de laço.");
+        return;
+      }
+
+      showAlert("sucesso", "Tipo de laço atualizado com sucesso!");
+      closeModal();
+      carregarTiposDeLaco();
+
+    } catch (err) {
+      console.error(err);
+      showAlert("erro", "Erro inesperado ao atualizar.");
+    }
+  };
+
   async function deletarTipoLaco(id) {
     try {
       const token = getAuthToken();
@@ -138,6 +171,7 @@ export default function CadastroTipoLacos() {
     }
   }
 
+  // -------- MODAL ----------
   const openModal = (type, tipo = null) => {
     setModalState({ isOpen: true, type, tipoData: tipo });
   };
@@ -217,7 +251,9 @@ export default function CadastroTipoLacos() {
             onSubmit={
               modalState.type === "delete"
                 ? () => deletarTipoLaco(modalState.tipoData.id)
-                : handleModalSubmit
+                : modalState.type === "edit"
+                  ? (data) => handleUpdate(data, modalState.tipoData.id)
+                  : handleModalSubmit
             }
           />
         )}
