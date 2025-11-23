@@ -160,3 +160,13 @@
   .modal .modal-content { width: 92%; padding: 16px; }
   .modal input[type="text"], .modal textarea { max-width: 100%; }
 }
+
+.modal .modal-content-fix {
+  max-height: 85vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.modal .close {
+  z-index: 10;
+}
