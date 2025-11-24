@@ -12,6 +12,29 @@ function getValorCor(formData, colorData) {
 // Defina a URL igual à usada em CadastroCor.jsx
 const API_URL = 'http://localhost:8080/caracteristica-detalhe/cor';
 import '../styles/Modal.css';
+
+const ConfirmModal = ({ colorName, onConfirm, onCancel, isActivating }) => (
+  <div className="modal-content">
+    <span className="close" onClick={onCancel}>&times;</span>
+    <h2 className="tituloPopUp">Deseja disponibilizar a cor "{colorName}"?</h2>
+    <div style={{ margin: '18px 0', textAlign: 'center', color: '#a04c6e', fontWeight: 500, fontSize: 16 }}>
+      Essa ação tornará a cor disponível para uso no sistema.
+    </div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, marginTop: 12 }}>
+      <button
+        className="btn-confirm"
+        onClick={onConfirm}
+        disabled={isActivating}
+        style={isActivating ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+      >
+        {isActivating ? 'Disponibilizando...' : 'Disponibilizar cor'}
+      </button>
+      <button className="btn-cancel" onClick={onCancel}>
+        Cancelar
+      </button>
+    </div>
+  </div>
+);
 const Modal = ({ 
   isOpen, 
   onClose, 
@@ -22,6 +45,42 @@ const Modal = ({
   viewContent = null
 }) => {
   // ...existing code...
+  // Variáveis de conteúdo para cada tipo de modal
+  const modalConfig = {
+    create: {
+      title: 'Cadastro de Cor',
+      buttonLabel: 'Cadastrar cor',
+      showColorInput: true,
+      showValueInput: true,
+      showModelos: true,
+      readOnlyName: false,
+    },
+    edit: {
+      title: 'Editar Cor',
+      buttonLabel: 'Atualizar cor',
+      showColorInput: false,
+      showValueInput: true,
+      showModelos: true,
+      readOnlyName: true,
+    },
+    delete: {
+      title: `Você Deseja inativar: "${colorName}"?`,
+      buttonLabel: 'Inativar cor',
+      showColorInput: false,
+      showValueInput: false,
+      showModelos: false,
+      readOnlyName: true,
+    },
+    activate: {
+      title: `Deseja disponibilizar a cor "${colorName}"?`,
+      buttonLabel: 'Confirmar',
+      showColorInput: false,
+      showValueInput: false,
+      showModelos: false,
+      readOnlyName: true,
+    }
+  };
+  const config = modalConfig[type] || modalConfig.create;
   const [colorInfo, setColorInfo] = useState(null);
   // Atualiza o valor do input assim que colorInfo é carregado
   useEffect(() => {
@@ -40,7 +99,7 @@ const Modal = ({
   }, [type, colorInfo]);
   const [formData, setFormData] = useState({
     nome: '',
-    cor: '#F29DC3',
+    cor: '#EEEEEE',
     valor: '',
     modelos: []
   });
@@ -180,13 +239,15 @@ const Modal = ({
 
   if (!isOpen) return null;
 
-  if (type === 'view' && viewContent) {
+  if (type === 'activate') {
     return (
-      <div className="modal">
-        <div className="modal-content">
-          <span className="close" onClick={onClose}>&times;</span>
-          {viewContent}
-        </div>
+      <div className="modal-overlay">
+        <ConfirmModal
+          colorName={colorName}
+          onConfirm={() => onSubmit()}
+          onCancel={onClose}
+          isActivating={false}
+        />
       </div>
     );
   }
@@ -194,64 +255,103 @@ const Modal = ({
   const renderCreateModal = () => (
     <div className="modal-content">
       <span className="close" onClick={onClose}>&times;</span>
-      <h2 className="tituloPopUp">Cadastro de Cor</h2>
-
+      <h2 className="tituloPopUp">{config.title}</h2>
+      {/* Nome da cor */}
       <input
         type="text"
-        id='inpValor'
-        value={(function() {
-          let valorInput = formData.valor;
-          if (colorInfo && typeof colorInfo === 'object' && colorInfo.preco !== undefined && colorInfo.preco !== null) {
-            valorInput = `R$ ${colorInfo.preco}`;
-          }
-          console.log('Valor exibido no input do modal:', valorInput);
-          return valorInput;
-        })()}
-        onChange={(e) => {
-          let v = e.target.value.replace(/[^\d,]/g, '');
-          setFormData(prev => ({ ...prev, valor: v }));
-        }}
-        onBlur={(e) => {
-          import('../utils/formatValor').then(({ formatValorBR }) => {
-            setFormData(prev => ({ ...prev, valor: formatValorBR(prev.valor) }));
-          });
-        }}
-        placeholder="Valor: R$ 0,00"
-        style={{ marginTop: '5px' }}
+        id="inpNome"
+        value={formData.nome}
+        onChange={e => handleInputChange('nome', e.target.value)}
+        placeholder="Nome da cor"
+        style={{ marginBottom: '8px', fontWeight: 500 }}
+        readOnly={config.readOnlyName}
       />
-
-      <h3 className="titulo">
-        Associar modelo:
-        <i className="bi bi-bookmark-plus-fill" style={{ color: '#000000', marginLeft: '5px' }}></i>
-      </h3>
-
-      <div className="modal-search-wrapper">
+      {/* Bloco para escolher a cor */}
+      {config.showColorInput && (
+        <>
+          <div style={{ width: '100%', textAlign: 'center', margin: '8px 0', fontWeight: 600, fontSize: 16 }}>Clique para escolher a cor:</div>
+          <input
+            type="color"
+            id="inpCor"
+            value={formData.cor}
+            onChange={e => handleInputChange('cor', e.target.value)}
+            style={{
+              margin: '-10px 0px 15px 0px',
+              width: '100%',
+              height: '45px',
+              border: '2.5px solid white',
+              cursor: 'pointer',
+              borderRadius: '10px',
+              background: 'rgb(255, 255, 255)'
+            }}
+          />
+        </>
+      )}
+      {/* Valor */}
+      {config.showValueInput && (
         <input
           type="text"
-          className="searchInput"
-          placeholder="Pesquisar modelo"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          id="inpValor"
+          value={formData.valor}
+          onChange={e => handleInputChange('valor', e.target.value.replace(/[^\d,]/g, ''))}
+          onBlur={e => {
+            import('../utils/formatValor').then(({ formatValorBR }) => {
+              setFormData(prev => ({ ...prev, valor: formatValorBR(prev.valor) }));
+            });
+          }}
+          placeholder="Valor: R$ 0,00"
+          style={{ marginBottom: '8px' }}
         />
-        <i className="bi bi-search"></i>
-      </div>
-
-      <div className="checkboxList">
-        {filteredModels.map((model) => (
-          <div key={model.id}>
-            <input
-              type="checkbox"
-              id={`modelo${model.id}`}
-              checked={formData.modelos.includes(model.id)}
-              onChange={(e) => handleModelChange(model, e.target.checked)}
-            />
-            <label htmlFor={`modelo${model.id}`}>{model.nome}</label>
+      )}
+      {/* Associar modelo */}
+      {config.showModelos && (
+        <>
+          <div style={{ width: '100%', textAlign: 'left', fontWeight: 600, fontSize: 16, margin: '8px 0 2px 0' }}>
+            Associar modelo: <i className="bi bi-bookmark-plus-fill" style={{ color: '#000000', marginLeft: '5px' }}></i>
           </div>
-        ))}
-      </div>
-
+          <div className="modal-search-wrapper" style={{ position: 'relative', width: '100%' }}>
+            <input
+              type="text"
+              className="searchInput"
+              placeholder="Pesquisar modelo"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{
+                paddingRight: '32px',
+                width: '100%',
+                boxSizing: 'border-box'
+              }}
+            />
+            <i
+              className="bi bi-search"
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#a04c6e',
+                fontSize: '20px',
+                pointerEvents: 'none'
+              }}
+            ></i>
+          </div>
+          <div className="checkboxList">
+            {filteredModels.map(model => (
+              <div key={model.id}>
+                <input
+                  type="checkbox"
+                  id={`modelo${model.id}`}
+                  checked={formData.modelos.includes(model.id)}
+                  onChange={e => handleModelChange(model, e.target.checked)}
+                />
+                <label htmlFor={`modelo${model.id}`}>{model.nome}</label>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
       <button id="fecharModal" onClick={handleSubmit}>
-        Cadastrar cor
+        {config.buttonLabel}
       </button>
     </div>
   );
@@ -259,89 +359,113 @@ const Modal = ({
   const renderEditModal = () => (
     <div className="modal-content">
       <span className="close" onClick={onClose}>&times;</span>
-      <h2 className="tituloPopUp">Editar Cor</h2>
-
-      {/* Nome da cor */}
-      <div style={{ marginBottom: '10px' }}>
-        <label htmlFor="inpNome" style={{ fontWeight: 'bold' }}>Nome da cor:</label>
-        <input
-          type="text"
-          id='inpNome'
-          value={colorInfo?.descricao || formData.nome}
-          readOnly
-          style={{ backgroundColor: '#eee', color: '#888', cursor: 'not-allowed', marginTop: '5px' }}
-        />
-      </div>
-
-      {/* Valor da cor */}
-
-      <div style={{ marginBottom: '10px' }}>
-        <label htmlFor="inpValor" style={{ fontWeight: 'bold' }}>Valor:</label>
-        <input
-          type="text"
-          id='inpValor'
-          value={formData.valor}
-          onChange={(e) => {
-            let v = e.target.value.replace(/[^\d,]/g, '');
-            setFormData(prev => ({ ...prev, valor: v }));
-          }}
-          onBlur={(e) => {
-            import('../utils/formatValor').then(({ formatValorBR }) => {
-              setFormData(prev => ({ ...prev, valor: formatValorBR(prev.valor) }));
-            });
-          }}
-          placeholder="Valor: R$ 0,00"
-          style={{ marginTop: '5px' }}
-        />
-      </div>
-
-
-
-
-      {/* Modelos associados */}
-      <h3 className="titulo">
-        Modelos Associados:
-        <i className="bi bi-bookmark-plus-fill" style={{ color: '#000000', marginLeft: '5px' }}></i>
-      </h3>
-
-      <div className="modal-search-wrapper">
-        <input
-          type="text"
-          className="searchInput"
-          placeholder="Pesquisar modelo"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <i className="bi bi-search"></i>
-      </div>
-
-      <div className="checkboxList">
-        {filteredModels.map((model) => (
-          <div key={model.id}>
+      <h2 className="tituloPopUp">{config.title}</h2>
+      {(!formData || !colorData || !Array.isArray(availableModels) || availableModels.length === 0) ? (
+        <div style={{ textAlign: 'center', margin: '32px 0', color: '#a04c6e', fontWeight: 500 }}>
+          Carregando dados da cor e modelos...
+        </div>
+      ) : (
+        <>
+          {/* Nome da cor */}
+          <input
+            type="text"
+            id="inpNome"
+            value={colorInfo?.descricao || formData.nome}
+            readOnly={config.readOnlyName}
+            style={{ backgroundColor: config.readOnlyName ? '#eee' : '#fff', color: config.readOnlyName ? '#888' : '#222', cursor: config.readOnlyName ? 'not-allowed' : 'text', marginBottom: '8px', fontWeight: 500 }}
+          />
+          {/* Bloco para escolher a cor (apenas visualização) */}
+          {config.showColorInput && (
+            <>
+              <div style={{ width: '100%', textAlign: 'center', margin: '8px 0', fontWeight: 600, fontSize: 16 }}>Clique para escolher a cor:</div>
+              <div className="color-block" style={{ background: formData.cor, border: '2px solid #fff', marginBottom: 8 }}></div>
+              <input
+                type="color"
+                id="inpCor"
+                value={formData.cor}
+                onChange={e => handleInputChange('cor', e.target.value)}
+                style={{ width: '100%', height: 44, borderRadius: 10, border: '2px solid #fff', cursor: 'pointer', marginBottom: 8 }}
+              />
+            </>
+          )}
+          {/* Valor da cor */}
+          {config.showValueInput && (
             <input
-              type="checkbox"
-              id={`modeloEdit${model.id}`}
-              checked={formData.modelos.includes(model.id)}
-              onChange={(e) => handleModelChange(model, e.target.checked)}
+              type="text"
+              id="inpValor"
+              value={formData.valor}
+              onChange={e => handleInputChange('valor', e.target.value.replace(/[^\d,]/g, ''))}
+              onBlur={e => {
+                import('../utils/formatValor').then(({ formatValorBR }) => {
+                  setFormData(prev => ({ ...prev, valor: formatValorBR(prev.valor) }));
+                });
+              }}
+              placeholder="Valor: R$ 0,00"
+              style={{ marginBottom: '8px' }}
             />
-            <label htmlFor={`modeloEdit${model.id}`}>{model.nome}</label>
-          </div>
-        ))}
-      </div>
-
-      <button id="fecharModal" onClick={handleSubmit}>
-        Atualizar cor
-      </button>
+          )}
+          {/* Associar modelo */}
+          {config.showModelos && (
+            <>
+              <div style={{ width: '100%', textAlign: 'left', fontWeight: 600, fontSize: 16, margin: '8px 0 2px 0' }}>
+                Associar modelo: <i className="bi bi-bookmark-plus-fill" style={{ color: '#000000', marginLeft: '5px' }}></i>
+              </div>
+              <div className="modal-search-wrapper" style={{ position: 'relative', width: '100%' }}>
+                <input
+                  type="text"
+                  className="searchInput"
+                  placeholder="Pesquisar modelo"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  style={{
+                    paddingRight: '32px',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                  }}
+                />
+                <i
+                  className="bi bi-search"
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#a04c6e',
+                    fontSize: '20px',
+                    pointerEvents: 'none'
+                  }}
+                ></i>
+              </div>
+              <div className="checkboxList">
+                {filteredModels.map(model => (
+                  <div key={model.id}>
+                    <input
+                      type="checkbox"
+                      id={`modeloEdit${model.id}`}
+                      checked={formData.modelos.includes(model.id)}
+                      onChange={e => handleModelChange(model, e.target.checked)}
+                    />
+                    <label htmlFor={`modeloEdit${model.id}`}>{model.nome}</label>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          <button id="fecharModal" onClick={handleSubmit}>
+            {config.buttonLabel}
+          </button>
+        </>
+      )}
     </div>
   );
 
   const renderDeleteModal = () => (
     <div className="modal-content">
       <span className="close" onClick={onClose}>&times;</span>
-      <h2 className="tituloPopUp">Você Deseja Deletar: "{colorName}"?</h2>
+      <h2 className="tituloPopUp">Você Deseja intativar: "{colorName}"?</h2>
 
       <button id="fecharModalExcluir" onClick={handleSubmit}>
-        Deletar cor
+        Inativar cor
       </button>
       <button id="fecharModalCancelar" onClick={onClose}>
         Cancelar
@@ -350,10 +474,12 @@ const Modal = ({
   );
 
   return (
-    <div className="modal">
-      {type === 'create' && renderCreateModal()}
-      {type === 'edit' && renderEditModal()}
-      {type === 'delete' && renderDeleteModal()}
+    <div className="modal-overlay">
+      <div className="modal">
+        {type === 'create' && renderCreateModal()}
+        {type === 'edit' && renderEditModal()}
+        {type === 'delete' && renderDeleteModal()}
+      </div>
     </div>
   );
 };

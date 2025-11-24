@@ -36,6 +36,13 @@ const CadastroCor = () => {
   const id = raw.id ?? raw.idCaracteristicaDetalhe ?? raw.id_caracteristica_detalhe ?? raw.id_caracteristica ?? raw.idCor;
   const nome = raw.nomeDaCor ?? raw.nome ?? raw.descricao ?? '';
   const cor = raw.cor ?? raw.hexaDecimal ?? raw.hexa_decimal ?? '';
+  // Normalizar ativo para 1 ou 0
+  let ativo = 0;
+  if (raw.ativo !== undefined && raw.ativo !== null) {
+    if (raw.ativo === true || raw.ativo === 'true' || raw.ativo === 1 || raw.ativo === '1') ativo = 1;
+    else if (raw.ativo === false || raw.ativo === 'false' || raw.ativo === 0 || raw.ativo === '0') ativo = 0;
+    else ativo = Number(raw.ativo) ? 1 : 0;
+  }
 
   // Formatar valor para moeda brasileira e valor puro para edição
   let valor = '';
@@ -122,7 +129,7 @@ const CadastroCor = () => {
     } else if (raw.valor !== undefined && raw.valor !== null && raw.valor !== '') {
       valorNumericoPadrao = raw.valor;
     }
-    return { id, nome, cor, valor, valorNumerico: valorNumericoPadrao, imagem, modelos: modelosNomes, modelosIds };
+    return { id, nome, cor, valor, valorNumerico: valorNumericoPadrao, imagem, modelos: modelosNomes, modelosIds, ativo };
 
   // Se não encontrou nomes mas há objetos Modelo completos com IDs
   if (modelos.length === 0 && raw.listaModelos && Array.isArray(raw.listaModelos) && raw.listaModelos.length > 0) {
@@ -140,7 +147,7 @@ const CadastroCor = () => {
       } else if (raw.valor !== undefined && raw.valor !== null && raw.valor !== '') {
         valorNumerico = raw.valor;
       }
-      return { id, nome, cor, valor, valorNumerico, imagem, modelos: idsModelos };
+      return { id, nome, cor, valor, valorNumerico, imagem, modelos: idsModelos, ativo };
     }
     
     // Se listaModelos contém apenas números (IDs diretos)
@@ -152,11 +159,13 @@ const CadastroCor = () => {
       } else if (raw.valor !== undefined && raw.valor !== null && raw.valor !== '') {
         valorNumerico = raw.valor;
       }
-      return { id, nome, cor, valor, valorNumerico, imagem, modelos: idsNumericos };
+      return { id, nome, cor, valor, valorNumerico, imagem, modelos: idsNumericos, ativo };
     }
   }
 
   return { id, nome, cor, valor, imagem, modelos };
+  // Se não houver modelos, garantir que ativo seja passado
+  return { id, nome, cor, valor, imagem, modelos, ativo };
 };
 
 
@@ -219,8 +228,8 @@ const CadastroCor = () => {
         hexaDecimal: formData.cor,
         preco: precoNumerico,
         imagem: formData.imagem ?? null,
-        // enviar apenas array de IDs (backend espera inteiros, não objetos)
-        listaModelos: modelosArray
+        // backend espera array de objetos { idModelo }
+        listaModelos: modelosArray.map(id => ({ idModelo: id }))
       };
       console.log('Payload enviado para cadastro de cor:', corPayload);
           // POST para cadastrar cor
@@ -359,6 +368,41 @@ const CadastroCor = () => {
     }
   };
 
+  const [isActivating, setIsActivating] = React.useState(false);
+  const activateColor = async (id) => {
+    console.log('[DISPONIBILIZAR] INÍCIO DA FUNÇÃO activateColor, id:', id);
+    if (isActivating) return;
+    setIsActivating(true);
+    try {
+      console.log('[DISPONIBILIZAR] PATCH para:', `${API_URL}/${id}/ativar`);
+      const res = await fetch(`${API_URL}/${id}/ativar`, {
+        method: "PATCH"
+      });
+      const text = await res.text();
+      console.log('[DISPONIBILIZAR] Resposta do backend:', res.status, text);
+      if (!res.ok) throw new Error("Erro ao ativar");
+      // Após ativar, buscar a cor individualmente para garantir que o status está atualizado
+      let corAtualizada = null;
+      try {
+        const resCor = await fetch(`${API_URL}/${id}`);
+        if (resCor.ok) {
+          corAtualizada = await safeParseJson(resCor);
+          console.log('[DISPONIBILIZAR] Cor atualizada:', corAtualizada);
+        }
+      } catch (e) {
+        console.warn('Não foi possível buscar cor atualizada após ativação', e);
+      }
+      showAlert("sucesso", "Cor reativada com sucesso!");
+      closeModal();
+      await loadColors();
+    } catch (err) {
+      console.error('[DISPONIBILIZAR] Erro ao ativar:', err);
+      showAlert("erro", "Erro ao reativar cor!");
+    } finally {
+      setIsActivating(false);
+    }
+  };
+
   const openCreateModal = () => {
     setModalState({
       isOpen: true,
@@ -392,7 +436,7 @@ const CadastroCor = () => {
         } else {
           colorDataRaw = await safeParseJson(res) || null;
         }
-          console.log('[EDIT MODAL] Resposta /cor/{id}/completo:', colorDataRaw);
+        console.log('[EDIT MODAL] Resposta /cor/{id}/completo:', colorDataRaw);
 
         // Se o endpoint /completo ou /{id} não trouxe modelos, tentar buscar associações explicitamente
         try {
@@ -413,7 +457,7 @@ const CadastroCor = () => {
           const assocRes = await fetch(`http://localhost:8080/caracteristica-detalhe/corModelo/${id}`);
           if (assocRes.ok) {
             const assocData = await safeParseJson(assocRes) || [];
-              console.log('[EDIT MODAL] Resposta /corModelo/{id}:', assocData);
+            console.log('[EDIT MODAL] Resposta /corModelo/{id}:', assocData);
             let assocIds = [];
             if (Array.isArray(assocData) && assocData.length > 0) {
               const first = assocData[0];
@@ -448,16 +492,21 @@ const CadastroCor = () => {
           if (m && typeof m === 'object') return m.idModelo ?? m.id ?? (m.modelo && (m.modelo.idModelo ?? m.modelo.id)) ?? null;
           return null;
         }).filter(v => v !== null && v !== undefined);
-          console.log('[EDIT MODAL] IDs normalizados para checkboxes:', colorDataRaw.modelos);
+        console.log('[EDIT MODAL] IDs normalizados para checkboxes:', colorDataRaw.modelos);
       }
 
       const colorData = normalizeColor(colorDataRaw);
+      console.log('[EDIT MODAL] colorData normalizado:', colorData);
       setModalState({
         isOpen: true,
         type: 'edit',
         colorData: colorData,
         colorName: colorData.nome
       });
+      // LOG EXTRA PARA DEBUG
+      setTimeout(() => {
+        console.log('[EDIT MODAL] modalState.colorData:', colorData);
+      }, 1000);
     } catch (error) {
       console.error("Erro ao abrir modal de edição:", error);
       showAlert("erro", "Cor não encontrada!");
@@ -493,6 +542,9 @@ const CadastroCor = () => {
       case 'delete':
         deleteColor();
         break;
+      case 'activate':
+        activateColor(modalState.colorData?.id);
+        break;
       default:
         break;
     }
@@ -509,16 +561,13 @@ const CadastroCor = () => {
   return (
     <div className="color-page">
       <Sidebar />
-      
       <header>Cores</header>
-      
       <BarraPesquisa 
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onAddClick={openCreateModal}
         addLabel="Cadastrar Cores"
       />
-
       <div className="content">
         <div className="card-container">
           {filteredColors.map((color, idx) => (
@@ -531,13 +580,22 @@ const CadastroCor = () => {
                   ?? idx
               }
               color={color}
-              onEdit={openEditModal}
-              onDelete={openDeleteModal}
+              onEdit={id => openEditModal(id)}
+              onDelete={(id, nome) => openDeleteModal(id, nome)}
+              onActivate={id => {
+                console.log('[DISPONIBILIZAR] Clique em disponibilizar cor:', id, color);
+                setModalState({
+                  isOpen: true,
+                  type: 'activate',
+                  colorData: { id },
+                  colorName: color.nome
+                });
+              }}
+              isActivating={isActivating}
             />
           ))}
         </div>
       </div>
-
       <Modal
         isOpen={modalState.isOpen}
         onClose={closeModal}

@@ -1,45 +1,28 @@
 import React from 'react';
 import '../styles/CardCor.css';
 
-const CardCor = ({ color, onEdit, onDelete }) => {
-  const { id, nome, cor, modelos = [], valor } = color;
-  // Se valor já vem como string 'R$ ...', só mostra
-  const formattedValue = typeof valor === 'string' ? valor.replace(/^R\$\s*/, '') : valor;
-
-  // Só considera id real do banco (número)
+const CardCor = ({ color, onEdit, onDelete, onActivate, isActivating = false }) => {
+  const { id, nome, cor, modelos = [], valor, ativo } = color;
   const realId = typeof id === 'number' || (!isNaN(Number(id)) && String(Number(id)) === String(id)) ? Number(id) : null;
-
-  const displayModelos = (Array.isArray(modelos) ? modelos : [])
-    .map((m) => {
-      if (typeof m === 'string') return m;
-      if (!m || typeof m !== 'object') return null;
-      if (m.modelo) {
-        if (typeof m.modelo === 'string') return m.modelo;
-        if (m.modelo && typeof m.modelo === 'object') {
-          const nested = m.modelo.nome ?? m.modelo.descricao ?? Object.values(m.modelo).find(v => typeof v === 'string' && v.trim().length > 0) ?? null;
-          if (nested) return nested;
+  const isActive = Number(ativo) === 1;
+  const isInactive = Number(ativo) === 0;
+  const cardBg = isInactive ? '#e0e0e0' : '#F29DC3';
+  const colorBoxBg = cor || '#fff';
+  const valorFormatado = typeof valor === 'string' && valor.startsWith('R$') ? valor : `R$ ${valor}`;
+  const displayModelos = Array.isArray(modelos)
+    ? modelos.map((m) => {
+        if (typeof m === 'string') return m;
+        if (typeof m === 'object' && m !== null) {
+          return m.nomeModelo || m.nome || m.descricao || m.label || m.titulo || m.modeloNome || m.nomeCor || '';
         }
-      }
-      const direto = (
-        m.nome ??
-        m.nomeDoModelo ??
-        m.descricao ??
-        m.titulo ??
-        m.label ??
-        m.nomeCor ??
-        m.modeloNome ??
-        null
-      );
-      if (direto) return direto;
-      const anyString = Object.values(m).find(v => typeof v === 'string' && v.trim().length > 0) ?? null;
-      return anyString ?? m.id ?? null;
-    })
-    .filter((v) => typeof v === 'string' && v.trim().length > 0);
+        return '';
+      }).filter((v) => typeof v === 'string' && v.trim().length > 0)
+    : [];
 
   return (
-    <div className="card-custom">
-      <h5>{nome}</h5>
-      <div className="color-box" style={{ background: cor }}></div>
+    <div className="card-custom" style={{ opacity: isInactive ? 0.6 : 1 }}>
+      <h5>{nome || '—'}</h5>
+      <div className="color-box" style={{ background: colorBoxBg }}></div>
       <p><strong>Modelos Associados:</strong></p>
       <div className="list-associates">
         {displayModelos.length > 0 ? (
@@ -53,20 +36,39 @@ const CardCor = ({ color, onEdit, onDelete }) => {
         )}
       </div>
       <div className="card-footer">
-        <p className="valor">Valor: {typeof valor === 'string' ? valor : `R$ ${valor}`}</p>
+        <p className="valor">Valor: {valorFormatado}</p>
         <div className="icons">
-          <i
-            className="bi bi-pencil"
-            onClick={() => realId !== null && onEdit(realId)}
-            style={{ opacity: realId !== null ? 1 : 0.3, pointerEvents: realId !== null ? 'auto' : 'none' }}
-          ></i>
-          <i
-            className="bi bi-trash"
-            onClick={() => realId !== null && onDelete(realId, nome)}
-            style={{ opacity: realId !== null ? 1 : 0.3, pointerEvents: realId !== null ? 'auto' : 'none' }}
-          ></i>
+          {isActive && (
+            <>
+              <i
+                className="bi bi-pencil"
+                onClick={() => onEdit(realId)}
+                title="Editar"
+              ></i>
+              <i
+                className="bi bi-trash"
+                onClick={() => onDelete(realId, nome)}
+                title="Excluir"
+              ></i>
+            </>
+          )}
+          {isInactive && (
+            <button
+              className="btn-activate"
+              onClick={() => onActivate(realId)}
+              disabled={isActivating}
+              style={isActivating ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+            >
+              {isActivating ? 'Disponibilizando...' : 'Disponibilizar'}
+            </button>
+          )}
         </div>
       </div>
+      {isInactive && (
+        <div style={{ textAlign: 'center', color: '#a04c6e', fontWeight: 600, marginTop: 8 }}>
+          Indisponível
+        </div>
+      )}
     </div>
   );
 };
