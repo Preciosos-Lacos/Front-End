@@ -154,14 +154,33 @@ body {
     margin-left: 12px;
 }
 
+.status-chip {
+    border: 1px solid transparent;
+}
+
 .status-em-confeccao {
     color: #d16b9b;
     background: #f9d2e3;
 }
 
+.status-em-andamento {
+    color: #d16b9b;
+    background: #f9d2e3;
+}
+
+.status-concluido {
+    color: #7354c9;
+    background: #eae5ff;
+}
+
 .status-entregue {
     color: #3bbf68;
     background: #e0f7e9;
+}
+
+.status-neutro {
+    color: #666;
+    background: #eee;
 }
 
 .compra-entrega {
@@ -180,18 +199,28 @@ body {
 .compra-botoes {
     margin-top: 8px;
     gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
 }
-
-
 
 .compra-botoes .btn {
     border-radius: 20px;
     font-size: 1.01rem;
     font-weight: 600;
-    padding: 7px 20px;
+    padding: 0 20px;
     white-space: nowrap;
     width: auto;
     transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.compra-botoes .compra-btn {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .compra-botoes .btn-outline-secondary {
@@ -216,6 +245,58 @@ body {
     background: #d16b9b;
     border-color: #d16b9b;
     color: #fff;
+}
+
+/* Pagamento */
+.pagamento-chip {
+    border: 1px solid transparent;
+}
+
+.pagamento-pago {
+    color: #1d7a3b;
+    background: #d9f3e3;
+}
+
+.pagamento-pendente {
+    color: #b36a00;
+    background: #ffeac2;
+}
+
+.pagamento-neutro {
+    color: #666;
+    background: #eee;
+}
+
+.compra-total {
+    font-size: 1.05rem;
+    color: #222;
+    background: #f6f6f6;
+    border-radius: 10px;
+    padding: 4px 10px;
+}
+
+.itens-detalhes {
+    border-top: 1px dashed #e6c7d6;
+}
+
+.item-linha {
+    border-bottom: 1px dashed #f0dde6;
+}
+
+.item-linha:last-child {
+    border-bottom: none;
+}
+
+.pequeno {
+    font-size: 0.92rem;
+}
+
+.copiar-id {
+    color: #a9506d;
+}
+
+.copiar-id:hover {
+    color: #7f3b51;
 }
 
 .text-center.text-muted {
