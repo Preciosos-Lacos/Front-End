@@ -80,7 +80,7 @@ export default function CadastroEndereco() {
     const id_usuario = sessionStorage.id_usuario ? Number(sessionStorage.id_usuario) : 4;
 
     const novoEndereco = {
-      usuario_id: id_usuario,
+      usuarioId: id_usuario,
       cep,
       uf,
       localidade: cidade,
@@ -106,7 +106,7 @@ export default function CadastroEndereco() {
         // redirecionar após 1.5s (comportamento parecido com versão original)
         setTimeout(() => {
           // navegar para a rota de finalizar compra
-          navigate('/finalizar-compra');
+          navigate(-1);
         }, 1500);
       } else {
         setMessage({ type: 'error', text: 'Erro ao cadastrar endereço. Tente novamente.' });

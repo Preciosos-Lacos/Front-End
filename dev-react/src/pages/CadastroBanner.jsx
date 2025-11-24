@@ -1,4 +1,21 @@
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
+// Utilitário para obter o token JWT do localStorage
+function getAuthToken() {
+  return localStorage.getItem('token');
+}
 import React, { useState, useEffect } from 'react';
+import AlertModal from '../components/AlertModal';
+import ConfirmModal from '../components/ConfirmModal';
+
+// Utilitário para converter arquivo em base64
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+}
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import '../styles/cadastroBanner.css';
@@ -12,6 +29,7 @@ const CadastroBanner = () => {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
   const [showPreviewItem, setShowPreviewItem] = useState(null);
   const [showSyncModal, setShowSyncModal] = useState(false);
@@ -21,84 +39,97 @@ const CadastroBanner = () => {
   const [showServerBanners, setShowServerBanners] = useState(false);
   const [bannerForm, setBannerForm] = useState({
     titulo: '',
-    linkDestino: '',
-    ordem: 0,
+    linkDestino: 'http://localhost:5173/catalogo',
     ativo: true,
     dataInicio: '',
     dataFim: ''
   });
-  const SERVER_ENABLED = (import.meta.env.VITE_ENABLE_BANNER_SERVER === 'true');
 
+  // Fetch initial data and setup
   useEffect(() => {
+    const token = getAuthToken();
+    const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+    
+    // Load current banner
+    fetch(`${API_BASE}/banners/ativo/home`, { headers })
+      .then(res => res.ok ? res.json() : '')
+      .then(data => {
+        if (data && data.imagemUrl) setCurrentBanner(data.imagemUrl);
+      })
+      .catch(err => console.error('Erro ao carregar banner atual:', err));
 
-    // Carregar banner padrão local
-    setCurrentBanner('');
-    setPreview('');
-    setHistory([]);
+    // Load banner history
+    fetch(`${API_BASE}/banners`)
+      .then(res => res.ok ? res.json() : [])
+      .then(data => setHistory(Array.isArray(data) ? data : []))
+      .catch(() => {});
 
-    // Load server banners
+    // Load server banners if enabled
     loadServerBanners();
-  }, [navigate]);
+  }, []);
 
   const loadServerBanners = async () => {
-    if (!SERVER_ENABLED) return;
     try {
-      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
-      const res = await fetch(`${BASE}/banners`);
+      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
+      const token = getAuthToken();
+      const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+      const res = await fetch(`${BASE}/banners?ativo=true`, { headers });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const banners = await res.json();
-      setServerBanners(Array.isArray(banners) ? banners : (banners?.content || []));
+      const data = await res.json();
+      setServerBanners(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar banners do servidor:', error);
-      setMessage({ text: 'Erro ao carregar banners do servidor', type: 'error' });
     }
   };
 
   const handleCreateBanner = async () => {
-    if (!SERVER_ENABLED) {
-      setMessage({ text: 'Modo local: criação no servidor está desativada.', type: 'info' });
-      setTimeout(() => setMessage({ text: '', type: '' }), 2500);
-      return;
-    }
-    if (!file && !preview) {
-      setMessage({ text: 'Selecione uma imagem primeiro.', type: 'error' });
-      return;
-    }
-
+    if (loading) return;
     setLoading(true);
     try {
-      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
       let imagemUrl = preview;
-      if (file) {
-        const uploaded = await uploadFile('/banners/upload', file);
-        imagemUrl = uploaded?.imagemUrl || uploaded?.url || imagemUrl;
-      }
-      const payload = { ...bannerForm, imagemUrl };
       const token = getAuthToken();
-      const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
-      const res = await fetch(`${BASE}/banners`, { method: 'POST', headers, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
+      // Se há um arquivo novo, fazer upload para o servidor de uploads (dev)
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('titulo', bannerForm.titulo || 'banner');
+
+        // Upload para o endpoint correto do backend
+        const resUpload = await fetch(`${API_BASE}/banners/upload`, {
+          method: 'POST',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          body: formData
+        });
+        if (!resUpload.ok) throw new Error('Falha no upload da imagem');
+        const uploadData = await resUpload.json();
+        imagemUrl = uploadData.imagemUrl || uploadData.url || imagemUrl;
+      }
+      // Enviar dados do banner
+      const payload = { ...bannerForm, imagemUrl };
+      // Remove ordem do payload se existir
+      if (payload.ordem !== undefined) delete payload.ordem;
+      const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+      const res = await fetch(`${API_BASE}/banners`, { method: 'POST', headers, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setMessage({ text: 'Banner criado com sucesso!', type: 'success' });
       setFile(null);
       setPreview('');
-      
-      // Reset form
       setBannerForm({
         titulo: '',
-        linkDestino: '',
-        ordem: 0,
+        linkDestino: 'http://localhost:5173/catalogo',
         ativo: true,
         dataInicio: '',
         dataFim: ''
       });
-
-      // Reload server banners
-      await loadServerBanners();
-      
       setTimeout(() => {
         setMessage({ text: '', type: '' });
       }, 3000);
+      // Atualizar histórico
+      fetch(`${API_BASE}/banners`)
+        .then(res => res.ok ? res.json() : [])
+        .then(data => setHistory(Array.isArray(data) ? data : []))
+        .catch(() => {});
     } catch (error) {
       setMessage({ text: 'Erro ao criar banner: ' + error.message, type: 'error' });
       console.error('Erro ao criar banner:', error);
@@ -108,17 +139,12 @@ const CadastroBanner = () => {
   };
 
   const handleDeleteServerBanner = async (bannerId) => {
-    if (!SERVER_ENABLED) {
-      setMessage({ text: 'Modo local: exclusão no servidor está desativada.', type: 'info' });
-      setTimeout(() => setMessage({ text: '', type: '' }), 2500);
-      return;
-    }
     if (!window.confirm('Deseja realmente excluir este banner do servidor?')) {
       return;
     }
 
     try {
-      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
+      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
       const token = getAuthToken();
       const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
       const res = await fetch(`${BASE}/banners/${bannerId}`, { method: 'DELETE', headers });
@@ -136,13 +162,8 @@ const CadastroBanner = () => {
   };
 
   const handleToggleBannerStatus = async (bannerId, currentStatus) => {
-    if (!SERVER_ENABLED) {
-      setMessage({ text: 'Modo local: alteração de status no servidor está desativada.', type: 'info' });
-      setTimeout(() => setMessage({ text: '', type: '' }), 2500);
-      return;
-    }
     try {
-      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
+      const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
       const token = getAuthToken();
       const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
       const res = await fetch(`${BASE}/banners/${bannerId}/toggle`, { method: 'PATCH', headers });
@@ -252,21 +273,32 @@ const CadastroBanner = () => {
   };
 
   const handleReset = () => {
-    if (window.confirm('Deseja realmente restaurar o banner padrão?')) {
-      const success = resetBanner();
-      if (success) {
-        // Após resetar, não há banner salvo, então limpa o preview
-        setCurrentBanner('');
-        setPreview('');
-        setFile(null);
-        setMessage({ text: 'Banner restaurado ao padrão! A home voltará a exibir o banner padrão.', type: 'success' });
+    setShowRestoreConfirm(true);
+  };
 
-        setTimeout(() => {
-          setMessage({ text: '', type: '' });
-        }, 3000);
+  const confirmRestoreBanner = async () => {
+    setShowRestoreConfirm(false);
+    setLoading(true);
+    try {
+      // Buscar banner padrão ativo (ordem=0)
+      const res = await fetch(`${API_BASE}/banners?ativo=true&ordem=0`);
+      if (!res.ok) throw new Error('Não foi possível buscar o banner padrão');
+      const banners = await res.json();
+      if (Array.isArray(banners) && banners.length > 0) {
+        const bannerPadrao = banners[0];
+        setCurrentBanner(bannerPadrao.imagemUrl);
+        setFile(null);
+        setMessage({ text: 'Banner padrão restaurado com sucesso!', type: 'success' });
       } else {
-        setMessage({ text: 'Erro ao restaurar banner.', type: 'error' });
+        setMessage({ text: 'Nenhum banner padrão ativo encontrado.', type: 'error' });
       }
+      setTimeout(() => {
+        setMessage({ text: '', type: '' });
+      }, 3000);
+    } catch (error) {
+      setMessage({ text: 'Erro ao restaurar banner padrão.', type: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -276,23 +308,26 @@ const CadastroBanner = () => {
     setMessage({ text: '', type: '' });
   };
 
-  const handleUseHistory = (item) => {
-    if (!item || !item.url) return;
-    const success = saveBannerUrl(item.url);
-    if (success) {
-      setCurrentBanner(item.url);
-      setPreview(item.url);
-      setMessage({ text: 'Banner aplicado a partir do histórico.', type: 'success' });
-      // refresh history order
-      try {
-        const h = getBannerHistory();
-        setHistory(h);
-      } catch (e) {
-        console.warn('Erro ao atualizar histórico após aplicar item:', e);
-      }
+  const handleUseHistory = async (item) => {
+    if (!item || !item.id) return;
+    try {
+      // Tornar o banner selecionado como ativo na Home (PATCH)
+      const token = getAuthToken();
+      const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+      // Ativa o banner e define ordem 0
+      const res = await fetch(`${API_BASE}/banners/${item.id}/ativo?ativo=true`, { method: 'PATCH', headers });
+      if (!res.ok) throw new Error('Erro ao ativar banner');
+      // Atualiza visualmente
+      setCurrentBanner(item.imagemUrl);
+      setMessage({ text: 'Banner ativado na Home com sucesso!', type: 'success' });
+      // Atualiza histórico
+      fetch(`${API_BASE}/banners`)
+        .then(res => res.ok ? res.json() : [])
+        .then(data => setHistory(Array.isArray(data) ? data : []))
+        .catch(() => {});
       setTimeout(() => setMessage({ text: '', type: '' }), 2500);
-    } else {
-      setMessage({ text: 'Erro ao aplicar banner do histórico.', type: 'error' });
+    } catch (error) {
+      setMessage({ text: 'Erro ao ativar banner do histórico.', type: 'error' });
     }
   };
 
@@ -421,25 +456,6 @@ const CadastroBanner = () => {
     }));
   };
 
-  const handleUseServerBanner = (banner) => {
-    if (!SERVER_ENABLED) {
-      setMessage({ text: 'Modo local: uso de banners do servidor está desativado.', type: 'info' });
-      setTimeout(() => setMessage({ text: '', type: '' }), 2500);
-      return;
-    }
-    if (banner.imagemUrl) {
-      const success = saveBannerUrl(banner.imagemUrl);
-      if (success) {
-        setCurrentBanner(banner.imagemUrl);
-        setPreview(banner.imagemUrl);
-        setMessage({ text: 'Banner do servidor aplicado com sucesso!', type: 'success' });
-        setTimeout(() => setMessage({ text: '', type: '' }), 3000);
-      } else {
-        setMessage({ text: 'Erro ao aplicar banner do servidor.', type: 'error' });
-      }
-    }
-  };
-
   const seedSampleHistory = () => {
     // create small SVG placeholders as data URLs
     const makeSvg = (text, color) => {
@@ -464,305 +480,153 @@ const CadastroBanner = () => {
     }
   };
 
+  // Utilitário para garantir src absoluto para imagens do backend
+  function getBannerImageSrc(src) {
+    if (!src) return '';
+    // Se já é base64 ou começa com http(s), retorna direto
+    if (src.startsWith('data:image') || src.startsWith('http')) return src;
+    // Se começa com /uploads, monta URL absoluta do backend
+    if (src.startsWith('/uploads')) {
+      return `${API_BASE}${src}`;
+    }
+    // Se é apenas o nome do arquivo, monta URL do backend
+    if (/^[a-f0-9\-_.]+\.(png|jpg|jpeg|webp)$/i.test(src)) {
+      return `${API_BASE}/uploads/${src}`;
+    }
+    return src;
+  }
+
   return (
-    <div className="admin-banner-container">
-      <Sidebar />
-      <div className="admin-banner-content">
-        <header className="admin-banner-header">
-          <h1 className="admin-banner-title">Gerenciar Banner da Home</h1>
-          <p className="admin-banner-subtitle">
-            Faça upload de uma nova imagem para substituir o banner principal da página inicial
-          </p>
-        </header>
-
-        {message.text && (
-          <div className={`admin-banner-message admin-banner-message--${message.type}`}>
-            {message.text}
-          </div>
-        )}
-
-        <section className="admin-banner-section">
-          <div className="admin-banner-upload">
-            <label htmlFor="banner-upload" className="admin-banner-upload-label">
-              <i className="bi bi-cloud-upload"></i>
-              <span>Selecionar Nova Imagem</span>
-              <input
-                id="banner-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                disabled={loading}
-                className="admin-banner-upload-input"
-              />
-            </label>
-            <p className="admin-banner-upload-hint">
-              Formatos aceitos: JPG, PNG, WEBP. Tamanho máximo: 5MB
+    <>
+      <AlertModal
+        isOpen={alert.open}
+        type={alert.type}
+        message={alert.text}
+        onClose={() => setAlert({ open: false, text: '', type: 'info' })}
+      />
+      <ConfirmModal
+        isOpen={showRestoreConfirm}
+        message="Deseja realmente restaurar o banner padrão?"
+        onConfirm={confirmRestoreBanner}
+        onCancel={() => setShowRestoreConfirm(false)}
+      />
+      <div className="admin-banner-container">
+        <Sidebar />
+        <div className="admin-banner-content">
+          <header className="admin-banner-header">
+            <h1 className="admin-banner-title">Cadastro e Gerenciamento de Banners</h1>
+            <p className="admin-banner-subtitle">
+              Cadastre, visualize e gerencie os banners exibidos na Home. Acompanhe o histórico e banners do servidor.
             </p>
-          </div>
-
-          <div className="admin-banner-preview">
-            <h3>Preview do Banner</h3>
-            <div className="admin-banner-preview-container">
-              {preview ? (
-                <img src={preview} alt="Preview do banner" className="admin-banner-preview-image" />
-              ) : (
-                <div className="admin-banner-preview-placeholder">
-                  <i className="bi bi-image"></i>
-                  <p>Nenhuma imagem selecionada</p>
+          </header>
+          <div className="admin-banner-grid">
+            {/* Cadastro e Preview */}
+            <section className="admin-banner-section admin-banner-section--cadastro">
+              <h2 className="section-title">Cadastrar Novo Banner</h2>
+              <div className="admin-banner-form-wrapper">
+                <div className="admin-banner-upload">
+                  <label htmlFor="banner-upload" className="admin-banner-upload-label">
+                    <i className="bi bi-cloud-upload"></i>
+                    <span>Selecionar Imagem</span>
+                    <input
+                      id="banner-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      disabled={loading}
+                      className="admin-banner-upload-input"
+                    />
+                  </label>
+                  <p className="admin-banner-upload-hint">
+                    Formatos: JPG, PNG, WEBP | Máx: 5MB
+                  </p>
                 </div>
-              )}
-            </div>
-          </div>
-
-          <div className="admin-banner-form">
-            <h4>Configurações do Banner</h4>
-            <div className="form-group">
-              <label>Título:</label>
-              <input
-                type="text"
-                name="titulo"
-                value={bannerForm.titulo}
-                onChange={handleFormChange}
-                placeholder="Título do banner (opcional)"
-              />
-            </div>
-            <div className="form-group">
-              <label>Link de Destino:</label>
-              <input
-                type="url"
-                name="linkDestino"
-                value={bannerForm.linkDestino}
-                onChange={handleFormChange}
-                placeholder="URL de destino ao clicar no banner"
-              />
-            </div>
-            <div className="form-group">
-              <label>Ordem:</label>
-              <input
-                type="number"
-                name="ordem"
-                value={bannerForm.ordem}
-                onChange={handleFormChange}
-                min="0"
-              />
-            </div>
-            <div className="form-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="ativo"
-                  checked={bannerForm.ativo}
-                  onChange={handleFormChange}
-                />
-                Ativo
-              </label>
-            </div>
-            <div className="form-group">
-              <label>Data Início:</label>
-              <input
-                type="date"
-                name="dataInicio"
-                value={bannerForm.dataInicio}
-                onChange={handleFormChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Data Fim:</label>
-              <input
-                type="date"
-                name="dataFim"
-                value={bannerForm.dataFim}
-                onChange={handleFormChange}
-              />
-            </div>
-          </div>
-
-          <div className="admin-banner-actions">
-            <button
-              className="admin-banner-btn admin-banner-btn--primary"
-              onClick={handleSave}
-              disabled={loading || (!file && preview === currentBanner)}
-            >
-              {loading ? 'Salvando...' : 'Salvar Banner Local'}
-            </button>
-            <button
-              className="admin-banner-btn admin-banner-btn--success"
-              onClick={handleCreateBanner}
-              disabled={loading || (!file && !preview) || !SERVER_ENABLED}
-              title={!SERVER_ENABLED ? 'Modo local: criação no servidor desativada' : ''}
-            >
-              {loading ? 'Criando...' : (SERVER_ENABLED ? 'Criar Banner no Servidor' : 'Criar no Servidor (desativado)')}
-            </button>
-            {(file || preview !== currentBanner) && (
-              <button
-                className="admin-banner-btn admin-banner-btn--secondary"
-                onClick={handleCancel}
-                disabled={loading}
-              >
-                Cancelar
-              </button>
-            )}
-            <button
-              className="admin-banner-btn admin-banner-btn--danger"
-              onClick={handleReset}
-              disabled={loading}
-            >
-              Restaurar Padrão
-            </button>
-            <button
-              className="admin-banner-btn admin-banner-btn--info"
-              onClick={() => setShowServerBanners(!showServerBanners)}
-              disabled={loading || !SERVER_ENABLED}
-              title={!SERVER_ENABLED ? 'Modo local: visualização de servidores desativada' : ''}
-            >
-              {showServerBanners ? 'Ocultar' : (SERVER_ENABLED ? 'Ver Banners do Servidor' : 'Ver Banners do Servidor (desativado)')}
-            </button>
-          </div>
-        </section>
-
-        {showServerBanners && (
-          <section className="admin-banner-section admin-banner-server">
-            <div className="admin-banner-server-header">
-              <h3>Banners do Servidor</h3>
-              <p className="admin-banner-server-note">Gerencie banners armazenados no servidor</p>
-            </div>
-            <div className="admin-banner-server-grid">
-              {serverBanners && serverBanners.length > 0 ? serverBanners.map((banner) => (
-                <div key={banner.id} className="admin-banner-server-item">
-                  <div className="admin-banner-server-thumb">
-                    <img src={banner.imagemUrl} alt={banner.titulo || `Banner ${banner.id}`} />
-                    {banner.ativo && <span className="admin-banner-badge">Ativo</span>}
-                  </div>
-                  <div className="admin-banner-server-meta">
-                    <div className="admin-banner-title">{banner.titulo || `Banner ${banner.id}`}</div>
-                    <div className="admin-banner-ordem">Ordem: {banner.ordem}</div>
-                    <div className="admin-banner-status">
-                      Status: {banner.ativo ? 'Ativo' : 'Inativo'}
-                    </div>
-                    {banner.linkDestino && (
-                      <div className="admin-banner-link">
-                        Link: <a href={banner.linkDestino} target="_blank" rel="noopener noreferrer">{banner.linkDestino}</a>
+                <div className="admin-banner-preview">
+                  <h3>Preview</h3>
+                  <div className="admin-banner-preview-container">
+                    {preview ? (
+                      <img src={getBannerImageSrc(preview)} alt="Preview do banner" className="admin-banner-preview-image" />
+                    ) : (
+                      <div className="admin-banner-preview-placeholder">
+                        <i className="bi bi-image"></i>
+                        <p>Nenhuma imagem selecionada</p>
                       </div>
                     )}
                   </div>
-                  <div className="admin-banner-server-actions">
-                    <button className="admin-banner-btn" onClick={() => handleUseServerBanner(banner)}>
-                      Usar na Home
-                    </button>
-                    <button 
-                      className={`admin-banner-btn ${banner.ativo ? 'admin-banner-btn--warning' : 'admin-banner-btn--success'}`}
-                      onClick={() => handleToggleBannerStatus(banner.id, banner.ativo)}
-                    >
-                      {banner.ativo ? 'Desativar' : 'Ativar'}
-                    </button>
-                    <button 
-                      className="admin-banner-btn admin-banner-btn--danger"
-                      onClick={() => handleDeleteServerBanner(banner.id)}
-                    >
-                      Excluir
-                    </button>
+                </div>
+              </div>
+              <form className="admin-banner-form">
+                <h4>Informações do Banner</h4>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Título</label>
+                    <input type="text" name="titulo" value={bannerForm.titulo} onChange={handleFormChange} placeholder="Título (opcional)" />
+                  </div>
+                  <div className="form-group">
+                    <label>Link de Destino</label>
+                    <input type="url" name="linkDestino" value={bannerForm.linkDestino} onChange={handleFormChange} placeholder="URL ao clicar" />
+                  </div>
+                  {/* Campo de ordem removido do formulário */}
+                  <div className="form-group">
+                    <label>Ativo</label>
+                    <input type="checkbox" name="ativo" checked={bannerForm.ativo} onChange={handleFormChange} />
+                  </div>
+                  <div className="form-group">
+                    <label>Data Início</label>
+                    <input type="date" name="dataInicio" value={bannerForm.dataInicio} onChange={handleFormChange} />
+                  </div>
+                  <div className="form-group">
+                    <label>Data Fim</label>
+                    <input type="date" name="dataFim" value={bannerForm.dataFim} onChange={handleFormChange} />
                   </div>
                 </div>
-              )) : (
-                <div style={{ padding: '1rem', color: '#666' }}>
-                  Nenhum banner encontrado no servidor.
+                <div className="admin-banner-actions">
+                  <button type="button" className="admin-banner-btn admin-banner-btn--success" onClick={handleCreateBanner} disabled={loading || (!file && !preview)}>
+                    {loading ? 'Criando...' : 'Criar Banner'}
+                  </button>
+                  {(file || preview !== currentBanner) && (
+                    <button type="button" className="admin-banner-btn admin-banner-btn--secondary" onClick={handleCancel} disabled={loading}>Cancelar</button>
+                  )}
+                  <button type="button" className="admin-banner-btn admin-banner-btn--danger" onClick={handleReset} disabled={loading}>Restaurar Padrão</button>
                 </div>
-              )}
-            </div>
-          </section>
-        )}
+              </form>
+            </section>
 
-        <section className="admin-banner-section admin-banner-history">
-            <div className="admin-banner-history-header">
-              <div>
-                <h3>Histórico de Banners</h3>
-                <p className="admin-banner-history-note">Aqui estão os últimos banners que você salvou. Você pode reutilizá-los sem precisar upar novamente.</p>
+            {/* Histórico de Banners */}
+            <section className="admin-banner-section admin-banner-section--history">
+              <div className="admin-banner-history-header">
+                <h2 className="section-title">Histórico de Banners</h2>
+                <p>Visualize e reutilize banners antigos já usados. Clique em um banner para torná-lo o atual na Home.</p>
               </div>
-              <div className="admin-banner-history-controls">
-                <button className="admin-banner-btn" onClick={exportHistory}>Exportar</button>
-                <label className="admin-banner-btn admin-banner-btn--secondary" style={{ cursor: 'pointer' }}>
-                  Importar
-                  <input type="file" accept="application/json" onChange={handleImportInput} style={{ display: 'none' }} />
-                </label>
-                <button className="admin-banner-btn" onClick={seedSampleHistory}>Adicionar exemplos</button>
-                <button className="admin-banner-btn admin-banner-btn--secondary" onClick={handleClearHistory}>Limpar histórico</button>
-                <button className="admin-banner-btn" onClick={handleSyncToServer} disabled={syncLoading}>{syncLoading ? 'Sincronizando...' : 'Sincronizar com servidor'}</button>
-              </div>
-            </div>
-            <div className="admin-banner-history-grid">
-              {history && history.length > 0 ? history.map((item, idx) => {
-                const isActive = currentBanner && item.url === currentBanner;
-                const filename = (item.url || '').split('/').pop();
-                return (
-                  <div key={idx} className="admin-banner-history-item">
-                    <div className="admin-banner-history-thumb">
-                      <img src={item.url} alt={`Banner ${idx + 1}`} />
-                      {isActive && <span className="admin-banner-badge">Ativo</span>}
+              <div className="admin-banner-history-grid">
+                {history && history.length > 0 ? history.map((item, idx) => {
+                  const isActive = currentBanner && item.imagemUrl === currentBanner;
+                  const filename = (item.imagemUrl || '').split('/').pop();
+                  return (
+                    <div key={item.id || idx} className={`admin-banner-history-item${isActive ? ' active' : ''}`}
+                      title="Clique para ativar este banner na Home"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleUseHistory(item)}>
+                      <div className="admin-banner-history-thumb">
+                        <img src={getBannerImageSrc(item.imagemUrl)} alt={`Banner ${idx + 1}`} />
+                        {isActive && <span className="admin-banner-badge">Ativo</span>}
+                      </div>
+                      <div className="admin-banner-history-meta">
+                        <div className="admin-banner-filename" title={filename}>{filename || 'preview'}</div>
+                        <div className="admin-banner-savedat">{item.titulo || ''}</div>
+                      </div>
                     </div>
-                    <div className="admin-banner-history-meta">
-                      <div className="admin-banner-filename" title={filename}>{filename || 'preview'}</div>
-                      <div className="admin-banner-savedat">{formatSavedAt(item.savedAt)}</div>
-                    </div>
-                    <div className="admin-banner-history-actions">
-                      <button className="admin-banner-btn" onClick={() => handleUseHistory(item)}>Usar</button>
-                      <button className="admin-banner-btn" onClick={() => handlePreview(item)}>Visualizar</button>
-                      <a className="admin-banner-btn admin-banner-btn--secondary" href={item.url} download target="_blank" rel="noreferrer">Download</a>
-                      <button className="admin-banner-btn admin-banner-btn--danger" onClick={() => handleDeleteHistory(item)}>Deletar</button>
-                    </div>
-                  </div>
-                );
-              }) : (
-                <div style={{ padding: '1rem', color: '#666' }}>Nenhum banner salvo ainda. Use o botão "Adicionar exemplos" ou faça upload e clique em "Salvar Banner" para popular o histórico.</div>
-              )}
-            </div>
-          </section>
-
-        {/* Clear confirmation modal */}
-        {showClearConfirm && (
-          <div className="admin-modal-overlay">
-            <div className="admin-modal">
-              <h4>Limpar histórico</h4>
-              <p>Tem certeza de que deseja limpar todo o histórico de banners? A ação não pode ser desfeita.</p>
-              <div className="admin-modal-actions">
-                <button className="admin-banner-btn admin-banner-btn--danger" onClick={confirmClearHistory}>Sim, limpar</button>
-                <button className="admin-banner-btn admin-banner-btn--secondary" onClick={() => setShowClearConfirm(false)}>Cancelar</button>
+                  );
+                }) : (
+                  <div style={{ padding: '1rem', color: '#666' }}>Nenhum banner cadastrado ainda.</div>
+                )}
               </div>
-            </div>
+            </section>
+            {/* Removido: Banners do Servidor */}
           </div>
-        )}
-
-        {showPreviewItem && (
-          <div className="admin-modal-overlay" onClick={closePreview}>
-            <div className="admin-modal admin-modal--preview" onClick={(e) => e.stopPropagation()}>
-              <div className="admin-modal-preview-body">
-                <img src={showPreviewItem.url} alt="Preview" />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.75rem' }}>
-                <button className="admin-banner-btn" onClick={() => { handleUseHistory(showPreviewItem); closePreview(); }}>Usar</button>
-                <a className="admin-banner-btn admin-banner-btn--secondary" href={showPreviewItem.url} download target="_blank" rel="noreferrer">Download</a>
-                <button className="admin-banner-btn admin-banner-btn--secondary" onClick={closePreview}>Fechar</button>
-              </div>
-            </div>
-          </div>
-        )}
-        {showSyncModal && (
-          <div className="admin-modal-overlay" onClick={() => setShowSyncModal(false)}>
-            <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-              <h4>Sincronizar histórico</h4>
-              <p>Informe o endpoint para enviar o histórico e, se necessário, um token Bearer.</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <input type="text" placeholder="https://api.seusite.com/banner-history" value={syncUrlInput} onChange={(e) => setSyncUrlInput(e.target.value)} />
-                <input type="text" placeholder="Token (opcional)" value={syncTokenInput} onChange={(e) => setSyncTokenInput(e.target.value)} />
-              </div>
-              <div className="admin-modal-actions">
-                <button className="admin-banner-btn admin-banner-btn--secondary" onClick={() => setShowSyncModal(false)}>Cancelar</button>
-                <button className="admin-banner-btn" onClick={confirmSync}>Sincronizar</button>
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

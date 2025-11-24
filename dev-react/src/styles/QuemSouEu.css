@@ -1,10 +1,59 @@
 /* QuemSouEu.css - seção 'Quem sou eu' */
 
-.sessao-quem-sou-eu{ display:flex; justify-content:center; background:#FAFBF5; padding:60px 20px }
-.quem-sou-eu{ display:flex; flex-direction:column; align-items:center; max-width:900px; text-align:center }
-.quem-sou-eu h2{ font-size:2rem; margin-bottom:24px; color:var(--color-primary,#BC6686) }
-.sobre{ display:flex; align-items:center; gap:36px; flex-wrap:wrap; justify-content:center }
-.sobre p{ max-width:520px; font-size:1.05rem; color:rgba(0,0,0,0.8) }
-.sobre img{ width:220px; height:220px; border-radius:14px; object-fit:cover; box-shadow:0 6px 18px rgba(0,0,0,0.12) }
+.sessao-quem-sou-eu {
+    display: flex;
+    justify-content: center;
+    background: #FAFBF5;
+    padding: 60px 20px
+}
 
-@media (max-width:600px){ .quem-sou-eu{ width:100% } .sobre{ flex-direction:column } .sobre img{ width:180px; height:180px } }
+.quem-sou-eu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 900px;
+    text-align: center
+}
+
+.quem-sou-eu h2 {
+    font-size: 2rem;
+    margin-bottom: 24px;
+    color: var(--color-primary, #BC6686)
+}
+
+.sobre {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    flex-wrap: wrap;
+    justify-content: center
+}
+
+.sobre p {
+    max-width: 520px;
+    font-size: 1.05rem;
+    color: rgba(0, 0, 0, 0.8)
+}
+
+.sobre img {
+    width: 220px;
+    height: 220px;
+    border-radius: 14px;
+    object-fit: cover;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12)
+}
+
+@media (max-width:600px) {
+    .quem-sou-eu {
+        width: 100%
+    }
+
+    .sobre {
+        flex-direction: column
+    }
+
+    .sobre img {
+        width: 180px;
+        height: 180px
+    }
+}
