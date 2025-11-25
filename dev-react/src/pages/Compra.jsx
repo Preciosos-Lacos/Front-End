@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import Modal from '../components/Modal';
 import '../styles/Compra.css';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -95,15 +94,18 @@ const Compra = () => {
     setError(null);
     try {
       const body = { idUsuario: checkout.idUsuario, formaPagamento: code, frete: checkout.frete ?? 15.0 };
+      const token = getAuthToken();
+      const headers = { 'Content-Type':'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
       const res = await fetch(`${BASE_URL}/checkout/finalizar`, {
         method: 'POST',
-        headers: { 'Content-Type':'application/json' },
+        headers,
         body: JSON.stringify(body)
       });
       const txt = await res.text();
-      const json = txt ? JSON.parse(txt) : null;
+      let json = null;
+      try { json = txt ? JSON.parse(txt) : null; } catch (_) { json = null; }
       if (!res.ok) {
-        const msg = (json && json.erro) ? json.erro : (txt || 'Erro ao finalizar pedido');
+        const msg = (json && (json.erro || json.message)) ? (json.erro || json.message) : (txt || 'Erro ao finalizar pedido');
         throw new Error(msg);
       }
 
@@ -243,13 +245,10 @@ const Compra = () => {
               {finalizing ? 'Finalizando...' : 'Finalizar Pedido'}
             </button>
 
-            <Modal
-              isOpen={confirmOpen}
-              onClose={() => setConfirmOpen(false)}
-              type="view"
-              viewContent={(
-                <div style={{ padding: 20, minWidth: 320 }}>
-                  <h2>Confirmar Pedido</h2>
+            {confirmOpen && (
+              <div className="compra-modal-overlay" onClick={() => setConfirmOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1600}}>
+                <div className="compra-modal" onClick={(e)=>e.stopPropagation()} style={{background:'#fff',borderRadius:8,padding:20,minWidth:320,maxWidth:'90%',boxShadow:'0 10px 30px rgba(0,0,0,0.3)'}}>
+                  <h2 style={{marginTop:0}}>Confirmar Pedido</h2>
                   <p>Forma de pagamento selecionada: <strong>{payment}</strong></p>
                   <div style={{ marginTop: 12 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -274,8 +273,8 @@ const Compra = () => {
                     <button onClick={handleFinalize} disabled={finalizing} style={{ padding: '8px 14px', borderRadius: 8, background: '#4caf50', color: '#fff', border: 'none' }}>{finalizing ? 'Enviando...' : 'Confirmar'}</button>
                   </div>
                 </div>
-              )}
-            />
+              </div>
+            )}
           </div>
         </div>
       </main>
