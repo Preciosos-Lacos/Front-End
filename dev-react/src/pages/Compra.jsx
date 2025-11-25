@@ -15,6 +15,29 @@ function decodeJwt(token) {
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
+// Normalize image source returned by backend.
+// The backend may return a "pure" base64 string (no data: prefix).
+// Browsers require a data URL like: data:image/png;base64,....
+function getImageSrc(img) {
+  if (!img) return '/placeholder-200.png';
+  if (typeof img !== 'string') return '/placeholder-200.png';
+  const s = img.trim();
+  // already a data URL?
+  if (s.startsWith('data:')) return s;
+  // Some backends may include the literal prefix 'base64,' accidentally
+  const idx = s.indexOf('base64,');
+  if (idx >= 0) return `data:image/png;base64,${s.slice(idx + 'base64,'.length)}`;
+  // Detect common image formats by base64 signature
+  // PNG: starts with 'iVBOR'
+  if (s.startsWith('iVBOR')) return `data:image/png;base64,${s}`;
+  // JPEG: base64 often starts with '/9j/'
+  if (s.startsWith('/9j/')) return `data:image/jpeg;base64,${s}`;
+  // GIF: starts with 'R0lG'
+  if (s.startsWith('R0lG')) return `data:image/gif;base64,${s}`;
+  // Fallback to PNG if unknown
+  return `data:image/png;base64,${s}`;
+}
+
 const Compra = () => {
   const [checkout, setCheckout] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -173,7 +196,7 @@ const Compra = () => {
             ) : produtosUnicos.map((item) => (
               <div key={item.idProduto} className="item-produto">
                 <div className="produto" style={{display:'flex',gap:12,alignItems:'center'}}>
-                  <img src={item.imagemPrincipal || '/placeholder-200.png'} alt={item.nome} style={{width:64,height:64,objectFit:'cover',borderRadius:6}} />
+                  <img src={getImageSrc(item.imagemPrincipal)} alt={item.nome} style={{width:64,height:64,objectFit:'cover',borderRadius:6}} />
                   <div>
                     <div style={{fontWeight:600}}>{item.nome}</div>
                     <div style={{fontSize:12,color:'#666'}}>{item.modelo}</div>
