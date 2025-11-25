@@ -228,7 +228,6 @@ export default function MinhasCompras() {
       <Header />
       <section className="minhas-compras-section container">
         <h2 className="titulo-minhas-compras">Minhas compras</h2>
-        {loading && <p className="text-muted">Carregando compras...</p>}
         {error && !loading && <div className="alert alert-warning pequeno" role="alert">{error}</div>}
         <div className="minhas-compras-barra d-flex align-items-center justify-content-between mb-4">
           <div className="busca-filtros d-flex align-items-center gap-3">
@@ -262,7 +261,12 @@ export default function MinhasCompras() {
           </div>
         </div>
         <div className="compras-lista">
-          {pedidosFiltrados.map((p) => {
+          {loading ? (
+            <div className="text-center text-muted">Carregando compras...</div>
+          ) : pedidosFiltrados.length === 0 ? (
+            <div className="text-center text-muted">Nenhuma compra encontrada.</div>
+          ) : (
+            pedidosFiltrados.map((p) => {
             const primeiraImagem = p?.itens?.[0]?.imagens?.[0] || '/src/assets/laco-kit-6.webp';
             const itens = p?.itens || [];
             const mais = Math.max(itens.length - 1, 0);
@@ -326,9 +330,7 @@ export default function MinhasCompras() {
                 </div>
               </div>
             );
-          })}
-          {pedidosFiltrados.length === 0 && (
-            <div className="text-center text-muted">Nenhuma compra encontrada.</div>
+            })
           )}
         </div>
       </section>
