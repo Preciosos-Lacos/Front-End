@@ -97,6 +97,20 @@ const formatDateBR = (ymd) => {
 const formatMoeda = (valor) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor ?? 0);
 
+// Normalize image source returned by backend (base64 puro -> data URL).
+function getImageSrc(img) {
+  if (!img) return '/src/assets/laco-kit-6.webp';
+  if (typeof img !== 'string') return '/src/assets/laco-kit-6.webp';
+  const s = img.trim();
+  if (s.startsWith('data:')) return s;
+  const idx = s.indexOf('base64,');
+  if (idx >= 0) return `data:image/png;base64,${s.slice(idx + 'base64,'.length)}`;
+  if (s.startsWith('iVBOR')) return `data:image/png;base64,${s}`;
+  if (s.startsWith('/9j/')) return `data:image/jpeg;base64,${s}`;
+  if (s.startsWith('R0lG')) return `data:image/gif;base64,${s}`;
+  return `data:image/png;base64,${s}`;
+}
+
 const statusPedidoClass = (status) => {
   const s = (status || '').toLowerCase();
   if (s.includes('andamento') || s.includes('confe')) return 'status-em-andamento';
@@ -255,7 +269,7 @@ export default function MinhasCompras() {
             return (
               <div key={p.idPedido} className="compra-card d-flex align-items-center mb-4 p-3">
                 <div className="compra-img me-3">
-                  <img src={primeiraImagem} alt={tituloPrimeiro} className="img-fluid rounded" style={{ width: 90, height: 90, objectFit: 'cover' }} />
+                  <img src={getImageSrc(primeiraImagem)} alt={tituloPrimeiro} className="img-fluid rounded" style={{ width: 90, height: 90, objectFit: 'cover' }} />
                 </div>
                 <div className="compra-info flex-grow-1 w-100">
                   <div className="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
