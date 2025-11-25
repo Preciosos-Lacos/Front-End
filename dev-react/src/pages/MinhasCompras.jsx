@@ -190,7 +190,14 @@ export default function MinhasCompras() {
   }, []);
 
   const pedidosOrdenados = useMemo(() => {
-    return [...pedidos].sort((a, b) => new Date(b.data) - new Date(a.data));
+    // Order by idPedido descending (maior -> menor) by default
+    return [...pedidos].sort((a, b) => {
+      const idA = Number(a.idPedido ?? 0);
+      const idB = Number(b.idPedido ?? 0);
+      if (!isNaN(idA) && !isNaN(idB) && idA !== idB) return idB - idA;
+      // fallback to date if ids are equal or not numeric
+      return new Date(b.data) - new Date(a.data);
+    });
   }, [pedidos]);
 
   const pedidosFiltrados = useMemo(() => {
