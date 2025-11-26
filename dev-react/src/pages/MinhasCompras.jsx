@@ -97,6 +97,20 @@ const formatDateBR = (ymd) => {
 const formatMoeda = (valor) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor ?? 0);
 
+// Normalize image source returned by backend (base64 puro -> data URL).
+function getImageSrc(img) {
+  if (!img) return '/src/assets/laco-kit-6.webp';
+  if (typeof img !== 'string') return '/src/assets/laco-kit-6.webp';
+  const s = img.trim();
+  if (s.startsWith('data:')) return s;
+  const idx = s.indexOf('base64,');
+  if (idx >= 0) return `data:image/png;base64,${s.slice(idx + 'base64,'.length)}`;
+  if (s.startsWith('iVBOR')) return `data:image/png;base64,${s}`;
+  if (s.startsWith('/9j/')) return `data:image/jpeg;base64,${s}`;
+  if (s.startsWith('R0lG')) return `data:image/gif;base64,${s}`;
+  return `data:image/png;base64,${s}`;
+}
+
 const statusPedidoClass = (status) => {
   const s = (status || '').toLowerCase();
   if (s.includes('andamento') || s.includes('confe')) return 'status-em-andamento';
@@ -176,7 +190,14 @@ export default function MinhasCompras() {
   }, []);
 
   const pedidosOrdenados = useMemo(() => {
-    return [...pedidos].sort((a, b) => new Date(b.data) - new Date(a.data));
+    // Order by idPedido descending (maior -> menor) by default
+    return [...pedidos].sort((a, b) => {
+      const idA = Number(a.idPedido ?? 0);
+      const idB = Number(b.idPedido ?? 0);
+      if (!isNaN(idA) && !isNaN(idB) && idA !== idB) return idB - idA;
+      // fallback to date if ids are equal or not numeric
+      return new Date(b.data) - new Date(a.data);
+    });
   }, [pedidos]);
 
   const pedidosFiltrados = useMemo(() => {
@@ -207,7 +228,6 @@ export default function MinhasCompras() {
       <Header />
       <section className="minhas-compras-section container">
         <h2 className="titulo-minhas-compras">Minhas compras</h2>
-        {loading && <p className="text-muted">Carregando compras...</p>}
         {error && !loading && <div className="alert alert-warning pequeno" role="alert">{error}</div>}
         <div className="minhas-compras-barra d-flex align-items-center justify-content-between mb-4">
           <div className="busca-filtros d-flex align-items-center gap-3">
@@ -241,7 +261,12 @@ export default function MinhasCompras() {
           </div>
         </div>
         <div className="compras-lista">
-          {pedidosFiltrados.map((p) => {
+          {loading ? (
+            <div className="text-center text-muted">Carregando compras...</div>
+          ) : pedidosFiltrados.length === 0 ? (
+            <div className="text-center text-muted">Nenhuma compra encontrada.</div>
+          ) : (
+            pedidosFiltrados.map((p) => {
             const primeiraImagem = p?.itens?.[0]?.imagens?.[0] || '/src/assets/laco-kit-6.webp';
             const itens = p?.itens || [];
             const mais = Math.max(itens.length - 1, 0);
@@ -255,7 +280,7 @@ export default function MinhasCompras() {
             return (
               <div key={p.idPedido} className="compra-card d-flex align-items-center mb-4 p-3">
                 <div className="compra-img me-3">
-                  <img src={primeiraImagem} alt={tituloPrimeiro} className="img-fluid rounded" style={{ width: 90, height: 90, objectFit: 'cover' }} />
+                  <img src={getImageSrc(primeiraImagem)} alt={tituloPrimeiro} className="img-fluid rounded" style={{ width: 90, height: 90, objectFit: 'cover' }} />
                 </div>
                 <div className="compra-info flex-grow-1 w-100">
                   <div className="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
@@ -305,9 +330,7 @@ export default function MinhasCompras() {
                 </div>
               </div>
             );
-          })}
-          {pedidosFiltrados.length === 0 && (
-            <div className="text-center text-muted">Nenhuma compra encontrada.</div>
+            })
           )}
         </div>
       </section>

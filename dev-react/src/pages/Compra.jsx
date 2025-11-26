@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import Modal from '../components/Modal';
 import '../styles/Compra.css';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -15,6 +14,29 @@ function decodeJwt(token) {
 }
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+// Normalize image source returned by backend.
+// The backend may return a "pure" base64 string (no data: prefix).
+// Browsers require a data URL like: data:image/png;base64,....
+function getImageSrc(img) {
+  if (!img) return '/placeholder-200.png';
+  if (typeof img !== 'string') return '/placeholder-200.png';
+  const s = img.trim();
+  // already a data URL?
+  if (s.startsWith('data:')) return s;
+  // Some backends may include the literal prefix 'base64,' accidentally
+  const idx = s.indexOf('base64,');
+  if (idx >= 0) return `data:image/png;base64,${s.slice(idx + 'base64,'.length)}`;
+  // Detect common image formats by base64 signature
+  // PNG: starts with 'iVBOR'
+  if (s.startsWith('iVBOR')) return `data:image/png;base64,${s}`;
+  // JPEG: base64 often starts with '/9j/'
+  if (s.startsWith('/9j/')) return `data:image/jpeg;base64,${s}`;
+  // GIF: starts with 'R0lG'
+  if (s.startsWith('R0lG')) return `data:image/gif;base64,${s}`;
+  // Fallback to PNG if unknown
+  return `data:image/png;base64,${s}`;
+}
 
 const Compra = () => {
   const [checkout, setCheckout] = useState(null);
@@ -95,15 +117,18 @@ const Compra = () => {
     setError(null);
     try {
       const body = { idUsuario: checkout.idUsuario, formaPagamento: code, frete: checkout.frete ?? 15.0 };
+      const token = getAuthToken();
+      const headers = { 'Content-Type':'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
       const res = await fetch(`${BASE_URL}/checkout/finalizar`, {
         method: 'POST',
-        headers: { 'Content-Type':'application/json' },
+        headers,
         body: JSON.stringify(body)
       });
       const txt = await res.text();
-      const json = txt ? JSON.parse(txt) : null;
+      let json = null;
+      try { json = txt ? JSON.parse(txt) : null; } catch (_) { json = null; }
       if (!res.ok) {
-        const msg = (json && json.erro) ? json.erro : (txt || 'Erro ao finalizar pedido');
+        const msg = (json && (json.erro || json.message)) ? (json.erro || json.message) : (txt || 'Erro ao finalizar pedido');
         throw new Error(msg);
       }
 
@@ -171,7 +196,7 @@ const Compra = () => {
             ) : produtosUnicos.map((item) => (
               <div key={item.idProduto} className="item-produto">
                 <div className="produto" style={{display:'flex',gap:12,alignItems:'center'}}>
-                  <img src={item.imagemPrincipal || '/placeholder-200.png'} alt={item.nome} style={{width:64,height:64,objectFit:'cover',borderRadius:6}} />
+                  <img src={getImageSrc(item.imagemPrincipal)} alt={item.nome} style={{width:64,height:64,objectFit:'cover',borderRadius:6}} />
                   <div>
                     <div style={{fontWeight:600}}>{item.nome}</div>
                     <div style={{fontSize:12,color:'#666'}}>{item.modelo}</div>
@@ -243,13 +268,10 @@ const Compra = () => {
               {finalizing ? 'Finalizando...' : 'Finalizar Pedido'}
             </button>
 
-            <Modal
-              isOpen={confirmOpen}
-              onClose={() => setConfirmOpen(false)}
-              type="view"
-              viewContent={(
-                <div style={{ padding: 20, minWidth: 320 }}>
-                  <h2>Confirmar Pedido</h2>
+            {confirmOpen && (
+              <div className="compra-modal-overlay" onClick={() => setConfirmOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1600}}>
+                <div className="compra-modal" onClick={(e)=>e.stopPropagation()} style={{background:'#fff',borderRadius:8,padding:20,minWidth:320,maxWidth:'90%',boxShadow:'0 10px 30px rgba(0,0,0,0.3)'}}>
+                  <h2 style={{marginTop:0}}>Confirmar Pedido</h2>
                   <p>Forma de pagamento selecionada: <strong>{payment}</strong></p>
                   <div style={{ marginTop: 12 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -274,8 +296,8 @@ const Compra = () => {
                     <button onClick={handleFinalize} disabled={finalizing} style={{ padding: '8px 14px', borderRadius: 8, background: '#4caf50', color: '#fff', border: 'none' }}>{finalizing ? 'Enviando...' : 'Confirmar'}</button>
                   </div>
                 </div>
-              )}
-            />
+              </div>
+            )}
           </div>
         </div>
       </main>
