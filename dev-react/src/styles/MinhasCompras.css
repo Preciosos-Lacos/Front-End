@@ -36,31 +36,56 @@ body {
 }
 
 .busca-filtros {
-    gap: 18px;
+    gap: 24px; /* give more vertical breathing room */
+    flex: 1 1 72%; /* allow this block to take more horizontal space */
+    /* remove strict min-width so grid can behave predictably */
+    align-items: flex-start; /* ensure children align to left edge */
 }
 
 .busca-compras {
-    min-width: 260px;
+    min-width: 220px;
     max-width: 540px;
 }
 
+
+/* Make the search input visually match the filter selects (rounded pink pill) */
+.busca-compras .input-group {
+    background: #f9d2e3;
+    border-radius: 20px;
+    padding: 0 10px; /* remove vertical padding, we'll control height explicitly */
+    align-items: center;
+    height: 40px; /* match select height */
+    color: #222; /* make inner icons/text inherit the page font color */
+}
+
 .busca-compras .input-group-text {
-    /* background: var(--rosa, #F29DC3); */
-    color: #fff;
+    background: transparent;
     border: none;
-    border-radius: 20px 0 0 20px;
-    font-size: 1.2rem;
-    padding-left: 18px;
-    padding-right: 12px;
+    color: inherit; /* use same color as fonts */
+    font-size: 1.05rem;
+    padding: 0 8px 0 10px;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .busca-compras .form-control {
     border: none;
-    background: #f9d2e3;
-    border-radius: 0 20px 20px 0;
-    font-size: 1.08rem;
-    padding: 10px 16px;
+    background: transparent;
+    border-radius: 0;
+    font-size: 1.05rem;
+    padding: 0 10px;
     color: #222;
+    box-shadow: none;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.busca-compras .form-control:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 .busca-compras .form-control:focus {
@@ -71,6 +96,70 @@ body {
 .filtro-compras {
     gap: 8px;
 }
+
+.filtros-labels {
+    /* Use fixed-column grid so labels align exactly with controls below */
+    display: grid;
+    grid-template-columns: 360px 180px 180px; /* fixed first-column width to align labels with controls */
+    gap: 32px; /* wider gap between label columns */
+    align-items: center;
+    width: 100%;
+    justify-items: start; /* left-align each label inside its grid cell */
+}
+
+.filtros-controls {
+    /* mirror the label columns so controls align under each label */
+    display: grid;
+    grid-template-columns: 360px 180px 180px; /* match label columns */
+    gap: 24px; /* increase horizontal spacing between controls */
+    align-items: center;
+    width: 100%;
+    justify-items: start; /* left-align controls inside their grid cells */
+}
+
+/* Ensure the search control sits in the first column */
+.filtros-controls > .busca-compras {
+    grid-column: 1;
+}
+
+.filtros-controls > .busca-compras {
+    justify-self: start; /* make sure search control sticks to left edge of first column */
+}
+
+.filtros-controls > .busca-compras .input-group {
+    width: 100%; /* make search pill fill its grid column */
+}
+
+/* The filter block spans columns 2 and 3 but internally aligns icon and selects into three small columns */
+.filtros-controls > .filtro-compras {
+    grid-column: 2 / span 2;
+    display: grid;
+    grid-template-columns: 36px 1fr 1fr; /* icon, status select, payment select */
+    gap: 24px; /* match outer grid gap so spacing is uniform */
+    align-items: center;
+}
+
+.filter-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #d16b9b;
+    grid-column: 1; /* inside .filtro-compras grid */
+}
+
+.filtro-compras .filtro-item select.form-select {
+    min-width: 150px;
+}
+
+/* Make the two selects occupy their intended fixed columns inside the filter block */
+.filtro-compras > .filtro-item:first-of-type { grid-column: 2; }
+.filtro-compras > .filtro-item:last-of-type { grid-column: 3; }
+.filtro-compras > .filtro-item:first-of-type .form-select { width: 180px; }
+.filtro-compras > .filtro-item:last-of-type .form-select { width: 180px; }
 
 .filtro-compras i {
     font-size: 1.3rem;
@@ -85,11 +174,142 @@ body {
     color: #222;
     padding: 6px 18px;
     min-width: 110px;
+    height: 40px; /* explicit height to match input */
+    display: inline-flex;
+    align-items: center;
 }
 
 .filtro-compras .form-select:focus {
     box-shadow: none;
     outline: 2px solid var(--rosa, #F29DC3);
+}
+
+/* New single-grid layout: each column contains its label above and control below */
+.filtros-grid {
+    display: grid;
+    grid-template-columns: 360px 192px 180px; /* slightly wider middle column for better alignment */
+    column-gap: 32px;
+    row-gap: 8px;
+    align-items: start;
+    width: 100%;
+}
+
+.filtro-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Selects inside the new grid: ensure they receive the same pill styling as other selects */
+.filtro-col .form-select {
+    border: none;
+    background: #f9d2e3;
+    border-radius: 20px;
+    font-size: 1.05rem;
+    color: #222;
+    padding: 6px 18px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    box-shadow: none;
+}
+
+/* Make the filter icon sit a little closer to the select */
+.filtro-col .filter-icon {
+    margin-right: 8px;
+}
+
+/* Nudge the second column content a bit right so the title visually aligns over the select */
+.filtros-grid > .filtro-col:nth-child(2) {
+    padding-left: 12px; /* nudge the second column slightly right to align its label with the select */
+}
+
+.filtros-grid .busca-compras .input-group {
+    width: 100%;
+}
+
+.filtros-grid .d-flex.align-items-center {
+    gap: 12px;
+    align-items: center;
+}
+
+.filtro-item {
+    display: flex;
+    gap: 6px;
+}
+
+.filtro-label {
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* Timeline styles */
+.timeline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.compra-timeline-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.timeline-icon {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #fff;
+    background: #ddd;
+}
+
+.timeline-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ddd;
+    display: inline-block;
+}
+
+.timeline-step.completed .timeline-icon,
+.timeline-step.active .timeline-icon {
+    background: var(--rosa, #F29DC3);
+}
+
+.timeline-step.completed .timeline-text,
+.timeline-step.active .timeline-text {
+    color: #444;
+    font-weight: 700;
+}
+
+.timeline-text {
+    color: #888;
+    font-size: 0.78rem;
+}
+
+.timeline-connector {
+    width: 34px;
+    height: 2px;
+    background: #eee;
+}
+
+.timeline-connector.done {
+    background: var(--rosa, #F29DC3);
 }
 
 .info-compras {
@@ -109,11 +329,17 @@ body {
     border-radius: 16px;
     box-shadow: 0 2px 12px #0002;
     display: flex;
-    align-items: center;
-    padding: 24px 32px;
-    gap: 32px;
-    min-height: 120px;
+    align-items: center; /* default: center when collapsed */
+    justify-content: flex-start;
+    padding: 28px 36px;
+    gap: 48px;
+    min-height: 160px;
     transition: box-shadow 0.2s;
+}
+
+/* When card is expanded, anchor items to top so image remains fixed */
+.compra-card.expanded {
+    align-items: flex-start;
 }
 
 .compra-card:hover {
@@ -121,19 +347,38 @@ body {
 }
 
 .compra-img img {
-    width: 110px;
-    height: 110px;
+    width: 200px;
+    height: 200px;
     object-fit: cover;
     border-radius: 12px;
     border: 2px solid #f9d2e3;
     background: #fafbfa;
 }
 
+.compra-left {
+    display: flex;
+    align-items: center; /* center vertically when collapsed */
+    justify-content: flex-end; /* move image toward the right side of the left column */
+    width: 220px; /* reserve space for a larger image */
+    padding-right: 0;
+}
+
+/* Top-align left column when the parent card has .expanded */
+.compra-card.expanded .compra-left {
+    align-items: flex-start;
+}
+
+.compra-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .compra-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 8px;
 }
 
 .compra-data-status {
@@ -207,12 +452,35 @@ body {
 
 .compra-botoes .btn {
     border-radius: 20px;
-    font-size: 1.01rem;
+    font-size: 1.02rem;
     font-weight: 600;
-    padding: 0 20px;
+    padding: 8px 22px;
     white-space: nowrap;
     width: auto;
     transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+/* Remove left spacing so buttons sit flush to the left edge of the content area */
+.compra-botoes {
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.compra-botoes .btn {
+    margin-left: 0;
+}
+
+/* On small screens keep buttons full width but aligned left without extra left padding */
+@media (max-width: 700px) {
+    .compra-botoes {
+        padding-left: 0;
+        margin-left: 0;
+        align-items: stretch;
+    }
+    .compra-botoes .btn {
+        width: 100%;
+        margin-left: 0;
+    }
 }
 
 .compra-botoes .compra-btn {
@@ -311,12 +579,16 @@ body {
         padding: 24px 8px 32px 8px;
     }
     .compra-card {
-        padding: 18px 10px;
-        gap: 18px;
+        padding: 22px 14px;
+        gap: 20px;
+        min-height: 140px;
+    }
+    .compra-img {
+        width: 140px;
     }
     .compra-img img {
-        width: 80px;
-        height: 80px;
+        width: 120px;
+        height: 120px;
     }
 }
 
@@ -349,23 +621,68 @@ body {
         width: 100%;
         justify-content: flex-start;
     }
+
+    /* revert label/control grid to stacked layout on small screens */
+    .filtros-labels,
+    .filtros-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
     .compras-lista {
         gap: 14px;
     }
     .compra-card {
         flex-direction: column;
         align-items: flex-start;
-        padding: 14px 8px;
-        gap: 10px;
+        justify-content: flex-start;
+        padding: 16px 10px;
+        gap: 12px;
         min-height: unset;
     }
+    .compra-img {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
     .compra-img img {
-        width: 70px;
-        height: 70px;
+        width: 76px;
+        height: 76px;
     }
     .compra-botoes .btn {
         width: 100%;
-        padding: 8px 0;
-        font-size: 0.98rem;
+        padding: 10px 0;
+        font-size: 1rem;
+    }
+
+    /* Centraliza e ajusta a timeline em telas pequenas */
+    .compra-timeline-row {
+        justify-content: center;
+        width: 100%;
+        padding: 6px 0 0 0;
+    }
+
+    .timeline {
+        justify-content: center;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    .timeline-step {
+        gap: 4px;
+    }
+
+    .timeline-text {
+        font-size: 0.72rem;
+        max-width: 86px;
+        text-align: center;
+        white-space: normal;
+    }
+
+    .timeline-connector {
+        width: 18px;
+        height: 2px;
     }
 }
