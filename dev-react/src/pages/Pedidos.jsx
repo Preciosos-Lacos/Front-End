@@ -93,7 +93,17 @@ const Pedidos = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [modalState, setModalState] = useState({ isOpen: false, type: null, viewContent: null });
+  const [modalState, setModalState] = useState({ isOpen: false, pedido: null });
+
+  // Função para normalizar string (remove acentos, espaços, caixa)
+  function normalize(str) {
+    if (!str) return '';
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '')
+      .toLowerCase();
+  }
 
   // Filtragem dos dados recebidos do backend
   const filtered = Array.isArray(orders)
@@ -140,9 +150,12 @@ const Pedidos = () => {
           match = match && statusPag === filters.statusPagamento;
         }
         if (filters.statusPedido) {
-          const statusPed = (pedido.statusPedido || pedido.status_pedido || pedido.pedidoStatus || '').toLowerCase();
-          match = match && statusPed.includes(filters.statusPedido.toLowerCase());
+          // Normaliza ambos para garantir correspondência
+          const statusPed = normalize(pedido.statusPedido || pedido.status_pedido || pedido.pedidoStatus || '');
+          const filterPed = normalize(filters.statusPedido);
+          match = match && statusPed === filterPed;
         }
+        // Se o filtro está vazio, mostra todos os status
         if (searchTerm) {
           const nome = pedido.cliente?.nome?.toLowerCase() || '';
           match = match && nome.includes(searchTerm.toLowerCase());
@@ -172,7 +185,7 @@ const Pedidos = () => {
         return res.json();
       })
       .then(() => {
-        setOrders(prev => prev.map(p => p.id === id ? { ...p, statusPagamento: novoStatus } : p));
+        fetchOrders();
       })
       .catch(err => {
         alert('Erro ao atualizar status do pagamento!');
@@ -191,16 +204,18 @@ const Pedidos = () => {
         return res.json();
       })
       .then(() => {
-        setOrders(prev => prev.map(p => p.id === id ? { ...p, statusPedido: novoStatus } : p));
+        fetchOrders();
       })
       .catch(err => {
         alert('Erro ao atualizar status do pedido!');
         console.error(err);
       });
   };
-  const openDetails = () => {};
+  const openDetails = (pedido) => {
+    setModalState({ isOpen: true, pedido });
+  };
+  const closeModal = () => setModalState({ isOpen: false, pedido: null });
   const mapStatusBackendToSelect = (status) => status;
-  const closeModal = () => setModalState({ ...modalState, isOpen: false });
 
   // Função para tentar novamente buscar pedidos
   const fetchOrders = () => {
@@ -257,6 +272,17 @@ const Pedidos = () => {
         setLoading(false);
       });
   }, []);
+
+  // Função para mapear status do backend para o valor do select
+  const mapStatusPedidoBackendToSelect = (status) => {
+    switch ((status || '').toLowerCase()) {
+      case 'em andamento': return 'EM ANDAMENTO';
+      case 'entregue': return 'ENTREGUE';
+      case 'cancelado': return 'CANCELADO';
+      case 'concluido': return 'CONCLUIDO';
+      default: return 'EM ANDAMENTO';
+    }
+  };
 
   return (
     <div className="pedidos-root">
@@ -389,10 +415,21 @@ const Pedidos = () => {
                           }}
                         >
                           <td
-                            style={{ borderBottom: '1px solid #f3e0e8', textAlign: 'left', verticalAlign: 'top' , color: '#343434ff' }}
+                            style={{
+                              borderBottom: '1px solid #f3e0e8',
+                              textAlign: 'left',
+                              verticalAlign: 'top',
+                              color: '#343434ff',
+                              cursor: 'pointer',
+                              position: 'relative',
+                            }}
                             onClick={() => openDetails(p)}
+                            title="Clique para ver detalhes do pedido"
                           >
-                            {p.cliente?.nome || '-'}
+                            <span style={{display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle'}}>
+                              {p.cliente?.nome || '-'}
+                              <i className="bi bi-info-circle" style={{color: '#e48ab6', fontSize: 18, marginLeft: 8, position: 'relative', top: '1px'}}></i>
+                            </span>
                           </td>
                           <td style={{ color: '#343434ff',borderBottom: '1px solid #f3e0e8', verticalAlign: 'top', textAlign: 'left', background: 'transparent', minWidth: 120 }}>{p.cliente?.telefone || '-'}</td>
                           <td style={{ color: '#343434ff',borderBottom: '1px solid #f3e0e8', verticalAlign: 'top', textAlign: 'left', background: 'transparent', minWidth: 120 }}>{p.dataPedido || '-'}</td>
@@ -446,7 +483,7 @@ const Pedidos = () => {
                                 background: '#fff',
                                 color: '#343434ff',
                               }}
-                              value={mapStatusBackendToSelect(p.statusPedido || p.status_pedido || p.pedidoStatus || '-')}
+                              value={mapStatusPedidoBackendToSelect(p.statusPedido || p.status_pedido || p.pedidoStatus || '-')}
                               onChange={e => handleUpdateStatus(p.id, e.target.value)}
                               aria-label="Status do pedido"
                             >
@@ -486,6 +523,42 @@ const Pedidos = () => {
         </>
       </div>
       <Modal isOpen={modalState.isOpen} onClose={closeModal} type={modalState.type} viewContent={modalState.viewContent} />
+          {/* Modal de detalhes do pedido */}
+          {modalState.isOpen && modalState.pedido && (
+            <div style={{
+              position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+              background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999
+            }}
+              onClick={closeModal}
+            >
+              <div style={{ background: '#fff', padding: 32, borderRadius: 12, minWidth: 320, maxWidth: 480 }} onClick={e => e.stopPropagation()}>
+                <h2>Detalhes do Pedido</h2>
+                <div><strong>Cliente:</strong> {modalState.pedido.cliente?.nome}</div>
+                <div><strong>Telefone:</strong> {modalState.pedido.cliente?.telefone}</div>
+                <div><strong>E-mail:</strong> {modalState.pedido.cliente?.email}</div>
+                <div><strong>Valor Total:</strong> R$ {typeof modalState.pedido.valorTotal === 'number' ? modalState.pedido.valorTotal.toFixed(2).replace('.', ',') : modalState.pedido.valorTotal}</div>
+                <div><strong>Forma de Pagamento:</strong> {modalState.pedido.formaPagamento}</div>
+                <div><strong>Status Pagamento:</strong> {modalState.pedido.statusPagamento}</div>
+                <div><strong>Status Pedido:</strong> {modalState.pedido.statusPedido}</div>
+                <div><strong>Data do Pedido:</strong> {modalState.pedido.dataPedido}</div>
+                <div style={{marginTop: 16}}>
+                  <strong>Itens:</strong>
+                  <ul style={{paddingLeft: 18}}>
+                    {Array.isArray(modalState.pedido.itens) && modalState.pedido.itens.length > 0 ? (
+                      modalState.pedido.itens.map((item, idx) => (
+                        <li key={idx}>
+                          {item.nome} (Qtd: {item.quantidade}) - R$ {typeof item.preco === 'number' ? item.preco.toFixed(2).replace('.', ',') : item.preco}
+                        </li>
+                      ))
+                    ) : (
+                      <li>Nenhum item</li>
+                    )}
+                  </ul>
+                </div>
+                <button onClick={closeModal} style={{ marginTop: 24, padding: '8px 24px', borderRadius: 8, background: '#e6b6c7', color: '#333', border: 'none', fontWeight: 600 }}>Fechar</button>
+              </div>
+            </div>
+          )}
     </div>
   );
 }
