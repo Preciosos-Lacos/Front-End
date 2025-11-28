@@ -217,13 +217,33 @@ export default function MinhasCompras() {
   }, [pedidos]);
 
   const pedidosFiltrados = useMemo(() => {
+    // Map UI filter labels to backend status values (robust to numeric codes and strings)
+    const matchesStatus = (statusFromPedido, filtro) => {
+      if (!filtro || filtro === 'Todos') return true;
+      const f = (filtro || '').toLowerCase();
+      const s = (statusFromPedido ?? '').toString().toLowerCase();
+      // If backend uses numeric codes, try to coerce and map below via normalizeStatus
+      if (f === 'em confecção' || f === 'em confecc\u00e7\u00e3o' || f === 'em confeccao') {
+        // Em confecção should match 'Em andamento' or numeric 1
+        return s.includes('andamento') || s === '1' || s.includes('confec') || s.includes('confe');
+      }
+      if (f === 'produto conclu\u00eddo' || f === 'produto concluido' || f === 'produto concluído') {
+        // Produto concluído corresponds to backend 'Concluido' or numeric 4
+        return s.includes('conclu') || s === '4';
+      }
+      if (f === 'entregue') {
+        return s.includes('entreg') || s === '2';
+      }
+      return s.includes(f);
+    };
+
     return pedidosOrdenados.filter((p) => {
       const texto = (busca || '').trim().toLowerCase();
       const matchBusca =
         !texto ||
         String(p.idPedido).includes(texto) ||
         (p.itens || []).some((it) => it.nome?.toLowerCase().includes(texto));
-      const matchStatus = filtroStatus === 'Todos' || p.statusPedido === filtroStatus;
+      const matchStatus = filtroStatus === 'Todos' || matchesStatus(p.statusPedido, filtroStatus);
       const matchPagamento = filtroPagamento === 'Todos' || p.statusPagamento === filtroPagamento;
       return matchBusca && matchStatus && matchPagamento;
     });
@@ -240,24 +260,48 @@ export default function MinhasCompras() {
   };
 
   // Timeline rendering helpers
-  const getStatusStepIndex = (status) => {
-    const s = (status || '').toLowerCase();
-    if (s.includes('entreg')) return 3; // entregue
-    if (s.includes('conclu') || s.includes('concluído')) return 2; // concluido
-    // fallback: anything that indicates work in progress
-    if (s.includes('andamento') || s.includes('confec') || s.includes('confe')) return 1;
-    return 1;
+  // Normalize backend status (string or numeric) into tokens and render timeline accordingly
+  const normalizeStatus = (status) => {
+    if (status === null || status === undefined) return 'UNKNOWN';
+    const asNumber = Number(status);
+    if (!Number.isNaN(asNumber)) {
+      if (asNumber === 1) return 'IN_PROGRESS';
+      if (asNumber === 2) return 'DELIVERED';
+      if (asNumber === 3) return 'CANCELLED';
+      if (asNumber === 4) return 'COMPLETED';
+    }
+    const s = String(status).toLowerCase();
+    if (s.includes('cancel')) return 'CANCELLED';
+    if (s.includes('entreg')) return 'DELIVERED';
+    if (s.includes('conclu')) return 'COMPLETED';
+    if (s.includes('andamento') || s.includes('confec') || s.includes('confe')) return 'IN_PROGRESS';
+    return 'UNKNOWN';
   };
 
   const renderTimeline = (status) => {
-    const idx = getStatusStepIndex(status);
+    const token = normalizeStatus(status);
+    if (token === 'CANCELLED') {
+      return (
+        <div className="pedido-cancelado">
+          <strong>Pedido CANCELADO</strong>
+          <div className="pequeno text-muted">Este pedido foi cancelado e não está mais ativo.</div>
+        </div>
+      );
+    }
+
+    let completedCount = 0;
+    if (token === 'DELIVERED') completedCount = 3;
+    else if (token === 'COMPLETED') completedCount = 2;
+    else if (token === 'IN_PROGRESS') completedCount = 0;
+
+    const activeIndex = completedCount >= 3 ? null : completedCount + 1;
     const steps = ['Em confecção', 'Produto concluído', 'Entregue'];
     const nodes = [];
     for (let i = 0; i < steps.length; i++) {
       const label = steps[i];
       const stepNum = i + 1;
-      const completed = stepNum < idx;
-      const active = stepNum === idx;
+      const completed = stepNum <= completedCount;
+      const active = activeIndex === stepNum;
       nodes.push(
         <div key={`step-${i}`} className={`timeline-step ${completed ? 'completed' : ''} ${active ? 'active' : ''}`}>
           <div className="timeline-icon" aria-hidden>
@@ -267,9 +311,7 @@ export default function MinhasCompras() {
         </div>
       );
       if (i < steps.length - 1) {
-        nodes.push(
-          <div key={`conn-${i}`} className={`timeline-connector ${completed ? 'done' : ''}`} />
-        );
+        nodes.push(<div key={`conn-${i}`} className={`timeline-connector ${stepNum <= completedCount ? 'done' : ''}`} />);
       }
     }
     return <div className="timeline">{nodes}</div>;
@@ -304,18 +346,13 @@ export default function MinhasCompras() {
 
               <div className="filtro-col">
                 <span className="filtro-label pequeno">Status do pedido</span>
-                <div className="d-flex align-items-center">
-                  <div className="filter-icon d-flex align-items-center justify-content-center">
-                    <i className="bi bi-filter" />
-                  </div>
-                  <div className="filtro-item">
-                    <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
-                      <option>Todos</option>
-                      <option>Em andamento</option>
-                      <option>Concluido</option>
-                      <option>Entregue</option>
-                    </select>
-                  </div>
+                <div className="filtro-item">
+                  <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
+                    <option>Todos</option>
+                    <option>Em confecção</option>
+                    <option>Produto concluído</option>
+                    <option>Entregue</option>
+                  </select>
                 </div>
               </div>
 

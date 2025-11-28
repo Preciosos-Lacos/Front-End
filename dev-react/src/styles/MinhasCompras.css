@@ -131,25 +131,7 @@ body {
 }
 
 /* The filter block spans columns 2 and 3 but internally aligns icon and selects into three small columns */
-.filtros-controls > .filtro-compras {
-    grid-column: 2 / span 2;
-    display: grid;
-    grid-template-columns: 36px 1fr 1fr; /* icon, status select, payment select */
-    gap: 24px; /* match outer grid gap so spacing is uniform */
-    align-items: center;
-}
-
-.filter-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    color: #d16b9b;
-    grid-column: 1; /* inside .filtro-compras grid */
-}
+/* filter icon layout removed (icon no longer used) */
 
 .filtro-compras .filtro-item select.form-select {
     min-width: 150px;
@@ -216,13 +198,11 @@ body {
 }
 
 /* Make the filter icon sit a little closer to the select */
-.filtro-col .filter-icon {
-    margin-right: 8px;
-}
+/* icon removed */
 
-/* Nudge the second column content a bit right so the title visually aligns over the select */
-.filtros-grid > .filtro-col:nth-child(2) {
-    padding-left: 12px; /* nudge the second column slightly right to align its label with the select */
+/* Nudge the third column content a bit right so the title visually aligns over the select */
+.filtros-grid > .filtro-col:nth-child(3) {
+    /* keep aligned; no extra padding */
 }
 
 .filtros-grid .busca-compras .input-group {
@@ -310,6 +290,20 @@ body {
 
 .timeline-connector.done {
     background: var(--rosa, #F29DC3);
+}
+
+/* Cancelled order display */
+.pedido-cancelado {
+    background: #ffe6e9;
+    border: 1px solid #f5c1c8;
+    color: #8c1b2b;
+    padding: 10px 12px;
+    border-radius: 10px;
+    display: inline-block;
+}
+.pedido-cancelado .pequeno {
+    margin-top: 4px;
+    color: #7a464c;
 }
 
 .info-compras {
