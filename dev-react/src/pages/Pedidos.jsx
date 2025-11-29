@@ -500,8 +500,28 @@ const Pedidos = () => {
                             }}
                           >
                             <div style={{ display: 'flex', gap: 16, justifyContent: 'flex-start', alignItems: 'flex-start', width: '100%' }}>
-                              <button className="btn-sm btn-contato" title="WhatsApp" onClick={() => window.open(`https://wa.me/55${p.telefone.replace(/\D/g, '')}`)}><i className="bi bi-whatsapp"></i></button>
-                              <button className="btn-sm btn-contato" title="E-mail" onClick={() => window.open(`mailto:${p.cliente?.email || ''}`)}><i className="bi bi-envelope"></i></button>
+                              <button
+                                className="btn-sm btn-contato"
+                                title="WhatsApp"
+                                onClick={() => {
+                                  const tel = p.cliente?.telefone || p.telefone || '';
+                                  if (tel) {
+                                    const numero = tel.replace(/\D/g, '');
+                                    window.open(`https://wa.me/55${numero}`);
+                                  } else {
+                                    alert('Telefone não disponível para WhatsApp');
+                                  }
+                                }}
+                              >
+                                <i className="bi bi-whatsapp"></i>
+                              </button>
+                              <button
+                                className="btn-sm btn-contato"
+                                title="E-mail"
+                                onClick={() => window.open(`mailto:${p.cliente?.email || ''}`)}
+                              >
+                                <i className="bi bi-envelope"></i>
+                              </button>
                             </div>
                           </td>
                         </tr>

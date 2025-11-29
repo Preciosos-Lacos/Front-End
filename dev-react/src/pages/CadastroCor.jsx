@@ -359,47 +359,35 @@ const CadastroCor = () => {
       const res = await fetch(`${API_URL}/${id}`, { 
         method: "DELETE" 
       });
-  if (!res.ok) throw new Error("Erro ao excluir");
-      showAlert("sucesso", "Cor excluída com sucesso!");
+  if (!res.ok) throw new Error("Erro ao intaviar");
+      showAlert("sucesso", "Cor inativada com sucesso!");
       closeModal();
       loadColors();
     } catch {
-      showAlert("erro", "Cor não encontrada ou já excluída!");
+      showAlert("erro", "Cor não encontrada!");
     }
   };
 
   const [isActivating, setIsActivating] = React.useState(false);
   const activateColor = async (id) => {
-    console.log('[DISPONIBILIZAR] INÍCIO DA FUNÇÃO activateColor, id:', id);
-    if (isActivating) return;
-    setIsActivating(true);
     try {
-      console.log('[DISPONIBILIZAR] PATCH para:', `${API_URL}/${id}/ativar`);
-      const res = await fetch(`${API_URL}/${id}/ativar`, {
-        method: "PATCH"
+      console.log('[DISPONIBILIZAR] INÍCIO DA FUNÇÃO activateColor, id:', id);
+      const response = await fetch(`${API_URL}/${id}/ativar`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' }
       });
-      const text = await res.text();
-      console.log('[DISPONIBILIZAR] Resposta do backend:', res.status, text);
-      if (!res.ok) throw new Error("Erro ao ativar");
-      // Após ativar, buscar a cor individualmente para garantir que o status está atualizado
-      let corAtualizada = null;
-      try {
-        const resCor = await fetch(`${API_URL}/${id}`);
-        if (resCor.ok) {
-          corAtualizada = await safeParseJson(resCor);
-          console.log('[DISPONIBILIZAR] Cor atualizada:', corAtualizada);
-        }
-      } catch (e) {
-        console.warn('Não foi possível buscar cor atualizada após ativação', e);
+      const text = await response.text();
+      console.log('[DISPONIBILIZAR] Resposta do backend:', response.status, text);
+      if (response.ok) {
+        await loadColors();
+        showAlert('sucesso', 'Cor ativada com sucesso!');
+        closeModal();
+      } else {
+        showAlert('erro', 'Erro ao ativar cor: ' + text);
       }
-      showAlert("sucesso", "Cor reativada com sucesso!");
-      closeModal();
-      await loadColors();
     } catch (err) {
       console.error('[DISPONIBILIZAR] Erro ao ativar:', err);
-      showAlert("erro", "Erro ao reativar cor!");
-    } finally {
-      setIsActivating(false);
+      showAlert('erro', 'Erro ao ativar cor!');
     }
   };
 
