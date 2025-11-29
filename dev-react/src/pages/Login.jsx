@@ -92,8 +92,8 @@ export default function Login({ onLoginSuccess }) {
 
   return (
     <div className="login-container">
-      <Link to="" aria-label="Ir para a página inicial" className="home-shortcut">
-        <i className="bi bi-house-door"></i>
+      <Link to="/" aria-label="Ir para a página inicial" className="home-shortcut">
+          <i className="bi bi-house-door"></i>
       </Link>
       <section className="login-section">
         <div className="logo-login">

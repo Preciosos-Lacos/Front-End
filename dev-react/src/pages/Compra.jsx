@@ -132,8 +132,12 @@ const Compra = () => {
         throw new Error(msg);
       }
 
-      // Sucesso: redireciona para página de pedido confirmato
-      navigate('/pedido-confirmado');
+      // Sucesso: redireciona para página de pedido confirmado, passando o pedido via state
+      if (json && typeof json === 'object') {
+        navigate('/pedido-confirmado', { state: { order: json } });
+      } else {
+        navigate('/pedido-confirmado');
+      }
 
       // Após sucesso, recarrega o checkout (novo carrinho vazio criado pelo backend)
       setTimeout(() => {
