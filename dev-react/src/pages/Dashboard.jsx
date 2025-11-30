@@ -1,14 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import "../styles/Dashboard.css";
 
 import {
+  CategoryScale,
   Chart,
+  LinearScale,
   LineController,
   LineElement,
   PointElement,
-  LinearScale,
-  CategoryScale,
   Title,
 } from "chart.js";
 
@@ -122,6 +124,94 @@ const Dashboard = () => {
     fetchPedidos();
   }, [paginaAtual]);
 
+ const exportarParaExcel = async () => {
+  try {
+    const response = await fetch("http://localhost:8080/dashboard");
+    if (!response.ok) throw new Error("Erro ao exportar pedidos");
+
+    const data = await response.json();
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Pedidos");
+
+    const headers = [
+      "Cliente",
+      "Telefone",
+      "Data de Entrega",
+      "Preço",
+      "Tipo Pagamento",
+      "Status Pagamento",
+      "Status Pedido"
+    ];
+
+    sheet.addRow(headers);
+
+    sheet.getRow(1).eachCell((cell) => {
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "B04A71" } 
+      };
+      cell.font = { color: { argb: "FFFFFF" }, bold: true };
+      cell.alignment = { horizontal: "center", vertical: "middle" };
+    });
+
+    data.forEach((item, index) => {
+      const row = sheet.addRow([
+        item.nomeCliente,
+        item.telefone,
+        item.dataPedido,
+        `R$ ${item.total}`,
+        item.formaPagamento,
+        item.statusPagamento,
+        item.statusPedido
+      ]);
+
+      if (index % 2 === 0) {
+        row.eachCell((cell) => {
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FDEDF2" } 
+          };
+        });
+      }
+
+      const statusPagamento = row.getCell(6);
+      const statusPedido = row.getCell(7);
+
+      if (statusPagamento.value === "Pendente") {
+        statusPagamento.font = { color: { argb: "F2A900" }, bold: true };
+      } else if (statusPagamento.value === "Pago") {
+        statusPagamento.font = { color: { argb: "1FA855" }, bold: true };
+      }
+
+      if (statusPedido.value === "Em andamento") {
+        statusPedido.font = { color: { argb: "F2A900" }, bold: true };
+      } else if (statusPedido.value === "Entregue") {
+        statusPedido.font = { color: { argb: "1FA855" }, bold: true };
+      }
+    });
+
+    sheet.columns.forEach((column) => {
+      let maxLength = 0;
+
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const value = cell.value ? cell.value.toString() : "";
+        if (value.length > maxLength) maxLength = value.length;
+      });
+
+      column.width = maxLength + 2;
+    });
+
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      saveAs(new Blob([buffer]), "Pedidos.xlsx");
+    });
+  } catch (error) {
+    console.error("Erro ao exportar:", error);
+  }
+};
+
   useEffect(() => {
     const fetchEntregasDoDia = async () => {
 
@@ -161,7 +251,7 @@ const Dashboard = () => {
         });
 
         const labels = diasDaSemana;
-        const dataset = diasDaSemana.map(d => vendasMap[d] || 0); 
+        const dataset = diasDaSemana.map(d => vendasMap[d] || 0);
 
         const ctx = chartRef.current.getContext("2d");
         const chart = new Chart(ctx, {
@@ -382,23 +472,30 @@ const Dashboard = () => {
           </table>
         </section>
         <div className="paginacao">
-          <button
-            onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
-            disabled={paginaAtual === 1}
-          >
-            Anterior
+
+          <div className="paginacao-esquerda">
+            <button
+              onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
+              disabled={paginaAtual === 1}
+            >
+              Anterior
+            </button>
+
+            <span>Página {paginaAtual} de {totalPaginas}</span>
+
+            <button
+              onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
+              disabled={paginaAtual === totalPaginas}
+            >
+              Próxima
+            </button>
+          </div>
+
+          <button className="dashboard-exportar-btn" onClick={exportarParaExcel}>
+            Exportar para Excel
           </button>
 
-          <span>Página {paginaAtual} de {totalPaginas}</span>
-
-          <button
-            onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
-            disabled={paginaAtual === totalPaginas}
-          >
-            Próxima
-          </button>
         </div>
-
 
 
         <section className="dashboard-tabela">
