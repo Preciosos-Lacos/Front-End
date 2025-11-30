@@ -27,6 +27,11 @@ const Dashboard = () => {
     statusPedido: "",
   });
 
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const tamanhoPagina = 5;
+
+
   const aplicarFiltros = async () => {
     try {
       const params = new URLSearchParams();
@@ -45,7 +50,6 @@ const Dashboard = () => {
       setResumo(data.resumo || {});
       setEntregasDoDia(data.entregas || []);
 
-      // Atualizar gráfico
       const ctx = chartRef.current.getContext("2d");
       if (ctx.chart) ctx.chart.destroy();
 
@@ -96,25 +100,29 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    // === Função para buscar pedidos do backend ===
     const fetchPedidos = async () => {
       try {
-        const response = await fetch("http://localhost:8080/dashboard");
+        const response = await fetch(
+          `http://localhost:8080/dashboard/paginado?page=${paginaAtual}&size=${tamanhoPagina}`
+        );
+
         if (!response.ok) {
-          throw new Error("Erro ao buscar pedidos");
+          throw new Error("Erro ao buscar pedidos paginados");
         }
+
         const data = await response.json();
-        setPedidos(data);
+
+        setPedidos(data.pedidos || []);
+        setTotalPaginas(data.totalPages || 1);
       } catch (error) {
         console.error("Erro:", error);
       }
     };
 
     fetchPedidos();
-  }, []);
+  }, [paginaAtual]);
 
   useEffect(() => {
-    // === Função para buscar entregas do dia do backend ===
     const fetchEntregasDoDia = async () => {
 
       try {
@@ -139,11 +147,9 @@ const Dashboard = () => {
         if (!response.ok) throw new Error("Erro ao buscar vendas");
         const data = await response.json();
 
-        // Ordena os dados pelo dia da semana (opcional)
         const diasDaSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
         const vendasMap = {};
         data.forEach(item => {
-          // Converte abreviação do backend para português se necessário
           const dia = item.dia_semana === "Mon" ? "Seg" :
             item.dia_semana === "Tue" ? "Ter" :
               item.dia_semana === "Wed" ? "Qua" :
@@ -155,9 +161,8 @@ const Dashboard = () => {
         });
 
         const labels = diasDaSemana;
-        const dataset = diasDaSemana.map(d => vendasMap[d] || 0); // coloca 0 se não tiver venda
+        const dataset = diasDaSemana.map(d => vendasMap[d] || 0); 
 
-        // Cria o gráfico
         const ctx = chartRef.current.getContext("2d");
         const chart = new Chart(ctx, {
           type: "line",
@@ -376,6 +381,25 @@ const Dashboard = () => {
             </tbody>
           </table>
         </section>
+        <div className="paginacao">
+          <button
+            onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
+            disabled={paginaAtual === 1}
+          >
+            Anterior
+          </button>
+
+          <span>Página {paginaAtual} de {totalPaginas}</span>
+
+          <button
+            onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
+            disabled={paginaAtual === totalPaginas}
+          >
+            Próxima
+          </button>
+        </div>
+
+
 
         <section className="dashboard-tabela">
           <h2>Entregas do dia</h2>
