@@ -152,7 +152,21 @@ const Compra = () => {
     }
   }
 
-  if (loading) return <div><Header /><main style={{padding:20}}>Carregando checkout...</main></div>;
+  if (loading) {
+    return (
+      <div className="compra-page">
+        <Header />
+        <main>
+          <div className="loading-container">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Carregando...</span>
+            </div>
+            <p>Carregando checkout...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
   if (error) return <div><Header /><main style={{padding:20,color:'red'}}>Erro: {error}</main></div>;
 
   const produtos = checkout?.produtos || [];
