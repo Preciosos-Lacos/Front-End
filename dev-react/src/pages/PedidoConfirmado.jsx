@@ -8,11 +8,16 @@ const PedidoConfirmado = () => {
   const location = useLocation();
   const order = location.state?.order;
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (!order) {
       setError('Nenhum pedido foi encontrado. Por favor, finalize uma compra para visualizar os detalhes do pedido.');
+      setLoading(false);
+      return;
     }
+    // Simula carregamento rápido
+    const timer = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(timer);
   }, [order]);
   // Format order data for display
   const formatOrderData = (order) => {

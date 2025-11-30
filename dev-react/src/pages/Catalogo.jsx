@@ -326,7 +326,7 @@ const Catalogo = () => {
                         </div>
                     </div>
                 )}
-                {/* Footer igual HomeUsuario */}
+                {/* Footer */}
                 <footer style={{
                     width: '100%',
                     background: 'linear-gradient(90deg, #f29dc3 0%, #a7c7e7 100%)',
@@ -341,7 +341,7 @@ const Catalogo = () => {
                         <div style={{ flex: 1, minWidth: 220, textAlign: 'left' }}>
                             <strong>Preciosos Laços by Camila Osterman</strong><br />
                             <span>Laços, acessórios e carinho para todas as idades.</span><br />
-                            <span style={{ fontSize: 14, color: '#555' }}>CNPJ: 00.000.000/0000-00</span>
+                            <span style={{ fontSize: 14, color: '#555' }}>CNPJ: 33.970.501/0001-50</span>
                         </div>
                         <div style={{ flex: 1, minWidth: 220, textAlign: 'center', margin: '12px 0' }}>
                             <a href="https://www.instagram.com/preciososlacosbycamilaosterman/" target="_blank" rel="noopener noreferrer" style={{ margin: '0 8px', color: '#9d4e6aff', textDecoration: 'none', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' }}>

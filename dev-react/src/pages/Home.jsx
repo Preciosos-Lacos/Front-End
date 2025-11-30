@@ -76,6 +76,21 @@ export default function Home() {
       .finally(() => setLoadingBanner(false));
   }, []);
 
+  if (loadingBanner) {
+    return (
+      <div className="home-page">
+        <HeaderHome />
+        <main data-scroll-container>
+          <div className="loading-container">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Carregando...</span>
+            </div>
+            <p>Carregando banner...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
   return (
     <div>
       <HeaderHome />
@@ -89,9 +104,7 @@ export default function Home() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            background: loadingBanner
-              ? '#f7f7f7'
-              : `url(${bannerUrl || banner}) center center / cover no-repeat`,
+            background: `url(${bannerUrl || banner}) center center / cover no-repeat`,
             borderRadius: 16,
             position: 'relative',
             overflow: 'hidden',
@@ -112,36 +125,7 @@ export default function Home() {
               }}
               aria-label="Ir para catálogo"
             >
-              {loadingBanner ? (
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'rgba(255,255,255,0.7)',
-                  borderRadius: 12,
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  zIndex: 2,
-                }}>
-                  <div style={{
-                    width: 48,
-                    height: 48,
-                    border: '6px solid #e0e0e0',
-                    borderTop: '6px solid #f29dc3',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite',
-                  }} />
-                  <style>{`
-                    @keyframes spin {
-                      0% { transform: rotate(0deg); }
-                      100% { transform: rotate(360deg); }
-                    }
-                  `}</style>
-                </div>
-              ) : null}
+              {/* Conteúdo do banner/link pode ser adicionado aqui, se necessário */}
             </Link>
             {bannerError && <div style={{ color: '#e57373', marginTop: 8 }}>{bannerError}</div>}
           </div>
@@ -174,7 +158,7 @@ export default function Home() {
         <QuemSouEu />
       </section>
     </main>
-      {/* Footer profissional */ }
+      {/* Footer */ }
   <footer style={{
     width: '100%',
     background: 'linear-gradient(90deg, #f29dc3 0%, #a7c7e7 100%)',
@@ -189,7 +173,7 @@ export default function Home() {
       <div style={{ flex: 1, minWidth: 220, textAlign: 'left' }}>
         <strong>Preciosos Laços by Camila Osterman</strong><br />
         <span>Laços, acessórios e carinho para todas as idades.</span><br />
-        <span style={{ fontSize: 14, color: '#555' }}>CNPJ: 00.000.000/0000-00</span>
+        <span style={{ fontSize: 14, color: '#555' }}>CNPJ: 33.970.501/0001-50</span>
       </div>
       <div style={{ flex: 1, minWidth: 220, textAlign: 'center', margin: '12px 0' }}>
         <a href="https://www.instagram.com/preciososlacosbycamilaosterman/" target="_blank" rel="noopener noreferrer" style={{ margin: '0 8px', color: '#9d4e6aff', textDecoration: 'none', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' }}>

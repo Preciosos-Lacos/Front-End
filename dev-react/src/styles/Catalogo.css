@@ -172,6 +172,7 @@
 .catalogo-page main {
     margin-top: 0px !important;
     padding-top: 0;
+    background-color: #ffffff;
     width: 100%;
     overflow: visible;
 }

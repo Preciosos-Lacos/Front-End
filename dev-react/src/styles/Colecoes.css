@@ -20,7 +20,7 @@
     padding-right: 70px;
     box-shadow: 0 3px 1px rgb(0 0 0 / 19%);
     z-index: 1050;
-    width: 1600px;
+    width: 1920px;
 }
 
 /* main container mirrors .color-page .content from CadastroCor */
@@ -34,7 +34,7 @@
 
 /* Header: match CadastroCor header styles */
 .colecoes-page header {
-    width: 1600px;
+    width: 1920px;
     height: 75px;
     background: var(--header-bg);
     color: var(--rosa);
