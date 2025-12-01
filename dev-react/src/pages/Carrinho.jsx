@@ -17,6 +17,7 @@ export default function Carrinho() {
   const [produtos,setProdutos] = useState([]); // detalhes ProdutoDTO
   const [pedido,setPedido] = useState(null); // PedidoDTO
   const [removing,setRemoving] = useState(null); // idProduto em remoção
+  const [changingQty, setChangingQty] = useState(null); // idProduto sendo alterado (+/-)
 
   const subtotal = useMemo(()=>{
     // prioriza lista detalhada se disponível
@@ -83,6 +84,119 @@ export default function Carrinho() {
     finally { setRemoving(null); }
   }
 
+  // Remove um grupo de produtos (todos os ids passados)
+  async function removerGrupo(ids = []){
+    if(!usuario?.idUsuario) return;
+    const token = getAuthToken(); if(!token) return;
+    // marcar o primeiro id como removing to disable UI
+    const firstId = Number(ids[0]);
+    setRemoving(firstId);
+    try {
+      for (const id of ids) {
+        // chamar DELETE para cada id
+        await fetch(`${BASE_URL}/pedidos/carrinho/${id}/usuario/${usuario.idUsuario}`,{ method:'DELETE', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+      }
+      // Recarregar carrinho
+      const resCarrinho = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+      if(resCarrinho.status === 204){ setItens([]); setPedido(null); setProdutos([]); return; }
+      const carrinho = await resCarrinho.json(); setPedido(carrinho); setItens(carrinho.itens || []);
+      const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+      if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
+    } catch(e){ console.error(e); alert('Erro ao remover item(s)'); }
+    finally { setRemoving(null); }
+  }
+
+  async function incrementarQuantidade(idProduto) {
+    if(!usuario?.idUsuario) return;
+    const token = getAuthToken(); if(!token) return;
+    setChangingQty(idProduto);
+    try {
+      const res = await fetch(`${BASE_URL}/pedidos/carrinho`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+        body: JSON.stringify({ idUsuario: usuario.idUsuario, idProduto })
+      });
+      if (!res.ok) throw new Error('Falha ao adicionar item');
+      const novo = await res.json();
+      setPedido(novo); setItens(novo.itens || []);
+      // atualizar lista detalhada
+      try {
+        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+        if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
+      } catch {}
+    } catch(e){ console.error(e); alert(e.message || 'Erro ao adicionar item'); }
+    finally { setChangingQty(null); }
+  }
+
+  async function decrementarQuantidade(idProduto) {
+    if(!usuario?.idUsuario) return;
+    const token = getAuthToken(); if(!token) return;
+    setChangingQty(idProduto);
+    try {
+      const res = await fetch(`${BASE_URL}/pedidos/carrinho/decrement`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+        body: JSON.stringify({ idUsuario: usuario.idUsuario, idProduto })
+      });
+      if (res.status === 204) { // carrinho vazio ou não encontrado
+        setItens([]); setPedido(null); setProdutos([]); return;
+      }
+      if (!res.ok) {
+        // Fallback: se der 404/erro, tenta remover uma ocorrência via DELETE
+        try {
+          const del = await fetch(`${BASE_URL}/pedidos/carrinho/${idProduto}/usuario/${usuario.idUsuario}` ,{
+            method: 'DELETE',
+            headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }
+          });
+          if (del.status === 204) { setItens([]); setPedido(null); setProdutos([]); return; }
+          if (!del.ok) throw new Error('Falha ao remover item');
+          const novoDel = await del.json();
+          setPedido(novoDel); setItens(novoDel.itens || []);
+          try {
+            const r2 = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+            if(r2.ok && r2.status !== 204){ setProdutos(await r2.json()); } else { setProdutos([]); }
+          } catch {}
+          return;
+        } catch (fallbackErr) {
+          throw new Error('Falha ao remover item');
+        }
+      }
+      const novo = await res.json();
+      setPedido(novo); setItens(novo.itens || []);
+      // atualizar lista detalhada
+      try {
+        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+        if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
+      } catch {}
+    } catch(e){ console.error(e); alert(e.message || 'Erro ao remover item'); }
+    finally { setChangingQty(null); }
+  }
+
+  // Workaround: decrementar usando DELETE por id específico (remove uma ocorrência)
+  async function decrementarQuantidadeComDelete(idProduto) {
+    if(!usuario?.idUsuario) return;
+    const token = getAuthToken(); if(!token) return;
+    setChangingQty(idProduto);
+    try {
+      const res = await fetch(`${BASE_URL}/pedidos/carrinho/${idProduto}/usuario/${usuario.idUsuario}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }
+      });
+      if (res.status === 204) { // carrinho vazio ou não encontrado
+        setItens([]); setPedido(null); setProdutos([]); return;
+      }
+      if (!res.ok) throw new Error('Falha ao remover item');
+      const novo = await res.json();
+      setPedido(novo); setItens(novo.itens || []);
+      // atualizar lista detalhada
+      try {
+        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+        if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
+      } catch {}
+    } catch(e){ console.error(e); alert(e.message || 'Erro ao remover item'); }
+    finally { setChangingQty(null); }
+  }
+
   return (
     <>
       <Header />
@@ -94,62 +208,137 @@ export default function Carrinho() {
             {error && !loading && <p className="erro" style={{color:'red'}}>{error}</p>}
             {!loading && !error && itens.length === 0 && <p>Seu carrinho está vazio.</p>}
             <div className="cart-items">
-              {(produtos.length ? produtos : itens).map(p => (
-                <article key={p.idProduto || p.sku} className="cart-item">
-                  <div className="item-image">
-                    {p.foto ? (
-                      <img src={`data:image/jpeg;base64,${p.foto}`} alt={p.nome} />
-                    ) : (
-                      <div className="img-placeholder" aria-hidden="true">🎀</div>
-                    )}
-                  </div>
-                  <div className="item-details">
-                    <h3 className="item-name">
-                      {p.idModelo ? (
-                        <Link to={`/produto?idModelo=${p.idModelo}`} className="link-produto" title="Ver produto">{p.nome}</Link>
-                      ) : p.nome}
-                    </h3>
-                    {/* Removido colecao e tamanho conforme solicitação */}
-                    <p className="item-extra">
-                      {p.material && <span className="pill">{p.material}</span>}
-                      {p.corDescricao ? (
-                        <span className="pill">Cor: {p.corDescricao}</span>
-                      ) : (p.cor !== undefined && p.cor !== null ? (
-                        <span className="pill">Cor #{p.cor}</span>
-                      ) : null)}
-                      {p.acabamentoDescricao ? (
-                        <span className="pill">Acabamento: {p.acabamentoDescricao}</span>
-                      ) : (p.acabamento !== undefined && p.acabamento !== null ? (
-                        <span className="pill">Acabamento #{p.acabamento}</span>
-                      ) : null)}
-                    </p>
-                    <div className="item-bottom">
-                      <div className="item-price">{formatBRL(p.preco)}</div>
-                      <div className="item-controls">
-                        <button
-                          className="remove-btn"
-                          type="button"
-                          title="Remover"
-                          disabled={removing === Number(p.idProduto || p.sku)}
-                          onClick={()=>removerItem(Number(p.idProduto || p.sku))}
-                        >
-                          <i className="bi bi-trash"></i>
-                        </button>
+              {(() => {
+                // Agrupa produtos por igualdade de atributos relevantes
+                const fonte = produtos.length ? produtos : itens;
+                const map = new Map();
+                for (const p of fonte) {
+                  // chave de agrupamento: idProduto quando disponível, senão atributos que definem igualdade
+                  const baseId = p.idProduto ?? p.sku ?? null;
+                  let key;
+                  if (baseId) {
+                    key = `id:${baseId}`;
+                  } else {
+                    // fallback de igualdade baseado em campos que compõem o produto
+                    const modelo = p.idModelo ?? p.modelo ?? '';
+                    const nome = (p.nome || '').trim();
+                    const material = p.material ?? '';
+                    const cor = p.corDescricao ?? p.cor ?? '';
+                    const acabamento = p.acabamentoDescricao ?? p.acabamento ?? '';
+                    key = `k:${modelo}|${nome}|${material}|${cor}|${acabamento}`;
+                  }
+                  if (map.has(key)) {
+                    const ex = map.get(key);
+                    ex.produtos.push(p);
+                    ex.total += Number(p.preco || 0);
+                  } else {
+                    map.set(key, { produtos: [p], representante: p, total: Number(p.preco || 0) });
+                  }
+                }
+                return Array.from(map.values()).map(group => {
+                  const produto = group.representante;
+                  const quantidade = group.produtos.length;
+                  const firstId = Number(group.produtos[0]?.idProduto ?? group.produtos[0]?.sku ?? 0);
+                  const groupIds = group.produtos.map(x => Number(x.idProduto ?? x.sku ?? 0)).filter(Boolean);
+                  return (
+                    <article key={group.representante.idProduto || group.representante.sku || JSON.stringify(group.representante)} className="cart-item">
+                      <div className="item-image">
+                        {produto.foto ? (
+                          <img src={`data:image/jpeg;base64,${produto.foto}`} alt={produto.nome} />
+                        ) : (
+                          <div className="img-placeholder" aria-hidden="true">🎀</div>
+                        )}
                       </div>
-                    </div>
-                  </div>
-                </article>
-              ))}
+                      <div className="item-details">
+                        <h3 className="item-name">
+                          {produto.idModelo ? (
+                            <Link to={`/produto?idModelo=${produto.idModelo}`} className="link-produto" title="Ver produto">{produto.nome}</Link>
+                          ) : produto.nome}
+                        </h3>
+                        <p className="item-extra">
+                          {produto.material && <span className="pill">{produto.material}</span>}
+                          {produto.corDescricao ? (
+                            <span className="pill">Cor: {produto.corDescricao}</span>
+                          ) : (produto.cor !== undefined && produto.cor !== null ? (
+                            <span className="pill">Cor #{produto.cor}</span>
+                          ) : null)}
+                          {produto.acabamentoDescricao ? (
+                            <span className="pill">Acabamento: {produto.acabamentoDescricao}</span>
+                          ) : (produto.acabamento !== undefined && produto.acabamento !== null ? (
+                            <span className="pill">Acabamento #{produto.acabamento}</span>
+                          ) : null)}
+                        </p>
+                        <div className="item-bottom">
+                          <div className="item-price">{formatBRL(group.total / quantidade)}</div>
+                          <div className="item-controls">
+                            <div className="quantity-control">
+                              <button
+                                className="quantity-btn minus"
+                                type="button"
+                                title="Diminuir quantidade"
+                                disabled={changingQty === firstId}
+                                onClick={() => decrementarQuantidade(Number(group.produtos[group.produtos.length-1]?.idProduto ?? group.produtos[group.produtos.length-1]?.sku ?? firstId))}
+                              >−</button>
+                              <div className="quantity">{quantidade}</div>
+                              <button
+                                className="quantity-btn plus"
+                                type="button"
+                                title="Aumentar quantidade"
+                                disabled={changingQty === firstId}
+                                onClick={() => incrementarQuantidade(firstId)}
+                              >+</button>
+                            </div>
+                            <button
+                              className="remove-btn"
+                              type="button"
+                              title="Remover"
+                              disabled={removing === firstId}
+                              onClick={()=>removerGrupo(groupIds)}
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                });
+              })()}
             </div>
           </div>
           <aside className="cart-summary">
             <div className="cart-summary-list">
-              {(produtos.length ? produtos : itens).map(i => (
-                <div key={i.idProduto || i.sku} className="cart-summary-list-item">
-                  <span>{i.nome}</span>
-                  <span>{formatBRL(i.preco)}</span>
-                </div>
-              ))}
+              {(() => {
+                const fonte = produtos.length ? produtos : itens;
+                const map = new Map();
+                for (const p of fonte) {
+                  const baseId = p.idProduto ?? p.sku ?? null;
+                  let key;
+                  if (baseId) {
+                    key = `id:${baseId}`;
+                  } else {
+                    const modelo = p.idModelo ?? p.modelo ?? '';
+                    const nome = (p.nome || '').trim();
+                    const material = p.material ?? '';
+                    const cor = p.corDescricao ?? p.cor ?? '';
+                    const acabamento = p.acabamentoDescricao ?? p.acabamento ?? '';
+                    key = `k:${modelo}|${nome}|${material}|${cor}|${acabamento}`;
+                  }
+                  if (map.has(key)) {
+                    const ex = map.get(key);
+                    ex.produtos.push(p);
+                    ex.total += Number(p.preco || 0);
+                  } else {
+                    map.set(key, { produtos: [p], representante: p, total: Number(p.preco || 0) });
+                  }
+                }
+                return Array.from(map.values()).map((group, idx) => (
+                  <div key={(group.representante.nome||'item') + idx} className="cart-summary-list-item">
+                    <span>{group.representante.nome} {group.produtos.length > 1 ? `×${group.produtos.length}` : ''}</span>
+                    <span>{formatBRL(group.total)}</span>
+                  </div>
+                ));
+              })()}
               {(produtos.length === 0 && itens.length === 0) && <div className="cart-summary-list-item"><span>Nenhum item</span><span>—</span></div>}
             </div>
             <hr />
