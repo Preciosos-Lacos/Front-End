@@ -132,8 +132,12 @@ const Compra = () => {
         throw new Error(msg);
       }
 
-      // Sucesso: redireciona para página de pedido confirmato
-      navigate('/pedido-confirmado');
+      // Sucesso: redireciona para página de pedido confirmado, passando o pedido via state
+      if (json && typeof json === 'object') {
+        navigate('/pedido-confirmado', { state: { order: json } });
+      } else {
+        navigate('/pedido-confirmado');
+      }
 
       // Após sucesso, recarrega o checkout (novo carrinho vazio criado pelo backend)
       setTimeout(() => {
@@ -148,7 +152,21 @@ const Compra = () => {
     }
   }
 
-  if (loading) return <div><Header /><main style={{padding:20}}>Carregando checkout...</main></div>;
+  if (loading) {
+    return (
+      <div className="compra-page">
+        <Header />
+        <main>
+          <div className="loading-container">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Carregando...</span>
+            </div>
+            <p>Carregando checkout...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
   if (error) return <div><Header /><main style={{padding:20,color:'red'}}>Erro: {error}</main></div>;
 
   const produtos = checkout?.produtos || [];

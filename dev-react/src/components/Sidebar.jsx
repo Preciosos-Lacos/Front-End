@@ -73,6 +73,12 @@ const Sidebar = () => {
               <span>Dashboard</span>
             </Link>
           </li>
+          <li onClick={handleItemClick} className={isActivePath('/admin/cadastro-modelo') ? 'active' : ''}>
+            <Link to="/admin/cadastro-modelo">
+              <i className="bi bi-tag"></i>
+              <span>Modelos</span>
+            </Link>
+          </li>
           <li onClick={handleItemClick} className={isActivePath('/admin/cadastro-cor') ? 'active' : ''}>
             <Link to="/admin/cadastro-cor">
               <i className="bi bi-palette"></i>
@@ -85,15 +91,8 @@ const Sidebar = () => {
               <span>Tipos de Laço</span>
             </Link>
           </li>
-          <li onClick={handleItemClick} className={isActivePath('/admin/cadastro-modelo') ? 'active' : ''}>
-            <Link to="/admin/cadastro-modelo">
-              <i className="bi bi-tag"></i>
-              <span>Modelos</span>
-            </Link>
-          </li>
           <li onClick={handleItemClick} className={isActivePath('/admin/colecoes') ? 'active' : ''}>
-            <Link to="/admin/colecoes">
-              <i className="bi bi-archive"></i>
+            <Link to="/admin/colecoes"> <i className="bi bi-archive"></i>
               <span>Coleções</span>
             </Link>
           </li>

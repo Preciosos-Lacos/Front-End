@@ -44,6 +44,45 @@ const statusPedidoIcons = {
 };
 
 const Pedidos = () => {
+    // Função para converter string de data em objeto Date (aceita ISO, yyyy-MM-dd, yyyy-MM-dd HH:mm:ss, dd/MM/yyyy)
+    function parseDate(str) {
+      if (!str) return null;
+      // yyyy-MM-dd (input date) - tratar como local
+      if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+        const [year, month, day] = str.split('-');
+        return new Date(Number(year), Number(month) - 1, Number(day));
+      }
+      // ISO ou yyyy-MM-ddTHH:mm:ss
+      let d = new Date(str);
+      if (!isNaN(d)) return d;
+      // yyyy-MM-dd HH:mm:ss
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(str)) {
+        const [datePart, timePart] = str.split(' ');
+        d = new Date(datePart + 'T' + timePart);
+        if (!isNaN(d)) return d;
+      }
+      // dd/MM/yyyy
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) {
+        const [day, month, year] = str.split('/');
+        d = new Date(`${year}-${month}-${day}`);
+        if (!isNaN(d)) return d;
+      }
+      // dd MMM. yyyy (ex: '08 nov. 2025')
+      if (/^\d{2} [a-zA-Zçãéíóú.]+\. \d{4}$/.test(str)) {
+        const [day, mes, year] = str.replace('.', '').split(' ');
+        // Mapeia mês abreviado para número
+        const meses = {
+          'jan': '01', 'fev': '02', 'mar': '03', 'abr': '04', 'mai': '05', 'jun': '06',
+          'jul': '07', 'ago': '08', 'set': '09', 'out': '10', 'nov': '11', 'dez': '12'
+        };
+        const mesNum = meses[mes.toLowerCase().replace('.', '')];
+        if (mesNum) {
+          d = new Date(`${year}-${mesNum}-${day}`);
+          if (!isNaN(d)) return d;
+        }
+      }
+      return null;
+    }
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     startDate: '',
@@ -54,17 +93,129 @@ const Pedidos = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [modalState, setModalState] = useState({ isOpen: false, type: null, viewContent: null });
+  const [modalState, setModalState] = useState({ isOpen: false, pedido: null });
 
-  // Filtragem e mapeamento dos dados recebidos do backend
-  const filtered = Array.isArray(orders) ? orders : [];
+  // Função para normalizar string (remove acentos, espaços, caixa)
+  function normalize(str) {
+    if (!str) return '';
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '')
+      .toLowerCase();
+  }
+
+  // Filtragem dos dados recebidos do backend
+  const filtered = Array.isArray(orders)
+    ? orders.filter((pedido) => {
+        const pedidoDateRaw = pedido.dataPedido || pedido.data_pedido || pedido.data || '';
+        const pedidoDate = parseDate(pedidoDateRaw);
+        let match = true;
+        let debugInfo = {};
+        // Função para comparar apenas ano, mês e dia
+        function isSameOrAfter(d1, d2) {
+          if (!d1 || !d2) return false;
+          return (
+            d1.getFullYear() > d2.getFullYear() ||
+            (d1.getFullYear() === d2.getFullYear() && d1.getMonth() > d2.getMonth()) ||
+            (d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() >= d2.getDate())
+          );
+        }
+        function isSameOrBefore(d1, d2) {
+          if (!d1 || !d2) return false;
+          return (
+            d1.getFullYear() < d2.getFullYear() ||
+            (d1.getFullYear() === d2.getFullYear() && d1.getMonth() < d2.getMonth()) ||
+            (d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() <= d2.getDate())
+          );
+        }
+        if (filters.startDate) {
+          const startDate = parseDate(filters.startDate);
+          debugInfo.startDate = startDate;
+          debugInfo.pedidoDate = pedidoDate;
+          const comp = pedidoDate && startDate && isSameOrAfter(pedidoDate, startDate);
+          debugInfo.startComp = comp;
+          match = match && comp;
+        }
+        if (filters.endDate) {
+          const endDate = parseDate(filters.endDate);
+          debugInfo.endDate = endDate;
+          debugInfo.pedidoDate = pedidoDate;
+          const comp = pedidoDate && endDate && isSameOrBefore(pedidoDate, endDate);
+          debugInfo.endComp = comp;
+          match = match && comp;
+        }
+        if (filters.statusPagamento) {
+          const statusPag = mapStatusPagamentoBackendToSelect(pedido.statusPagamento || pedido.status_pagamento || pedido.pagamentoStatus || '');
+          match = match && statusPag === filters.statusPagamento;
+        }
+        if (filters.statusPedido) {
+          // Normaliza ambos para garantir correspondência
+          const statusPed = normalize(pedido.statusPedido || pedido.status_pedido || pedido.pedidoStatus || '');
+          const filterPed = normalize(filters.statusPedido);
+          match = match && statusPed === filterPed;
+        }
+        // Se o filtro está vazio, mostra todos os status
+        if (searchTerm) {
+          const nome = pedido.cliente?.nome?.toLowerCase() || '';
+          match = match && nome.includes(searchTerm.toLowerCase());
+        }
+        if (filters.startDate || filters.endDate) {
+          console.log('[Filtro Pedido] id:', pedido.id, 'dataPedido:', pedidoDateRaw, 'parsed:', pedidoDate, 'start:', debugInfo.startDate, 'end:', debugInfo.endDate, '>=start:', debugInfo.startComp, '<=end:', debugInfo.endComp, 'match:', match);
+        }
+        return match;
+      })
+    : [];
+
+  // Opções dinâmicas para filtros
+  const statusPagamentoPresentes = Array.from(new Set(filtered.map(p => mapStatusPagamentoBackendToSelect(p.statusPagamento || p.status_pagamento || p.pagamentoStatus || '')))).filter(Boolean);
+  const statusPedidoPresentes = Array.from(new Set(filtered.map(p => (p.statusPedido || p.status_pedido || p.pedidoStatus || '').toUpperCase()))).filter(Boolean);
 
   // Funções mock para evitar erro
-  const handleUpdatePagamento = () => {};
-  const handleUpdateStatus = () => {};
-  const openDetails = () => {};
+  // Mock: atualiza status localmente
+  const handleUpdatePagamento = (id, novoStatus) => {
+    // Atualiza status pagamento no backend
+    fetch(`${API_URL}/${id}/pagamento`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statusPagamento: novoStatus })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Erro ao atualizar status do pagamento');
+        return res.json();
+      })
+      .then(() => {
+        fetchOrders();
+      })
+      .catch(err => {
+        alert('Erro ao atualizar status do pagamento!');
+        console.error(err);
+      });
+  };
+  const handleUpdateStatus = (id, novoStatus) => {
+    // Atualiza status pedido no backend
+    fetch(`${API_URL}/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statusPedido: novoStatus })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Erro ao atualizar status do pedido');
+        return res.json();
+      })
+      .then(() => {
+        fetchOrders();
+      })
+      .catch(err => {
+        alert('Erro ao atualizar status do pedido!');
+        console.error(err);
+      });
+  };
+  const openDetails = (pedido) => {
+    setModalState({ isOpen: true, pedido });
+  };
+  const closeModal = () => setModalState({ isOpen: false, pedido: null });
   const mapStatusBackendToSelect = (status) => status;
-  const closeModal = () => setModalState({ ...modalState, isOpen: false });
 
   // Função para tentar novamente buscar pedidos
   const fetchOrders = () => {
@@ -94,7 +245,26 @@ const Pedidos = () => {
       })
       .then(data => {
         console.log('Pedidos recebidos do backend:', data);
-        setOrders(data);
+        // Ordena por dataPedido decrescente (YYYY-MM-DD ou ISO)
+        const sorted = Array.isArray(data)
+          ? [...data].sort((a, b) => {
+              const rawA = a.dataPedido || a.data_pedido || a.data || '';
+              const rawB = b.dataPedido || b.data_pedido || b.data || '';
+              // Se não houver data, coloca no final
+              if (!rawA && !rawB) return 0;
+              if (!rawA) return 1;
+              if (!rawB) return -1;
+              // Normaliza para Date
+              const dateA = new Date(rawA);
+              const dateB = new Date(rawB);
+              // Se datas inválidas, coloca no final
+              if (isNaN(dateA) && isNaN(dateB)) return 0;
+              if (isNaN(dateA)) return 1;
+              if (isNaN(dateB)) return -1;
+              return dateB.getTime() - dateA.getTime();
+            })
+          : [];
+        setOrders(sorted);
         setLoading(false);
       })
       .catch(err => {
@@ -102,6 +272,17 @@ const Pedidos = () => {
         setLoading(false);
       });
   }, []);
+
+  // Função para mapear status do backend para o valor do select
+  const mapStatusPedidoBackendToSelect = (status) => {
+    switch ((status || '').toLowerCase()) {
+      case 'em andamento': return 'EM ANDAMENTO';
+      case 'entregue': return 'ENTREGUE';
+      case 'cancelado': return 'CANCELADO';
+      case 'concluido': return 'CONCLUIDO';
+      default: return 'EM ANDAMENTO';
+    }
+  };
 
   return (
     <div className="pedidos-root">
@@ -158,7 +339,7 @@ const Pedidos = () => {
                 onChange={(e) => setFilters(prev => ({ ...prev, statusPagamento: e.target.value }))}
               >
                 <option value="">Todos</option>
-                {statusPagamentoOptions.map(opt => (
+                {statusPagamentoOptions.filter(opt => statusPagamentoPresentes.includes(opt.value)).map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
@@ -172,11 +353,9 @@ const Pedidos = () => {
                 onChange={(e) => setFilters(prev => ({ ...prev, statusPedido: e.target.value }))}
               >
                 <option value="">Todos</option>
-                <option value="iniciado">Iniciado</option>
-                <option value="preparacao">Preparação</option>
-                <option value="enviado">Enviado</option>
-                <option value="entregue">Entregue</option>
-                <option value="cancelado">Cancelado</option>
+                {statusPedidoPresentes.map(opt => (
+                  <option key={opt} value={opt.toLowerCase()}>{opt.charAt(0) + opt.slice(1).toLowerCase()}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -236,10 +415,21 @@ const Pedidos = () => {
                           }}
                         >
                           <td
-                            style={{ borderBottom: '1px solid #f3e0e8', textAlign: 'left', verticalAlign: 'top' , color: '#343434ff' }}
+                            style={{
+                              borderBottom: '1px solid #f3e0e8',
+                              textAlign: 'left',
+                              verticalAlign: 'top',
+                              color: '#343434ff',
+                              cursor: 'pointer',
+                              position: 'relative',
+                            }}
                             onClick={() => openDetails(p)}
+                            title="Clique para ver detalhes do pedido"
                           >
-                            {p.cliente?.nome || '-'}
+                            <span style={{display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle'}}>
+                              {p.cliente?.nome || '-'}
+                              <i className="bi bi-info-circle" style={{color: '#e48ab6', fontSize: 18, marginLeft: 8, position: 'relative', top: '1px'}}></i>
+                            </span>
                           </td>
                           <td style={{ color: '#343434ff',borderBottom: '1px solid #f3e0e8', verticalAlign: 'top', textAlign: 'left', background: 'transparent', minWidth: 120 }}>{p.cliente?.telefone || '-'}</td>
                           <td style={{ color: '#343434ff',borderBottom: '1px solid #f3e0e8', verticalAlign: 'top', textAlign: 'left', background: 'transparent', minWidth: 120 }}>{p.dataPedido || '-'}</td>
@@ -293,7 +483,7 @@ const Pedidos = () => {
                                 background: '#fff',
                                 color: '#343434ff',
                               }}
-                              value={mapStatusBackendToSelect(p.statusPedido || p.status_pedido || p.pedidoStatus || '-')}
+                              value={mapStatusPedidoBackendToSelect(p.statusPedido || p.status_pedido || p.pedidoStatus || '-')}
                               onChange={e => handleUpdateStatus(p.id, e.target.value)}
                               aria-label="Status do pedido"
                             >
@@ -310,8 +500,28 @@ const Pedidos = () => {
                             }}
                           >
                             <div style={{ display: 'flex', gap: 16, justifyContent: 'flex-start', alignItems: 'flex-start', width: '100%' }}>
-                              <button className="btn-sm btn-contato" title="WhatsApp" onClick={() => window.open(`https://wa.me/55${p.telefone.replace(/\D/g, '')}`)}><i className="bi bi-whatsapp"></i></button>
-                              <button className="btn-sm btn-contato" title="E-mail" onClick={() => window.open(`mailto:${p.cliente?.email || ''}`)}><i className="bi bi-envelope"></i></button>
+                              <button
+                                className="btn-sm btn-contato"
+                                title="WhatsApp"
+                                onClick={() => {
+                                  const tel = p.cliente?.telefone || p.telefone || '';
+                                  if (tel) {
+                                    const numero = tel.replace(/\D/g, '');
+                                    window.open(`https://wa.me/55${numero}`);
+                                  } else {
+                                    alert('Telefone não disponível para WhatsApp');
+                                  }
+                                }}
+                              >
+                                <i className="bi bi-whatsapp"></i>
+                              </button>
+                              <button
+                                className="btn-sm btn-contato"
+                                title="E-mail"
+                                onClick={() => window.open(`mailto:${p.cliente?.email || ''}`)}
+                              >
+                                <i className="bi bi-envelope"></i>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -333,6 +543,42 @@ const Pedidos = () => {
         </>
       </div>
       <Modal isOpen={modalState.isOpen} onClose={closeModal} type={modalState.type} viewContent={modalState.viewContent} />
+          {/* Modal de detalhes do pedido */}
+          {modalState.isOpen && modalState.pedido && (
+            <div style={{
+              position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+              background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999
+            }}
+              onClick={closeModal}
+            >
+              <div style={{ background: '#fff', padding: 32, borderRadius: 12, minWidth: 320, maxWidth: 480 }} onClick={e => e.stopPropagation()}>
+                <h2>Detalhes do Pedido</h2>
+                <div><strong>Cliente:</strong> {modalState.pedido.cliente?.nome}</div>
+                <div><strong>Telefone:</strong> {modalState.pedido.cliente?.telefone}</div>
+                <div><strong>E-mail:</strong> {modalState.pedido.cliente?.email}</div>
+                <div><strong>Valor Total:</strong> R$ {typeof modalState.pedido.valorTotal === 'number' ? modalState.pedido.valorTotal.toFixed(2).replace('.', ',') : modalState.pedido.valorTotal}</div>
+                <div><strong>Forma de Pagamento:</strong> {modalState.pedido.formaPagamento}</div>
+                <div><strong>Status Pagamento:</strong> {modalState.pedido.statusPagamento}</div>
+                <div><strong>Status Pedido:</strong> {modalState.pedido.statusPedido}</div>
+                <div><strong>Data do Pedido:</strong> {modalState.pedido.dataPedido}</div>
+                <div style={{marginTop: 16}}>
+                  <strong>Itens:</strong>
+                  <ul style={{paddingLeft: 18}}>
+                    {Array.isArray(modalState.pedido.itens) && modalState.pedido.itens.length > 0 ? (
+                      modalState.pedido.itens.map((item, idx) => (
+                        <li key={idx}>
+                          {item.nome} (Qtd: {item.quantidade}) - R$ {typeof item.preco === 'number' ? item.preco.toFixed(2).replace('.', ',') : item.preco}
+                        </li>
+                      ))
+                    ) : (
+                      <li>Nenhum item</li>
+                    )}
+                  </ul>
+                </div>
+                <button onClick={closeModal} style={{ marginTop: 24, padding: '8px 24px', borderRadius: 8, background: '#e6b6c7', color: '#333', border: 'none', fontWeight: 600 }}>Fechar</button>
+              </div>
+            </div>
+          )}
     </div>
   );
 }

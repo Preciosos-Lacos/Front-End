@@ -295,3 +295,32 @@
 .dashboard-filtrar-btn:hover {
   background-color: #ff85c1;
 }
+
+.paginacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.paginacao-esquerda {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.dashboard-exportar-btn {
+  padding: 10px 16px;
+  background-color: #bb6686;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.dashboard-exportar-btn:hover {
+  background-color: #bb6686;
+}
+

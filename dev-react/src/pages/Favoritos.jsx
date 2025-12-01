@@ -27,6 +27,7 @@ export default function Favoritos() {
     const [usuario, setUsuario] = useState(null);
     const [favoritos, setFavoritos] = useState([]); // lista de modelos favoritos
     const [fotos, setFotos] = useState({}); // { [idModelo]: dataUrl }
+    // Removido render condicional duplicado para evitar loop infinito
 
     const precoBRL = (v) => Number(v ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
@@ -39,6 +40,7 @@ export default function Favoritos() {
                 const token = getAuthToken();
                 if (!token) {
                     setError('Faça login para ver seus favoritos.');
+                    setLoading(false);
                     return;
                 }
                 const payload = decodeJwt(token);
@@ -76,6 +78,7 @@ export default function Favoritos() {
                     if (!active) return;
                     setFavoritos([]);
                     setFotos({});
+                    setLoading(false);
                     return;
                 }
                 if (!resFav.ok) {
@@ -108,11 +111,11 @@ export default function Favoritos() {
                 );
                 if (!active) return;
                 setFotos(fotosMap);
+                setLoading(false);
             } catch (e) {
                 console.error(e);
                 if (active) setError(e.message || 'Falha ao carregar favoritos');
-            } finally {
-                if (active) setLoading(false);
+                setLoading(false);
             }
         }
         load();

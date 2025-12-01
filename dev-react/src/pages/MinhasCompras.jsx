@@ -134,6 +134,7 @@ export default function MinhasCompras() {
   const [expanded, setExpanded] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
 
   useEffect(() => {
     let ativo = true;
@@ -171,7 +172,22 @@ export default function MinhasCompras() {
           return;
         }
 
-        if (!resp.ok) throw new Error(`Falha ao carregar pedidos (${resp.status})`);
+        if (!resp.ok) {
+          // Try to read server body for debugging (may be json or text)
+          let bodyText = null;
+          try {
+            // prefer text so we don't throw on non-json responses
+            bodyText = await resp.text();
+          } catch (err) {
+            bodyText = null;
+          }
+          console.error('[MinhasCompras] fetch error', { url: API_PEDIDOS_MEUS, status: resp.status, body: bodyText });
+          if (ativo) {
+            setError(bodyText ? `Erro no servidor: ${bodyText}` : `Falha ao carregar compras (${resp.status})`);
+            setPedidos([]);
+          }
+          return;
+        }
 
         const data = await resp.json();
         if (ativo) setPedidos(Array.isArray(data) ? data : []);
@@ -190,17 +206,44 @@ export default function MinhasCompras() {
   }, []);
 
   const pedidosOrdenados = useMemo(() => {
-    return [...pedidos].sort((a, b) => new Date(b.data) - new Date(a.data));
+    // Order by idPedido descending (maior -> menor) by default
+    return [...pedidos].sort((a, b) => {
+      const idA = Number(a.idPedido ?? 0);
+      const idB = Number(b.idPedido ?? 0);
+      if (!isNaN(idA) && !isNaN(idB) && idA !== idB) return idB - idA;
+      // fallback to date if ids are equal or not numeric
+      return new Date(b.data) - new Date(a.data);
+    });
   }, [pedidos]);
 
   const pedidosFiltrados = useMemo(() => {
+    // Map UI filter labels to backend status values (robust to numeric codes and strings)
+    const matchesStatus = (statusFromPedido, filtro) => {
+      if (!filtro || filtro === 'Todos') return true;
+      const f = (filtro || '').toLowerCase();
+      const s = (statusFromPedido ?? '').toString().toLowerCase();
+      // If backend uses numeric codes, try to coerce and map below via normalizeStatus
+      if (f === 'em confecção' || f === 'em confecc\u00e7\u00e3o' || f === 'em confeccao') {
+        // Em confecção should match 'Em andamento' or numeric 1
+        return s.includes('andamento') || s === '1' || s.includes('confec') || s.includes('confe');
+      }
+      if (f === 'produto conclu\u00eddo' || f === 'produto concluido' || f === 'produto concluído') {
+        // Produto concluído corresponds to backend 'Concluido' or numeric 4
+        return s.includes('conclu') || s === '4';
+      }
+      if (f === 'entregue') {
+        return s.includes('entreg') || s === '2';
+      }
+      return s.includes(f);
+    };
+
     return pedidosOrdenados.filter((p) => {
       const texto = (busca || '').trim().toLowerCase();
       const matchBusca =
         !texto ||
         String(p.idPedido).includes(texto) ||
         (p.itens || []).some((it) => it.nome?.toLowerCase().includes(texto));
-      const matchStatus = filtroStatus === 'Todos' || p.statusPedido === filtroStatus;
+      const matchStatus = filtroStatus === 'Todos' || matchesStatus(p.statusPedido, filtroStatus);
       const matchPagamento = filtroPagamento === 'Todos' || p.statusPagamento === filtroPagamento;
       return matchBusca && matchStatus && matchPagamento;
     });
@@ -216,38 +259,113 @@ export default function MinhasCompras() {
     }
   };
 
+  // Timeline rendering helpers
+  // Normalize backend status (string or numeric) into tokens and render timeline accordingly
+  const normalizeStatus = (status) => {
+    if (status === null || status === undefined) return 'UNKNOWN';
+    const asNumber = Number(status);
+    if (!Number.isNaN(asNumber)) {
+      if (asNumber === 1) return 'IN_PROGRESS';
+      if (asNumber === 2) return 'DELIVERED';
+      if (asNumber === 3) return 'CANCELLED';
+      if (asNumber === 4) return 'COMPLETED';
+    }
+    const s = String(status).toLowerCase();
+    if (s.includes('cancel')) return 'CANCELLED';
+    if (s.includes('entreg')) return 'DELIVERED';
+    if (s.includes('conclu')) return 'COMPLETED';
+    if (s.includes('andamento') || s.includes('confec') || s.includes('confe')) return 'IN_PROGRESS';
+    return 'UNKNOWN';
+  };
+
+  const renderTimeline = (status) => {
+    const token = normalizeStatus(status);
+    if (token === 'CANCELLED') {
+      return (
+        <div className="pedido-cancelado">
+          <strong>Pedido CANCELADO</strong>
+          <div className="pequeno text-muted">Este pedido foi cancelado e não está mais ativo.</div>
+        </div>
+      );
+    }
+
+    let completedCount = 0;
+    if (token === 'DELIVERED') completedCount = 3;
+    else if (token === 'COMPLETED') completedCount = 2;
+    else if (token === 'IN_PROGRESS') completedCount = 0;
+
+    const activeIndex = completedCount >= 3 ? null : completedCount + 1;
+    const steps = ['Em confecção', 'Produto concluído', 'Entregue'];
+    const nodes = [];
+    for (let i = 0; i < steps.length; i++) {
+      const label = steps[i];
+      const stepNum = i + 1;
+      const completed = stepNum <= completedCount;
+      const active = activeIndex === stepNum;
+      nodes.push(
+        <div key={`step-${i}`} className={`timeline-step ${completed ? 'completed' : ''} ${active ? 'active' : ''}`}>
+          <div className="timeline-icon" aria-hidden>
+            {completed ? '✓' : (<span className="timeline-dot" />)}
+          </div>
+          <div className="timeline-text pequeno">{label}</div>
+        </div>
+      );
+      if (i < steps.length - 1) {
+        nodes.push(<div key={`conn-${i}`} className={`timeline-connector ${stepNum <= completedCount ? 'done' : ''}`} />);
+      }
+    }
+    return <div className="timeline">{nodes}</div>;
+  };
+
+  
+
   return (
     <div>
       <Header />
       <section className="minhas-compras-section container">
         <h2 className="titulo-minhas-compras">Minhas compras</h2>
-        {loading && <p className="text-muted">Carregando compras...</p>}
         {error && !loading && <div className="alert alert-warning pequeno" role="alert">{error}</div>}
         <div className="minhas-compras-barra d-flex align-items-center justify-content-between mb-4">
-          <div className="busca-filtros d-flex align-items-center gap-3">
-            <div className="input-group busca-compras">
-              <span className="input-group-text"><i className="bi bi-search"></i></span>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Buscar por ID ou produto"
-                value={busca}
-                onChange={e => setBusca(e.target.value)}
-              />
-            </div>
-            <div className="filtro-compras d-flex align-items-center gap-2">
-              <i className="bi bi-filter"></i>
-              <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
-                <option>Todos</option>
-                <option>Em andamento</option>
-                <option>Concluido</option>
-                <option>Entregue</option>
-              </select>
-              <select className="form-select" value={filtroPagamento} onChange={e => setFiltroPagamento(e.target.value)}>
-                <option>Todos</option>
-                <option>Pago</option>
-                <option>Pendente</option>
-              </select>
+          <div className="busca-filtros d-flex flex-column gap-2">
+            <div className="filtros-grid">
+              <div className="filtro-col">
+                <span className="filtro-label pequeno">Buscar por ID ou produto</span>
+                <div className="busca-compras">
+                  <div className="input-group">
+                    <span className="input-group-text"><i className="bi bi-search"></i></span>
+                    <input
+                      type="text"
+                      className="form-control"
+                      aria-label="Buscar por ID ou produto"
+                      value={busca}
+                      onChange={e => setBusca(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="filtro-col">
+                <span className="filtro-label pequeno">Status do pedido</span>
+                <div className="filtro-item">
+                  <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
+                    <option>Todos</option>
+                    <option>Em confecção</option>
+                    <option>Produto concluído</option>
+                    <option>Entregue</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="filtro-col">
+                <span className="filtro-label pequeno">Status do pagamento</span>
+                <div className="filtro-item">
+                  <select className="form-select" value={filtroPagamento} onChange={e => setFiltroPagamento(e.target.value)}>
+                    <option>Todos</option>
+                    <option>Pago</option>
+                    <option>Pendente</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
           <div className="info-compras">
@@ -255,7 +373,12 @@ export default function MinhasCompras() {
           </div>
         </div>
         <div className="compras-lista">
-          {pedidosFiltrados.map((p) => {
+          {loading ? (
+            <div className="text-center text-muted">Carregando compras...</div>
+          ) : pedidosFiltrados.length === 0 ? (
+            <div className="text-center text-muted">Nenhuma compra encontrada.</div>
+          ) : (
+            pedidosFiltrados.map((p) => {
             const primeiraImagem = p?.itens?.[0]?.imagens?.[0] || '/src/assets/laco-kit-6.webp';
             const itens = p?.itens || [];
             const mais = Math.max(itens.length - 1, 0);
@@ -267,11 +390,13 @@ export default function MinhasCompras() {
               .join(' · ');
 
             return (
-              <div key={p.idPedido} className="compra-card d-flex align-items-center mb-4 p-3">
-                <div className="compra-img me-3">
-                  <img src={getImageSrc(primeiraImagem)} alt={tituloPrimeiro} className="img-fluid rounded" style={{ width: 90, height: 90, objectFit: 'cover' }} />
+              <div key={p.idPedido} className={`compra-card d-flex mb-4 p-3 ${expanded[p.idPedido] ? 'expanded' : ''}`}>
+                <div className="compra-left">
+                  <div className="compra-img">
+                    <img src={getImageSrc(primeiraImagem)} alt={tituloPrimeiro} className="img-fluid rounded" />
+                  </div>
                 </div>
-                <div className="compra-info flex-grow-1 w-100">
+                <div className="compra-right compra-info flex-grow-1 w-100">
                   <div className="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
                     <div className="d-flex align-items-center gap-2">
                       <span className="compra-data">Pedido #{p.idPedido} • {formatDateBR(p.data)}</span>
@@ -280,7 +405,6 @@ export default function MinhasCompras() {
                       </button>
                     </div>
                     <div className="d-flex align-items-center gap-2 flex-wrap">
-                      <span className={`compra-status status-chip ${statusPedidoClass(p.statusPedido)}`}>{p.statusPedido}</span>
                       <span className={`compra-status pagamento-chip ${statusPagamentoClass(p.statusPagamento)}`}>{p.statusPagamento}</span>
                       <span className="compra-total fw-semibold">{formatMoeda(p.total)}</span>
                     </div>
@@ -290,6 +414,11 @@ export default function MinhasCompras() {
                   {caracPrimeiro && (
                     <div className="compra-produto mb-1 text-muted">{caracPrimeiro}</div>
                   )}
+
+                  {/* Timeline — posicionada antes dos botões para seguir ordem desejada */}
+                  <div className="compra-timeline-row mb-2">
+                    {renderTimeline(p.statusPedido)}
+                  </div>
 
                   <div className="compra-botoes d-flex gap-2 mt-2 flex-wrap">
                     <button className="btn btn-outline-secondary compra-btn" onClick={() => toggleExpand(p.idPedido)}>
@@ -319,9 +448,7 @@ export default function MinhasCompras() {
                 </div>
               </div>
             );
-          })}
-          {pedidosFiltrados.length === 0 && (
-            <div className="text-center text-muted">Nenhuma compra encontrada.</div>
+            })
           )}
         </div>
       </section>
