@@ -424,7 +424,7 @@ export default function MinhasCompras() {
                     <button className="btn btn-outline-secondary compra-btn" onClick={() => toggleExpand(p.idPedido)}>
                       {expanded[p.idPedido] ? 'Ocultar detalhes' : 'Ver detalhes'}
                     </button>
-                    <Link to={`/pedido-entregue`} className="btn btn-outline-secondary compra-btn">Ver compra</Link>
+                    <Link to={`/pedido-entregue?Id=${p.idPedido}`} className="btn btn-outline-secondary compra-btn">Ver compra</Link>
                     <Link to="/carrinho" className="btn btn-outline-primary compra-btn">Comprar novamente</Link>
                   </div>
 
