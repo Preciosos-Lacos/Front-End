@@ -135,8 +135,11 @@
     font-weight: 700;
     font-size: 16px;
     line-height: 1; /* centraliza o símbolo */
-    cursor: default; /* estático */
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease, transform 80ms ease;
   }
+  .quantity-btn:hover{ background: rgba(0,0,0,0.04); transform: translateY(-1px); }
+  .quantity-btn:disabled{ opacity: 0.55; cursor: not-allowed; transform: none; }
   .quantity-btn.plus{
     margin-left: -2px;
   }
@@ -156,8 +159,10 @@
     border: none;
     color: #333;
     font-size: 24px;
-    cursor: default; /* estático */
+    cursor: pointer;
+    transition: color 120ms ease, transform 80ms ease;
   }
+  .remove-btn:hover{ color: var(--rosa-hover); transform: translateY(-2px); }
 
   /* Summary */
   .cart-summary{
