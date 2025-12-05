@@ -13,6 +13,8 @@ export default function CadastroTipoLacos() {
 
   const [tipos, setTipos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [modelos, setModelos] = useState([]);
+
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -56,6 +58,38 @@ export default function CadastroTipoLacos() {
     }
   }
 
+  async function carregarModelos() {
+    try {
+      const token = getAuthToken();
+
+      const response = await fetch("http://localhost:8080/modelos", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        console.warn("Nenhum modelo retornado.");
+        setModelos([]);
+        return;
+      }
+
+      const dados = await response.json();
+
+      setModelos(
+        dados.map(m => ({
+          id: m.idModelo,
+          nome: m.nomeModelo,
+          foto: m.fotoBase64 ? `data:image/png;base64,${m.fotoBase64}` : null
+        }))
+      );
+
+    } catch (error) {
+      console.error("Erro ao carregar modelos:", error);
+    }
+  }
+
+
   const showAlert = (tipo, mensagem) => {
     let bgColor = "#f0f0f0";
     if (tipo === "sucesso") bgColor = "#28a745";
@@ -78,9 +112,17 @@ export default function CadastroTipoLacos() {
     setTimeout(() => alertDiv.remove(), 3000);
   };
 
-  const handleModalSubmit = async (data) => {
+  async function handleModalSubmit(formData) {
     try {
       const token = getAuthToken();
+
+      const dadosParaEnvio = {
+        nome: formData.nome,
+        preco: Number(formData.preco),
+        modelosIds: formData.modelosIds,
+        imagemBase64: formData.imagemBase64
+      };
+
 
       const response = await fetch(`${BASE_URL}/tipo-laco`, {
         method: "POST",
@@ -88,28 +130,25 @@ export default function CadastroTipoLacos() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({
-          nome: data.nome,
-          preco: Number(data.preco),
-          imagemBase64: data.imagemBase64
-        })
+        body: JSON.stringify(dadosParaEnvio)
       });
 
       if (!response.ok) {
-        const msg = await response.text();
-        showAlert("erro", msg || "Erro ao cadastrar tipo de laço.");
+        const errorText = await response.text();
+        console.error("Erro ao cadastrar tipo de laço:", errorText);
+        alert(`Erro ao cadastrar: ${errorText}`);
         return;
       }
 
-      showAlert("sucesso", "Tipo de laço cadastrado com sucesso!");
+      alert("Tipo de laço cadastrado com sucesso!");
       closeModal();
       carregarTiposDeLaco();
 
-    } catch (err) {
-      console.error(err);
-      showAlert("erro", "Erro inesperado. Tente novamente.");
+    } catch (error) {
+      console.error("Erro de rede ou processamento:", error);
+      alert("Ocorreu um erro inesperado.");
     }
-  };
+  }
 
   const handleUpdate = async (data, id) => {
     try {
@@ -174,6 +213,14 @@ export default function CadastroTipoLacos() {
   // -------- MODAL ----------
   const openModal = (type, tipo = null) => {
     setModalState({ isOpen: true, type, tipoData: tipo });
+
+    if (type === "create") {
+      carregarModelos(); 
+    }
+
+    if (type === "edit") {
+      carregarModelos();
+    }
   };
 
   const closeModal = () => {
@@ -248,6 +295,7 @@ export default function CadastroTipoLacos() {
             onClose={closeModal}
             type={modalState.type}
             tipoData={modalState.tipoData}
+            modelosDisponiveis={modelos} 
             onSubmit={
               modalState.type === "delete"
                 ? () => deletarTipoLaco(modalState.tipoData.id)
