@@ -2,6 +2,7 @@ import '../styles/Carrinho.css';
 import Header from '../components/Header.jsx';
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState, useMemo } from 'react';
+import { useCart } from '../context/CartContext.jsx';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -18,6 +19,7 @@ export default function Carrinho() {
   const [pedido,setPedido] = useState(null); // PedidoDTO
   const [removing,setRemoving] = useState(null); // idProduto em remoção
   const [changingQty, setChangingQty] = useState(null); // idProduto sendo alterado (+/-)
+  const { recomputeFromItens } = useCart();
 
   const subtotal = useMemo(()=>{
     // prioriza lista detalhada se disponível
@@ -45,7 +47,12 @@ export default function Carrinho() {
         if(resCarrinho.status === 204){ if(active){ setPedido(null); setItens([]);} return; }
         if(!resCarrinho.ok) throw new Error('Falha ao buscar carrinho');
         const carrinho = await resCarrinho.json();
-        if(active){ setPedido(carrinho); setItens(carrinho.itens || []); }
+        if(active){
+          setPedido(carrinho);
+          const its = carrinho.itens || [];
+          setItens(its);
+          recomputeFromItens(its);
+        }
 
         // Buscar detalhes dos produtos do carrinho
         const resDetalhes = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
@@ -67,11 +74,12 @@ export default function Carrinho() {
     try {
       const res = await fetch(`${BASE_URL}/pedidos/carrinho/${idProduto}/usuario/${usuario.idUsuario}`,{ method:'DELETE', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
       if(res.status === 204){ // carrinho vazio
-        setItens([]); setPedido(null); return;
+        setItens([]); setPedido(null); recomputeFromItens([]); return;
       }
       if(!res.ok) throw new Error('Falha ao remover item');
       const novo = await res.json();
-      setPedido(novo); setItens(novo.itens || []);
+      const its = novo.itens || [];
+      setPedido(novo); setItens(its); recomputeFromItens(its);
       // atualizar lista detalhada
       try {
         const token2 = getAuthToken();
@@ -98,8 +106,10 @@ export default function Carrinho() {
       }
       // Recarregar carrinho
       const resCarrinho = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
-      if(resCarrinho.status === 204){ setItens([]); setPedido(null); setProdutos([]); return; }
-      const carrinho = await resCarrinho.json(); setPedido(carrinho); setItens(carrinho.itens || []);
+      if(resCarrinho.status === 204){ setItens([]); setPedido(null); setProdutos([]); recomputeFromItens([]); return; }
+      const carrinho = await resCarrinho.json();
+      const its = carrinho.itens || [];
+      setPedido(carrinho); setItens(its); recomputeFromItens(its);
       const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
       if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
     } catch(e){ console.error(e); alert('Erro ao remover item(s)'); }
@@ -139,7 +149,7 @@ export default function Carrinho() {
         body: JSON.stringify({ idUsuario: usuario.idUsuario, idProduto })
       });
       if (res.status === 204) { // carrinho vazio ou não encontrado
-        setItens([]); setPedido(null); setProdutos([]); return;
+        setItens([]); setPedido(null); setProdutos([]); recomputeFromItens([]); return;
       }
       if (!res.ok) {
         // Fallback: se der 404/erro, tenta remover uma ocorrência via DELETE
@@ -148,10 +158,11 @@ export default function Carrinho() {
             method: 'DELETE',
             headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }
           });
-          if (del.status === 204) { setItens([]); setPedido(null); setProdutos([]); return; }
+          if (del.status === 204) { setItens([]); setPedido(null); setProdutos([]); recomputeFromItens([]); return; }
           if (!del.ok) throw new Error('Falha ao remover item');
           const novoDel = await del.json();
-          setPedido(novoDel); setItens(novoDel.itens || []);
+          const itsDel = novoDel.itens || [];
+          setPedido(novoDel); setItens(itsDel); recomputeFromItens(itsDel);
           try {
             const r2 = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
             if(r2.ok && r2.status !== 204){ setProdutos(await r2.json()); } else { setProdutos([]); }
@@ -162,7 +173,8 @@ export default function Carrinho() {
         }
       }
       const novo = await res.json();
-      setPedido(novo); setItens(novo.itens || []);
+      const its = novo.itens || [];
+      setPedido(novo); setItens(its); recomputeFromItens(its);
       // atualizar lista detalhada
       try {
         const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
@@ -183,11 +195,12 @@ export default function Carrinho() {
         headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }
       });
       if (res.status === 204) { // carrinho vazio ou não encontrado
-        setItens([]); setPedido(null); setProdutos([]); return;
+        setItens([]); setPedido(null); setProdutos([]); recomputeFromItens([]); return;
       }
       if (!res.ok) throw new Error('Falha ao remover item');
       const novo = await res.json();
-      setPedido(novo); setItens(novo.itens || []);
+      const its = novo.itens || [];
+      setPedido(novo); setItens(its); recomputeFromItens(its);
       // atualizar lista detalhada
       try {
         const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});

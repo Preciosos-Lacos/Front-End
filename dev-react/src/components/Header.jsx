@@ -2,10 +2,12 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Header.css';
+import { useCart } from '../context/CartContext.jsx';
 
 const Header = ({ showOffcanvas = true }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { count } = useCart();
 
   // Fecha o offcanvas e restaura o scroll ao trocar de rota
   useEffect(() => {
@@ -73,7 +75,14 @@ const Header = ({ showOffcanvas = true }) => {
               <Link to="/favoritos" className={location.pathname === '/favoritos' ? 'nav-active' : ''}>Favoritos</Link>
             </li>
             <li>
-              <Link to="/carrinho" className={location.pathname === '/carrinho' ? 'nav-active' : ''}>Carrinho</Link>
+              <Link to="/carrinho" className={location.pathname === '/carrinho' ? 'nav-active cart-link' : 'cart-link'}>
+                Carrinho
+                {count > 0 && (
+                  <span className="cart-badge" aria-label={`${count} item(ns) no carrinho`}>
+                    {count}
+                  </span>
+                )}
+              </Link>
             </li>
             {/* <li>
               <button type="button" className="link-button" onClick={handleLogout} aria-label="Sair">
