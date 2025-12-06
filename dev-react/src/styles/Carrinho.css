@@ -82,6 +82,29 @@
     color: var(--texto);
     margin: 4px 0 0 0;
   }
+  .item-extra{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+
+  /* Pill small labels used for material, cor, acabamento */
+  .pill{
+    display: inline-block;
+    background: rgba(231,143,179,0.08); /* very light pink */
+    color: var(--texto);
+    padding: 6px 8px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1;
+    box-shadow: none;
+  }
+
+  /* Make the prefix (e.g. "Cor:" / "Acabamento:") slightly muted to match design */
+  .pill strong, .pill b{ font-weight:700; }
   .item-collection{
     font-size: 12px;
     color: var(--cinza);

@@ -271,7 +271,7 @@ export default function Carrinho() {
                         <p className="item-extra">
                           {produto.material && <span className="pill">{produto.material}</span>}
                           {produto.corDescricao ? (
-                            <span className="pill">Cor: {produto.corDescricao}</span>
+                            <span className="pill">{produto.corDescricao}</span>
                           ) : (produto.cor !== undefined && produto.cor !== null ? (
                             <span className="pill">Cor #{produto.cor}</span>
                           ) : null)}

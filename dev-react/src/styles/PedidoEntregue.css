@@ -1,4 +1,6 @@
 /* Centraliza a div de resumo/produtos na tela */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+
 .pedido-entregue-page .pedido-section .row.g-4 {
   display: flex;
   justify-content: center;
@@ -79,7 +81,7 @@
     min-width: 0;
   }
 }
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+
 
 :root {
   --page-bg: #FAFBF5;
