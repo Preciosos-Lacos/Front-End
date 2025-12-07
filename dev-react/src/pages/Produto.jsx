@@ -251,7 +251,7 @@ export default function Produto() {
                       </label>
                     </div>
                     <div className="cor-dots-wrapper" role="radiogroup" aria-label="Escolha a cor">
-                      {grupos.Cor.map(d => {
+                      {grupos.Cor.filter(isAvailableDetalhe).map(d => {
                         const hex = (d.hexaDecimal || '').trim();
                         const isSelected = selecionados.cor?.idCaracteristicaDetalhe === d.idCaracteristicaDetalhe;
                         if (hex) {
@@ -530,4 +530,19 @@ function hexToHsl(hex) {
     h = NaN; s = 0; // achromatic
   }
   return { h, s, l };
+}
+
+// Determina se um detalhe de característica (cor/tipo/colecao) está disponível.
+// Tentamos detectar campos comuns de disponibilidade retornados pela API.
+function isAvailableDetalhe(d) {
+  if (!d) return false;
+  // campos booleanos explícitos
+  if (Object.prototype.hasOwnProperty.call(d, 'disponivel')) return !!d.disponivel;
+  if (Object.prototype.hasOwnProperty.call(d, 'ativo')) return !!d.ativo;
+  if (Object.prototype.hasOwnProperty.call(d, 'available')) return !!d.available;
+  // quantidade/estoque numérico
+  if (typeof d.quantidade === 'number') return d.quantidade > 0;
+  if (typeof d.estoque === 'number') return d.estoque > 0;
+  // por padrão, considerar disponível quando não há indicador contrário
+  return true;
 }
