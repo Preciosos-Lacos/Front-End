@@ -239,6 +239,16 @@ const Modal = ({
 
   if (!isOpen) return null;
 
+  if (type === 'view' && viewContent) {
+    return (
+      <div className="modal-overlay">
+        <div className="modal">
+          {viewContent}
+        </div>
+      </div>
+    );
+  }
+
   if (type === 'activate') {
     return (
       <div className="modal-overlay">

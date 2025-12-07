@@ -22,7 +22,7 @@ const PedidoConfirmado = () => {
   // Format order data for display
   const formatOrderData = (order) => {
     if (!order) return null;
-    
+
     return {
       id: order.numeroPedido || order.id || 'N/A',
       valorTotal: order.total || order.valorTotal || 0,
@@ -86,7 +86,10 @@ const PedidoConfirmado = () => {
               </div>
             </>
           )}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '50px' }}>
           <button className="home" onClick={() => navigate('/catalogo')}>Voltar para o Catálogo</button>
+          <button className="home" onClick={() => navigate(`/pedido-entregue?Id=${displayOrder.id}`)}>Ver Pedido</button>
+          </div>
         </section>
       </main>
     </div>

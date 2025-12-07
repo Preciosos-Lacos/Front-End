@@ -123,15 +123,15 @@ const Catalogo = () => {
                             {modelos.length > 0 ? (
                                 modelos.slice(0, 6).map((modelo, index) => (
                                     <div key={`variedade-${modelo.idModelo ? modelo.idModelo : `${modelo.nome}-${index}`}`} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                        <div className="row g-3 justify-content-center" style={{padding: '24px 0'}}>
-                                            <div className="col-12 col-sm-6 col-md-4 d-flex justify-content-center" style={{padding: '0 12px'}}>
+                                        <div className="row g-3 justify-content-center" style={{ padding: '24px 0' }}>
+                                            <div className="col-12 col-sm-6 col-md-4 d-flex justify-content-center" style={{ padding: '0 12px' }}>
                                                 <div
                                                     className="produto-card"
-                                                    style={{color: 'black', boxShadow: 'rgba(0, 0, 0, 0.12) 0px 4px 24px', borderRadius: '16px', background: 'rgb(255, 255, 255)', padding: '10px 0px 0px 0px', margin: '0px', cursor: 'pointer'}}
+                                                    style={{ color: 'black', boxShadow: 'rgba(0, 0, 0, 0.12) 0px 4px 24px', borderRadius: '16px', background: 'rgb(255, 255, 255)', padding: '10px 0px 0px 0px', margin: '0px', cursor: 'pointer' }}
                                                     onClick={() => navigate(`/produto?id=${modelo.idModelo}`)}
                                                 >
-                                                    <div style={{width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden'}}>
-                                                        <img src={getImage(modelo)} alt={getName(modelo)} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                                                    <div style={{ width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden' }}>
+                                                        <img src={getImage(modelo)} alt={getName(modelo)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     </div>
                                                     <div className="produto-info">
                                                         <p>{getName(modelo)} - {getCollection(modelo)}</p>
@@ -144,11 +144,11 @@ const Catalogo = () => {
                                 ))
                             ) : (
                                 <div className="carousel-item active">
-                                    <div className="row g-3 justify-content-center" style={{padding: '24px 0'}}>
-                                        <div className="col-12 col-sm-6 col-md-4 d-flex justify-content-center" style={{padding: '0 12px'}}>
-                                            <div className="produto-card" style={{boxShadow: '0 4px 24px rgba(0,0,0,0.12)', borderRadius: 16, background: '#fff', padding: 0, margin: 0, cursor: 'pointer'}} onClick={() => navigate('/produto?id=null')}>
-                                                <div style={{width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden'}}>
-                                                    <img src="/src/assets/laco_panda.webp" alt="Produto" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                                    <div className="row g-3 justify-content-center" style={{ padding: '24px 0' }}>
+                                        <div className="col-12 col-sm-6 col-md-4 d-flex justify-content-center" style={{ padding: '0 12px' }}>
+                                            <div className="produto-card" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)', borderRadius: 16, background: '#fff', padding: 0, margin: 0, cursor: 'pointer' }} onClick={() => navigate('/produto?id=null')}>
+                                                <div style={{ width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden' }}>
+                                                    <img src="/src/assets/laco_panda.webp" alt="Produto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                 </div>
                                                 <div className="produto-info">
                                                     <p>Nossos produtos</p>
@@ -224,11 +224,11 @@ const Catalogo = () => {
                             <div className="carousel-inner">
                                 {maisVendidos.length === 0 && (
                                     <div className="carousel-item active">
-                                        <div className="row g-3 justify-content-center" style={{padding: '24px 0'}}>
-                                            <div className="col-12 col-sm-6 col-md-4 d-flex justify-content-center" style={{padding: '0 12px'}}>
-                                                <div className="produto-card" style={{boxShadow: '0 4px 24px rgba(0,0,0,0.12)', borderRadius: 16, background: '#fff', padding: 0, margin: 0, cursor: 'pointer'}} onClick={() => navigate('/produto?id=0')}>
-                                                    <div style={{width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden'}}>
-                                                        <img src="/src/assets/laco-flor.webp" alt="Produto" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                                        <div className="row g-3 justify-content-center" style={{ padding: '24px 0' }}>
+                                            <div className="col-12 col-sm-6 col-md-4 d-flex justify-content-center" style={{ padding: '0 12px' }}>
+                                                <div className="produto-card" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)', borderRadius: 16, background: '#fff', padding: 0, margin: 0, cursor: 'pointer' }} onClick={() => navigate('/produto?id=0')}>
+                                                    <div style={{ width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden' }}>
+                                                        <img src="/src/assets/laco-flor.webp" alt="Produto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     </div>
                                                     <div className="produto-info">
                                                         <p>Mais vendidos</p>
@@ -241,15 +241,15 @@ const Catalogo = () => {
                                 )}
                                 {maisVendidos.map((modelo, index) => (
                                     <div key={`vendido-${modelo.idModelo ? modelo.idModelo : `${modelo.nome}-${index}`}`} className={`carousel-item ${index === 0 && maisVendidos.length > 0 ? 'active' : ''}`}>
-                                        <div className="row g-3 justify-content-center" style={{padding: '24px 0'}}>
-                                            <div className="col-12 col-sm-6 col-md-4 d-flex justify-content-center" style={{padding: '0 12px'}}>
+                                        <div className="row g-3 justify-content-center" style={{ padding: '24px 0' }}>
+                                            <div className="col-12 col-sm-6 col-md-4 d-flex justify-content-center" style={{ padding: '0 12px' }}>
                                                 <div
                                                     className="produto-card"
-                                                    style={{boxShadow: '0 4px 24px rgba(0,0,0,0.12)', borderRadius: 16, background: '#fff', padding: 0, margin: 0, cursor: 'pointer'}}
+                                                    style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)', borderRadius: 16, background: '#fff', padding: 0, margin: 0, cursor: 'pointer' }}
                                                     onClick={() => navigate(`/produto?id=${modelo.idModelo}`)}
                                                 >
-                                                    <div style={{width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden'}}>
-                                                        <img src={getImage(modelo)} alt={getName(modelo)} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                                                    <div style={{ width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden' }}>
+                                                        <img src={getImage(modelo)} alt={getName(modelo)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     </div>
                                                     <div className="produto-info">
                                                         <p>{getName(modelo)} - {getCollection(modelo)}</p>
@@ -278,11 +278,11 @@ const Catalogo = () => {
                                     <div
                                         key={`card-${modelo.idModelo ? modelo.idModelo : `${modelo.nome}-${index}`}`}
                                         className="product-card"
-                                        style={{boxShadow: 'rgba(0, 0, 0, 0.12) 0px 4px 24px', borderRadius: '16px', background: 'rgb(255, 255, 255)', padding: '0px 0px 0px 0px', margin: '0px', cursor: 'pointer'}}
+                                        style={{ boxShadow: 'rgba(0, 0, 0, 0.12) 0px 4px 24px', borderRadius: '16px', background: 'rgb(255, 255, 255)', padding: '0px 0px 0px 0px', margin: '0px', cursor: 'pointer' }}
                                         onClick={() => navigate(`/produto?id=${modelo.idModelo}`)}
                                     >
-                                        <div style={{width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden'}}>
-                                            <img src={getImage(modelo)} alt={getName(modelo)} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                                        <div style={{ width: '180px', height: '180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', borderRadius: '16px 16px 0 0', overflow: 'hidden' }}>
+                                            <img src={getImage(modelo)} alt={getName(modelo)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </div>
                                         <div className="card-info">
                                             <p className="product-name">{getName(modelo)} - <span className="collection">{getCollection(modelo)}</span></p>
@@ -329,8 +329,9 @@ const Catalogo = () => {
                 {/* Footer */}
                 <footer style={{
                     width: '100%',
-                    background: 'linear-gradient(90deg, #f29dc3 0%, #a7c7e7 100%)',
-                    color: '#333',
+                    backgroundColor: '#b15d7b',
+                    // background: 'linear-gradient(90deg, #f29dc3 0%, #a7c7e7 100%)',
+                    color: '#fff',
                     padding: '32px 0 16px 0',
                     marginTop: 48,
                     textAlign: 'center',
@@ -341,19 +342,19 @@ const Catalogo = () => {
                         <div style={{ flex: 1, minWidth: 220, textAlign: 'left' }}>
                             <strong>Preciosos Laços by Camila Osterman</strong><br />
                             <span>Laços, acessórios e carinho para todas as idades.</span><br />
-                            <span style={{ fontSize: 14, color: '#555' }}>CNPJ: 33.970.501/0001-50</span>
+                            <span style={{ fontSize: 14, color: '#fff' }}>CNPJ: 33.970.501/0001-50</span>
                         </div>
                         <div style={{ flex: 1, minWidth: 220, textAlign: 'center', margin: '12px 0' }}>
-                            <a href="https://www.instagram.com/preciososlacosbycamilaosterman/" target="_blank" rel="noopener noreferrer" style={{ margin: '0 8px', color: '#9d4e6aff', textDecoration: 'none', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' }}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9d4e6aff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                            <a href="https://www.instagram.com/preciososlacosbycamilaosterman/" target="_blank" rel="noopener noreferrer" style={{ margin: '0 8px', color: '#fff', textDecoration: 'none', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
                                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="#fff" />
                                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                                     <line x1="17.5" y1="6.5" x2="17.5" y2="6.5" />
                                 </svg>
                                 Instagram
                             </a>
-                            <a href="mailto:contato@preciososlacos.com.br" style={{ margin: '0 8px', color: '#333', textDecoration: 'none', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' }}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                            <a href="mailto:contato@preciososlacos.com.br" style={{ margin: '0 8px', color: '#fff', textDecoration: 'none', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
                                     <rect x="2" y="4" width="20" height="16" rx="2" ry="2" fill="#fff" />
                                     <polyline points="22,6 12,13 2,6" />
                                 </svg>
@@ -361,7 +362,7 @@ const Catalogo = () => {
                             </a>
                         </div>
                         <div style={{ flex: 1, minWidth: 220, textAlign: 'right' }}>
-                            <span style={{ fontSize: 14, color: '#555' }}>© {new Date().getFullYear()} Preciosos Laços. Todos os direitos reservados.</span>
+                            <span style={{ fontSize: 14, color: '#fff' }}>© {new Date().getFullYear()} Preciosos Laços. Todos os direitos reservados.</span>
                         </div>
                     </div>
                 </footer>

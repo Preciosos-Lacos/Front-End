@@ -20,7 +20,7 @@ const HeaderHomeBootstrap = () => {
   return (
     <header className="header-home navbar navbar-expand-lg" role="banner">
       <div className="container-fluid">
-        <Link className="navbar-brand logo" to="/home" onClick={close} aria-label="Ir para o início">
+        <Link className="navbar-brand logo" to="/" onClick={close} aria-label="Ir para o início">
           <img src="/src/assets/logo_preciosos_lacos.png" alt="Logo Preciosos Laços" />
         </Link>
 
