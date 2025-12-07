@@ -20,6 +20,7 @@ import MinhasCompras from '../pages/MinhasCompras.jsx';
 import EsqueciSenha from '../pages/EsqueciSenha.jsx';
 import Dashboard from '../pages/Dashboard.jsx';
 import CadastroEndereco from '../pages/CadastroEndereco.jsx';
+import AtualizarEndereco from '../pages/AtualizarEndereco.jsx';
 import ScrollToTop from '../components/ScrollToTop.jsx';
 import Colecoes from '../pages/Colecoes.jsx';
 import CadastroBanner from '../pages/CadastroBanner.jsx';
@@ -47,7 +48,7 @@ export default function AppRoutes() {
         <Route path="/finalizar-compra" element={<Compra />} />
         <Route path="/pedido-confirmado" element={<PedidoConfirmado />} />
         <Route path="/pedido-entregue" element={<PedidoEntregue />} />
-        {/* <Route path="/pedido-entregue/:id" element={<PedidoEntregue />} /> */}
+        <Route path="/atualizar-endereco" element={<AtualizarEndereco />} />
         <Route path="/cadastro-endereco" element={<CadastroEndereco />} />
 
         {/* Admin / Management flows */}
