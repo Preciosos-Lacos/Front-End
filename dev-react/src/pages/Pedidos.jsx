@@ -39,16 +39,29 @@ const Pedidos = () => {
   // utilitários
   const parseDate = (str) => {
     if (!str) return null;
+    // ISO format
     if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
       const [y, m, d] = str.split('-');
       return new Date(Number(y), Number(m) - 1, Number(d));
     }
-    const d = new Date(str);
-    if (!isNaN(d)) return d;
+    // DD/MM/YYYY
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) {
       const [day, month, year] = str.split('/');
-      return new Date(`${year}-${month}-${day}`);
+      return new Date(Number(year), Number(month) - 1, Number(day));
     }
+    // DD MMM YYYY (ex: '30 nov. 2025')
+    if (/^\d{2} [a-zA-Zçãé.]+\. \d{4}$/.test(str)) {
+      const meses = {
+        'jan.': 0, 'fev.': 1, 'mar.': 2, 'abr.': 3, 'mai.': 4, 'jun.': 5,
+        'jul.': 6, 'ago.': 7, 'set.': 8, 'out.': 9, 'nov.': 10, 'dez.': 11
+      };
+      const [dia, mesAbv, ano] = str.split(' ');
+      const mesNum = meses[mesAbv.toLowerCase()] ?? 0;
+      return new Date(Number(ano), mesNum, Number(dia));
+    }
+    // Tenta converter direto
+    const d = new Date(str);
+    if (!isNaN(d)) return d;
     return null;
   };
 
@@ -95,13 +108,13 @@ const Pedidos = () => {
       }
 
       const data = await res.json();
-      // ordena por data (tenta vários campos)
+      // Log para conferir os valores das datas recebidas
+      console.log('Pedidos recebidos (datas):', data.map(p => p.dataPedido));
+      // ordena por dataPedido (prioritário)
       const sorted = Array.isArray(data)
         ? [...data].sort((a, b) => {
-            const ra = a.dataPedido || a.data_pedido || a.data || '';
-            const rb = b.dataPedido || b.data_pedido || b.data || '';
-            const da = parseDate(ra) || new Date(0);
-            const db = parseDate(rb) || new Date(0);
+            const da = parseDate(a.dataPedido) || new Date(0);
+            const db = parseDate(b.dataPedido) || new Date(0);
             return db.getTime() - da.getTime();
           })
         : [];
