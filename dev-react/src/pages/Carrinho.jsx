@@ -27,6 +27,28 @@ export default function Carrinho() {
 
   useEffect(()=>{
     let active = true;
+    // Verifica se há produtos para recompra no localStorage
+    const recomprar = localStorage.getItem('carrinho_recomprar');
+    if (recomprar) {
+      try {
+        const produtosRecomprar = JSON.parse(recomprar);
+        if (Array.isArray(produtosRecomprar) && produtosRecomprar.length > 0) {
+          setProdutos(produtosRecomprar);
+          setItens(produtosRecomprar.map(p => ({
+            idProduto: p.idProduto,
+            quantidade: p.quantidade,
+            preco: p.precoUnitario,
+            nome: p.nome,
+            modelo: p.modelo,
+            imagemPrincipal: p.imagemPrincipal,
+            caracteristicas: p.caracteristicas || []
+          })));
+          localStorage.removeItem('carrinho_recomprar');
+          setLoading(false);
+          return;
+        }
+      } catch {}
+    }
     async function load(){
       try {
         setLoading(true); setError(null);
@@ -34,21 +56,21 @@ export default function Carrinho() {
         if(!token){ setError('Faça login para visualizar o carrinho.'); return; }
         const payload = decodeJwt(token); const email = payload?.sub;
         // Buscar usuários para achar ID do usuário logado
-        const resUsers = await fetch(`${BASE_URL}/usuarios`,{ headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+        const resUsers = await fetch(`${BASE_URL}/usuarios`,{ headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` } });
         if(!resUsers.ok) throw new Error('Falha ao carregar usuários');
         const listaUsuarios = await resUsers.json();
         const u = listaUsuarios.find(x=> x.login === email);
         if(!u) throw new Error('Usuário não encontrado');
         if(!active) return; setUsuario(u);
         // Buscar carrinho básico (PedidoDTO)
-        const resCarrinho = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+        const resCarrinho = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` } });
         if(resCarrinho.status === 204){ if(active){ setPedido(null); setItens([]);} return; }
         if(!resCarrinho.ok) throw new Error('Falha ao buscar carrinho');
         const carrinho = await resCarrinho.json();
         if(active){ setPedido(carrinho); setItens(carrinho.itens || []); }
 
         // Buscar detalhes dos produtos do carrinho
-        const resDetalhes = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+        const resDetalhes = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` } });
         if(resDetalhes.ok && resDetalhes.status !== 204) {
           const lista = await resDetalhes.json();
           if(active) setProdutos(lista);

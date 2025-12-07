@@ -116,7 +116,13 @@ const Compra = () => {
     setFinalizing(true);
     setError(null);
     try {
-      const body = { idUsuario: checkout.idUsuario, formaPagamento: code, frete: checkout.frete ?? 15.0 };
+      const body = {
+        idUsuario: checkout.idUsuario,
+        formaPagamento: code,
+        frete: checkout.frete ?? 15.0,
+        idEndereco: checkout.endereco?.id,
+        cep: checkout.endereco?.cep
+      };
       const token = getAuthToken();
       const headers = { 'Content-Type':'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
       const res = await fetch(`${BASE_URL}/checkout/finalizar`, {

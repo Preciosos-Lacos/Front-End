@@ -83,9 +83,9 @@
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(160, 76, 110, 0.18);
     padding: 40px 32px 32px 32px;
-    min-width: 340px;
-    max-width: 400px;
-    max-height: 88vh;
+    width: auto;
+    /* max-width: 400px; */
+    height: auto;
     overflow-y: auto;
     position: relative;
     z-index: 10000;
@@ -236,7 +236,8 @@
 .modal .btn-confirm,
 .modal .btn-activate {
   width: 100%;
-  max-width: 340px;
+  width: auto;
+  height: auto;
   font-weight: 600;
   border: none;
   padding: 12px 0;
@@ -306,12 +307,20 @@
 }
 
 .modal .modal-content-fix {
-  background: white;
-  padding: 25px 30px;
-  border-radius: 15px;
-  width: 90%;
+  background: #fff;
+  padding: 32px 28px;
+  border-radius: 16px;
+  width: 100%;
   max-width: 400px;
+  min-width: 320px;
+  box-shadow: 0 20px 60px rgba(160, 76, 110, 0.18);
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  color: var(--modal-text);
+  font-family: 'Poppins', 'Montserrat', Arial, sans-serif;
   position: relative;
 }
 
