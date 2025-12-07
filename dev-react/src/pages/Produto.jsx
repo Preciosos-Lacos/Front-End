@@ -3,6 +3,8 @@ import '../styles/Produto.css';
 import Header from '../components/Header.jsx';
 import imgFallback from '../assets/laco-neon-verde.webp';
 import { useCart } from '../context/CartContext.jsx';
+import { useNavigate } from 'react-router-dom';
+import checkGif from '../assets/Success.gif';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -22,6 +24,9 @@ export default function Produto() {
   const [a11yEnabled, setA11yEnabled] = useState(false);
   const [colorModal, setColorModal] = useState(null); // { hex, descricao, top, left }
   const { recomputeFromItens } = useCart();
+  const navigate = useNavigate();
+  const [addedModal, setAddedModal] = useState(null); // { produto, pedido }
+  const [validationError, setValidationError] = useState(null);
 
   // preço final = preço base do modelo + soma dos detalhes escolhidos
   const precoFinal = useMemo(() => {
@@ -99,6 +104,12 @@ export default function Produto() {
     setPrecoExtra(total);
   }, [selecionados]);
 
+  const canAdd = Boolean(selecionados.cor);
+
+  useEffect(() => {
+    if (canAdd) setValidationError(null);
+  }, [canAdd]);
+
   function escolher(tipo, detalhe) {
     setSelecionados(prev => ({ ...prev, [tipo]: detalhe }));
   }
@@ -126,6 +137,11 @@ export default function Produto() {
   }
 
   async function criarProduto() {
+    // validação cliente: exige ao menos a cor
+    if (!selecionados.cor) {
+      setValidationError('Selecione a cor antes de adicionar ao carrinho.');
+      return;
+    }
     try {
       if (!modelo?.idModelo) { alert('Modelo não carregado'); return; }
       const token = getAuthToken();
@@ -160,10 +176,14 @@ export default function Produto() {
             if (pedido && Array.isArray(pedido.itens)) {
               recomputeFromItens(pedido.itens);
             }
+            // abrir modal informando que produto foi adicionado
+            setAddedModal({ produto: created, pedido });
+            setValidationError(null);
           }
         }
       } catch(e){ console.warn('Erro carrinho', e); }
-      alert('Produto criado e adicionado ao carrinho!');
+      // substituímos o alert por um modal — caso a adição ao carrinho não tenha ocorrido, ainda informamos via modal
+      if (!addedModal) setAddedModal(prev => prev ?? { produto: created, pedido: null });
     } catch (e) { console.error(e); alert(e.message || 'Erro ao criar produto'); }
   }
 
@@ -173,6 +193,13 @@ export default function Produto() {
     detalhes.forEach(d => { const cat = d.caracteristica?.descricao; if (map[cat] !== undefined) map[cat].push(d); });
     return map;
   }, [detalhes]);
+
+  // Fechar modal com ESC quando aberto
+  useEffect(() => {
+    function onKey(e) { if (e.key === 'Escape') setAddedModal(null); }
+    if (addedModal) window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); };
+  }, [addedModal]);
 
   return (
     <>
@@ -190,6 +217,7 @@ export default function Produto() {
               <button type="button" aria-label="Favorito" className={`btn-fav ${favorite ? 'active' : ''}`} disabled={loading||!!error||!modelo} onClick={toggleFavoriteBackend} style={{ marginLeft:12 }}>
                 <i className={`bi ${favorite ? 'bi-heart-fill' : 'bi-heart'}`}></i>
               </button>
+            
             </div>
             <div className="produto-bloco" style={{ marginTop:28 }}>
               {error && <p style={{ color:'red' }}>{error}</p>}
@@ -261,6 +289,7 @@ export default function Produto() {
                         );
                       })}
                     </div>
+                    {validationError && <div className="validation-msg" role="alert">{validationError}</div>}
                   </div>
                   {/* Descrição */}
                   <div className="personaliza-grupo descricao-grupo">
@@ -286,10 +315,33 @@ export default function Produto() {
             </div>
           </div>
         )}
+        {addedModal && (
+          <div className="added-modal-overlay" role="dialog" aria-modal="true" aria-label="Produto adicionado ao carrinho" onClick={() => setAddedModal(null)}>
+            <div className="added-modal-card" onClick={(e) => e.stopPropagation()}>
+              <div className="added-modal-body">
+                <img src={checkGif} alt="" aria-hidden="true" className="added-modal-gif" />
+                <div className="added-modal-message">
+                  <h3>Produto adicionado</h3>
+                  <p>O item foi adicionado ao seu carrinho.</p>
+                </div>
+                <div className="added-modal-actions">
+                  <button type="button" className="btn-continue" onClick={() => setAddedModal(null)}>Continuar comprando</button>
+                  <button type="button" className="btn-finalize" onClick={() => { setAddedModal(null); navigate('/carrinho'); }}>Ir para o carrinho</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );
 }
+
+// Fechar modal com ESC
+// adiciona listener quando modal estiver aberto
+// useEffect local para modal
+// Note: keep this outside render to avoid lint warnings — we add a short effect here
+// (Placed after component definition intentionally.)
 // Acessibilidade: teclado nas bolinhas de cor (Enter/Espaço ativam)
 function onColorKeyDown(e, detalhe) {
   if (e.key === 'Enter' || e.key === ' ') {
