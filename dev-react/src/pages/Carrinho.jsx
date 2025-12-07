@@ -298,7 +298,7 @@ export default function Carrinho() {
                             <span className="pill">Cor #{produto.cor}</span>
                           ) : null)}
                           {produto.acabamentoDescricao ? (
-                            <span className="pill">Acabamento: {produto.acabamentoDescricao}</span>
+                            <span className="pill">{produto.acabamentoDescricao}</span>
                           ) : (produto.acabamento !== undefined && produto.acabamento !== null ? (
                             <span className="pill">Acabamento #{produto.acabamento}</span>
                           ) : null)}
@@ -306,23 +306,7 @@ export default function Carrinho() {
                         <div className="item-bottom">
                           <div className="item-price">{formatBRL(group.total / quantidade)}</div>
                           <div className="item-controls">
-                            <div className="quantity-control">
-                              <button
-                                className="quantity-btn minus"
-                                type="button"
-                                title="Diminuir quantidade"
-                                disabled={changingQty === firstId}
-                                onClick={() => decrementarQuantidade(Number(group.produtos[group.produtos.length-1]?.idProduto ?? group.produtos[group.produtos.length-1]?.sku ?? firstId))}
-                              >−</button>
-                              <div className="quantity">{quantidade}</div>
-                              <button
-                                className="quantity-btn plus"
-                                type="button"
-                                title="Aumentar quantidade"
-                                disabled={changingQty === firstId}
-                                onClick={() => incrementarQuantidade(firstId)}
-                              >+</button>
-                            </div>
+                            
                             <button
                               className="remove-btn"
                               type="button"

@@ -1,12 +1,15 @@
+import React, { useState, useEffect } from 'react';
+import AlertModal from '../components/AlertModal';
+import ConfirmModal from '../components/ConfirmModal';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import '../styles/cadastroBanner.css';
+
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
 // Utilitário para obter o token JWT do localStorage
 function getAuthToken() {
   return localStorage.getItem('token');
 }
-import React, { useState, useEffect } from 'react';
-import AlertModal from '../components/AlertModal';
-import ConfirmModal from '../components/ConfirmModal';
-
 // Utilitário para converter arquivo em base64
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -16,9 +19,15 @@ function fileToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
-import { useNavigate } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
-import '../styles/cadastroBanner.css';
+
+// Função utilitária para excluir banner
+async function excluirBanner(id, token) {
+  const res = await fetch(`${API_BASE}/banners/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok && res.status !== 204) throw new Error('Erro ao excluir banner');
+}
 
 const CadastroBanner = () => {
   const navigate = useNavigate();
@@ -26,6 +35,7 @@ const CadastroBanner = () => {
   const [preview, setPreview] = useState('');
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -49,7 +59,7 @@ const CadastroBanner = () => {
   useEffect(() => {
     const token = getAuthToken();
     const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
-    
+
     // Load current banner
     fetch(`${API_BASE}/banners/ativo/home`, { headers })
       .then(res => res.ok ? res.json() : '')
@@ -62,7 +72,7 @@ const CadastroBanner = () => {
     fetch(`${API_BASE}/banners`)
       .then(res => res.ok ? res.json() : [])
       .then(data => setHistory(Array.isArray(data) ? data : []))
-      .catch(() => {});
+      .catch(() => { });
 
     // Load server banners if enabled
     loadServerBanners();
@@ -89,13 +99,11 @@ const CadastroBanner = () => {
       let imagemUrl = preview;
       const token = getAuthToken();
 
-      // Se há um arquivo novo, fazer upload para o servidor de uploads (dev)
+      // Upload da imagem se houver arquivo
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('titulo', bannerForm.titulo || 'banner');
-
-        // Upload para o endpoint correto do backend
         const resUpload = await fetch(`${API_BASE}/banners/upload`, {
           method: 'POST',
           headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -105,14 +113,23 @@ const CadastroBanner = () => {
         const uploadData = await resUpload.json();
         imagemUrl = uploadData.imagemUrl || uploadData.url || imagemUrl;
       }
-      // Enviar dados do banner
-      const payload = { ...bannerForm, imagemUrl };
-      // Remove ordem do payload se existir
+      // Cria o novo banner como ativo
+      const payload = { ...bannerForm, imagemUrl, ativo: true };
       if (payload.ordem !== undefined) delete payload.ordem;
       const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
       const res = await fetch(`${API_BASE}/banners`, { method: 'POST', headers, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setMessage({ text: 'Banner criado com sucesso!', type: 'success' });
+      const novoBanner = await res.json();
+
+      // Inativa todos os outros banners
+      const bannersRes = await fetch(`${API_BASE}/banners`, { headers });
+      const banners = bannersRes.ok ? await bannersRes.json() : [];
+      const inativarPromises = banners.filter(b => b.id !== novoBanner.id && b.ativo).map(b =>
+        fetch(`${API_BASE}/banners/${b.id}/ativo?ativo=false`, { method: 'PATCH', headers })
+      );
+      await Promise.all(inativarPromises);
+
+      setMessage({ text: 'Banner criado e ativado com sucesso!', type: 'success' });
       setFile(null);
       setPreview('');
       setBannerForm({
@@ -129,7 +146,7 @@ const CadastroBanner = () => {
       fetch(`${API_BASE}/banners`)
         .then(res => res.ok ? res.json() : [])
         .then(data => setHistory(Array.isArray(data) ? data : []))
-        .catch(() => {});
+        .catch(() => { });
     } catch (error) {
       setMessage({ text: 'Erro ao criar banner: ' + error.message, type: 'error' });
       console.error('Erro ao criar banner:', error);
@@ -151,7 +168,7 @@ const CadastroBanner = () => {
       if (!res.ok && res.status !== 204) throw new Error(`HTTP ${res.status}`);
       setMessage({ text: 'Banner excluído com sucesso!', type: 'success' });
       await loadServerBanners();
-      
+
       setTimeout(() => {
         setMessage({ text: '', type: '' });
       }, 3000);
@@ -168,12 +185,12 @@ const CadastroBanner = () => {
       const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
       const res = await fetch(`${BASE}/banners/${bannerId}/toggle`, { method: 'PATCH', headers });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setMessage({ 
-        text: `Banner ${currentStatus ? 'desativado' : 'ativado'} com sucesso!`, 
-        type: 'success' 
+      setMessage({
+        text: `Banner ${currentStatus ? 'desativado' : 'ativado'} com sucesso!`,
+        type: 'success'
       });
       await loadServerBanners();
-      
+
       setTimeout(() => {
         setMessage({ text: '', type: '' });
       }, 3000);
@@ -186,89 +203,12 @@ const CadastroBanner = () => {
   const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
-
-    // Validar tipo de arquivo
-    if (!selectedFile.type.startsWith('image/')) {
-      setMessage({ text: 'Por favor, selecione apenas arquivos de imagem.', type: 'error' });
-      return;
-    }
-
-    // Validar tamanho (máximo 5MB)
-    if (selectedFile.size > 5 * 1024 * 1024) {
-      setMessage({ text: 'O arquivo deve ter no máximo 5MB.', type: 'error' });
-      return;
-    }
-
     setFile(selectedFile);
-    setLoading(true);
-
     try {
-      // Converter para base64 para preview
       const base64 = await fileToBase64(selectedFile);
       setPreview(base64);
-      setMessage({ text: 'Imagem selecionada. Clique em "Salvar Banner" para aplicar.', type: 'info' });
     } catch (error) {
-      setMessage({ text: 'Erro ao processar a imagem. Tente novamente.', type: 'error' });
-      console.error('Erro ao processar arquivo:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!file && !preview) {
-      setMessage({ text: 'Selecione uma imagem primeiro.', type: 'error' });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      let bannerUrl = preview;
-
-      // Se há um arquivo novo, fazer upload para o servidor de uploads (dev)
-      if (file) {
-        try {
-          const body = await uploadFile(file);
-          // upload server returns an URL like /uploads/xxxx
-          if (body && body.url) bannerUrl = body.url;
-          else if (body && body.fileName) bannerUrl = `/uploads/${body.fileName}`;
-          else {
-            // fallback to base64 if upload didn't return expected shape
-            bannerUrl = await fileToBase64(file);
-          }
-        } catch (err) {
-          console.warn('Upload failed, falling back to base64 preview:', err);
-          bannerUrl = await fileToBase64(file);
-        }
-      }
-
-      // Salvar localmente (banner da home)
-      const success = saveBannerUrl(bannerUrl);
-      if (success) {
-        setCurrentBanner(bannerUrl);
-        setMessage({ text: 'Banner salvo com sucesso!', type: 'success' });
-        setFile(null);
-
-        // atualizar histórico local
-        try {
-          const h = getBannerHistory();
-          setHistory(h);
-        } catch (e) {
-          console.warn('Erro ao atualizar histórico local após salvar:', e);
-        }
-
-        // Limpar mensagem após 3 segundos
-        setTimeout(() => {
-          setMessage({ text: '', type: '' });
-        }, 3000);
-      } else {
-        setMessage({ text: 'Erro ao salvar o banner. Tente novamente.', type: 'error' });
-      }
-    } catch (error) {
-      setMessage({ text: 'Erro ao salvar o banner. Tente novamente.', type: 'error' });
-      console.error('Erro ao salvar banner:', error);
-    } finally {
-      setLoading(false);
+      setMessage({ text: 'Erro ao carregar imagem.', type: 'error' });
     }
   };
 
@@ -324,7 +264,7 @@ const CadastroBanner = () => {
       fetch(`${API_BASE}/banners`)
         .then(res => res.ok ? res.json() : [])
         .then(data => setHistory(Array.isArray(data) ? data : []))
-        .catch(() => {});
+        .catch(() => { });
       setTimeout(() => setMessage({ text: '', type: '' }), 2500);
     } catch (error) {
       setMessage({ text: 'Erro ao ativar banner do histórico.', type: 'error' });
@@ -504,12 +444,6 @@ const CadastroBanner = () => {
         message={alert.text}
         onClose={() => setAlert({ open: false, text: '', type: 'info' })}
       />
-      <ConfirmModal
-        isOpen={showRestoreConfirm}
-        message="Deseja realmente restaurar o banner padrão?"
-        onConfirm={confirmRestoreBanner}
-        onCancel={() => setShowRestoreConfirm(false)}
-      />
       <div className="admin-banner-container">
         <Sidebar />
         <div className="admin-banner-content">
@@ -520,6 +454,85 @@ const CadastroBanner = () => {
             </p>
           </header>
           <div className="admin-banner-grid">
+            {/* Histórico de Banners */}
+            <section className="admin-banner-section admin-banner-section--history">
+              <div className="admin-banner-history-header">
+                <h2 className="section-title">Banners Cadastrados</h2>
+                  <p>Veja todos os banners cadastrados. Clique para ativar ou use o botão para excluir.</p>
+              </div>
+              <div className="admin-banner-history-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', justifyContent: 'flex-start', padding: '16px 0', width: 'auto' }}>
+                {history && history.length > 0 ? history.map((item, idx) => {
+                  const isActive = currentBanner && item.imagemUrl === currentBanner;
+                  const filename = (item.imagemUrl || '').split('/').pop();
+                  return (
+                    <div key={item.id || idx} className={`admin-banner-history-card${isActive ? ' active' : ''}`}
+                      style={{
+                        background: isActive ? '#f8c4d6' : '#fff',
+                        border: isActive ? '2px solid #e6b6c7' : '1px solid #eee',
+                        borderRadius: 16,
+                        boxShadow: '0 2px 8px #e6b6c733',
+                        width: 260,
+                        padding: 16,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        position: 'relative',
+                        transition: 'box-shadow 0.2s',
+                      }}>
+                      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+                        <img src={getBannerImageSrc(item.imagemUrl)} alt={`Banner ${idx + 1}`} style={{ maxWidth: '220px', maxHeight: '120px', borderRadius: 12, boxShadow: isActive ? '0 0 0 2px #e6b6c7' : '0 0 0 1px #eee' }} />
+                      </div>
+                      <div style={{ width: '100%', textAlign: 'center', fontWeight: 600, fontSize: '1.05rem', marginBottom: 4 }}>{item.titulo || filename || 'Banner'}</div>
+                      <div style={{ width: '100%', textAlign: 'center', color: '#888', fontSize: '0.75rem', marginBottom: 8, display: 'none' }}>{filename}</div>
+                      {isActive && <span style={{ position: 'absolute', top: 8, right: 12, background: 'green', color: '#fff', borderRadius: 8, padding: '2px 10px', fontWeight: 600, fontSize: '0.95rem' }}>Ativo</span>}
+                      <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+                        <button
+                          className="admin-banner-btn admin-banner-btn--danger"
+                          style={{ padding: '6px 16px', borderRadius: 8, fontWeight: 500, fontSize: '0.98rem', background: 'rgb(188 102 134)', color: '#fff', border: 'none', cursor: 'pointer' }}
+                          title="Excluir banner"
+                          onClick={() => setDeleteConfirmId(item.id)}
+                        >Excluir</button>
+                        {/* Modal de confirmação de exclusão */}
+                        <ConfirmModal
+                          isOpen={!!deleteConfirmId}
+                          title="Confirmar exclusão"
+                          message="Tem certeza que deseja excluir este banner?"
+                          onConfirm={async () => {
+                            const token = getAuthToken();
+                            try {
+                              await excluirBanner(deleteConfirmId, token);
+                              setMessage({ text: 'Banner excluído com sucesso!', type: 'success' });
+                              // Atualiza a lista de banners imediatamente
+                              const headers = token ? { Authorization: `Bearer ${token}` } : {};
+                              const res = await fetch(`${API_BASE}/banners`, { headers });
+                              const data = res.ok ? await res.json() : [];
+                              setHistory(Array.isArray(data) ? data : []);
+                            } catch (error) {
+                              setMessage({ text: 'Erro ao excluir banner: ' + error.message, type: 'error' });
+                            } finally {
+                              setDeleteConfirmId(null);
+                              setTimeout(() => {
+                                setMessage({ text: '', type: '' });
+                              }, 3000);
+                            }
+                          }}
+                          onCancel={() => setDeleteConfirmId(null)}
+                        />
+                        <button
+                          className="admin-banner-btn admin-banner-btn--primary"
+                          style={{ padding: '6px 16px', borderRadius: 8, fontWeight: 500, fontSize: '0.98rem', background: '#f8c4d6', color: '#6d2943', border: 'none', cursor: 'pointer' }}
+                          title="Ativar banner na Home"
+                          onClick={() => handleUseHistory(item)}
+                        >Ativar</button>
+                      </div>
+                    </div>
+                  );
+                }) : (
+                  <div style={{ padding: '1rem', color: '#666' }}>Nenhum banner cadastrado ainda.</div>
+                )}
+              </div>
+            </section>
+
             {/* Cadastro e Preview */}
             <section className="admin-banner-section admin-banner-section--cadastro">
               <h2 className="section-title">Cadastrar Novo Banner</h2>
@@ -566,19 +579,6 @@ const CadastroBanner = () => {
                     <label>Link de Destino</label>
                     <input type="url" name="linkDestino" value={bannerForm.linkDestino} onChange={handleFormChange} placeholder="URL ao clicar" />
                   </div>
-                  {/* Campo de ordem removido do formulário */}
-                  <div className="form-group">
-                    <label>Ativo</label>
-                    <input type="checkbox" name="ativo" checked={bannerForm.ativo} onChange={handleFormChange} />
-                  </div>
-                  <div className="form-group">
-                    <label>Data Início</label>
-                    <input type="date" name="dataInicio" value={bannerForm.dataInicio} onChange={handleFormChange} />
-                  </div>
-                  <div className="form-group">
-                    <label>Data Fim</label>
-                    <input type="date" name="dataFim" value={bannerForm.dataFim} onChange={handleFormChange} />
-                  </div>
                 </div>
                 <div className="admin-banner-actions">
                   <button type="button" className="admin-banner-btn admin-banner-btn--success" onClick={handleCreateBanner} disabled={loading || (!file && !preview)}>
@@ -587,48 +587,15 @@ const CadastroBanner = () => {
                   {(file || preview !== currentBanner) && (
                     <button type="button" className="admin-banner-btn admin-banner-btn--secondary" onClick={handleCancel} disabled={loading}>Cancelar</button>
                   )}
-                  <button type="button" className="admin-banner-btn admin-banner-btn--danger" onClick={handleReset} disabled={loading}>Restaurar Padrão</button>
                 </div>
               </form>
             </section>
-
-            {/* Histórico de Banners */}
-            <section className="admin-banner-section admin-banner-section--history">
-              <div className="admin-banner-history-header">
-                <h2 className="section-title">Histórico de Banners</h2>
-                <p>Visualize e reutilize banners antigos já usados. Clique em um banner para torná-lo o atual na Home.</p>
-              </div>
-              <div className="admin-banner-history-grid">
-                {history && history.length > 0 ? history.map((item, idx) => {
-                  const isActive = currentBanner && item.imagemUrl === currentBanner;
-                  const filename = (item.imagemUrl || '').split('/').pop();
-                  return (
-                    <div key={item.id || idx} className={`admin-banner-history-item${isActive ? ' active' : ''}`}
-                      title="Clique para ativar este banner na Home"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleUseHistory(item)}>
-                      <div className="admin-banner-history-thumb">
-                        <img src={getBannerImageSrc(item.imagemUrl)} alt={`Banner ${idx + 1}`} />
-                        {isActive && <span className="admin-banner-badge">Ativo</span>}
-                      </div>
-                      <div className="admin-banner-history-meta">
-                        <div className="admin-banner-filename" title={filename}>{filename || 'preview'}</div>
-                        <div className="admin-banner-savedat">{item.titulo || ''}</div>
-                      </div>
-                    </div>
-                  );
-                }) : (
-                  <div style={{ padding: '1rem', color: '#666' }}>Nenhum banner cadastrado ainda.</div>
-                )}
-              </div>
-            </section>
-            {/* Removido: Banners do Servidor */}
           </div>
         </div>
       </div>
     </>
   );
-};
+}
 
 export default CadastroBanner;
 

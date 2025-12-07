@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header.jsx';
 import ModalAlert from '../components/ModalAlert.jsx';
+import { Link } from 'react-router-dom';
 import '../styles/perfil.css';
 
 const BASE_URL = "http://localhost:8080";
@@ -444,11 +445,30 @@ export default function Perfil() {
                   <ul className="lista-enderecos">
                     {enderecos.map((end, idx) => (
                       <li key={end.idEndereco || idx} className="endereco-item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8,fontSize: '1rem' }}>
                           <span>{end.logradouro}, {end.numero} - {end.bairro}, {end.localidade} - {end.uf} | CEP: {end.cep}</span>
                           {end.complemento && <span> Complemento: {end.complemento}</span>}
                           {end.padrao && <span className="endereco-padrao"> Principal</span>}
                         </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <Link
+                            to={`/atualizar-endereco?id=${end.idEndereco}`}
+                            className="btn-editar-endereco"
+                            title="Editar endereço"
+                            aria-label="Editar endereço"
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#3A3A3A',
+                              cursor: 'pointer',
+                              fontSize: '1.3rem',
+                              padding: 0,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <i className="bi bi-pencil"></i>
+                          </Link>
                         <button
                           className="btn-excluir-endereco"
                           title="Excluir endereço"
@@ -467,18 +487,19 @@ export default function Perfil() {
                         >
                           <i className="bi bi-trash"></i>
                         </button>
+                      </div>
                       </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>Nenhum endereço cadastrado.</p>
+                ))}
+              </ul>
+            ) : (
+            <p>Nenhum endereço cadastrado.</p>
                 )}
-                <a href="/cadastro-endereco" className="btn btn-primary" style={{ marginTop: 12 }}>Adicionar novo endereço</a>
-              </>
+            <a href="/cadastro-endereco" className="btn btn-primary" style={{ marginTop: 12 }}>Adicionar novo endereço</a>
+          </>
             )}
-          </div>
-        </section>
-      </main>
+        </div>
+      </section>
+    </main >
     </>
   );
 }
