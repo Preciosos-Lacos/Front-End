@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Modal.css';
 
-const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => {
+const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, modelosDisponiveis = [], onSubmit }) => {
 
   const [form, setForm] = useState({
     nome: '',
@@ -13,37 +13,30 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
     imagemBase64: ''
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const modelosDisponiveis = [
-    'Laço Padrão',
-    'Laço de Festa',
-    'Laço Infantil',
-    'Laço Princesa',
-    'Laço Piscina',
-    'Laço Silicone'
-  ];
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    if (type === 'edit' && tipoData) {
+    if (!isOpen) return;
+
+    if (type === "edit" && tipoData) {
       setForm({
-        nome: tipoData.nome || '',
-        descricao: tipoData.descricao || '',
-        preco: tipoData.preco || '',
-        modelos: Array.isArray(tipoData.modelos) ? tipoData.modelos : [],
-        imagem: '',
-        previewImagem: tipoData.imagem || '',
-        imagemBase64: ''
+        nome: tipoData.nome || "",
+        descricao: tipoData.descricao || "",
+        preco: tipoData.preco || "",
+        modelos: tipoData.modelos || [],
+        imagem: "",
+        previewImagem: tipoData.imagem || "",
+        imagemBase64: ""
       });
-    } else if (type === 'create') {
+    } else if (type === "create") {
       setForm({
-        nome: '',
-        descricao: '',
-        preco: '',
+        nome: "",
+        descricao: "",
+        preco: "",
         modelos: [],
-        imagem: '',
-        previewImagem: '',
-        imagemBase64: ''
+        imagem: "",
+        previewImagem: "",
+        imagemBase64: ""
       });
     }
   }, [isOpen, type, tipoData]);
@@ -52,12 +45,12 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const toggleModelo = (m) => {
+  const toggleModelo = (idModelo) => {
     setForm(prev => ({
       ...prev,
-      modelos: prev.modelos.includes(m)
-        ? prev.modelos.filter(x => x !== m)
-        : [...prev.modelos, m]
+      modelos: prev.modelos.includes(idModelo)
+        ? prev.modelos.filter(i => i !== idModelo)
+        : [...prev.modelos, idModelo]
     }));
   };
 
@@ -81,13 +74,13 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
   };
 
   const handleSubmit = () => {
-    if (type === 'delete') {
+    if (type === "delete") {
       onSubmit();
       return;
     }
 
     if (!form.nome) {
-      alert('Preencha o nome do tipo');
+      alert("Preencha o nome do tipo");
       return;
     }
 
@@ -95,12 +88,17 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
       nome: form.nome,
       descricao: form.descricao,
       preco: Number(form.preco),
-      modelos: form.modelos,
+      modelosIds: form.modelos,      
       imagemBase64: form.imagemBase64
     });
   };
 
   if (!isOpen) return null;
+
+  // === FILTRAGEM DOS MODELOS ===
+  const modelosFiltrados = modelosDisponiveis.filter(m =>
+    m.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="modal">
@@ -109,26 +107,26 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
         <span className="close" onClick={onClose}>&times;</span>
 
         <h2 className="tituloPopUp">
-          {type === 'create'
-            ? 'Cadastro De Tipo de Laço'
-            : type === 'edit'
-              ? 'Editar Tipo de Laço'
+          {type === "create"
+            ? "Cadastro De Tipo de Laço"
+            : type === "edit"
+              ? "Editar Tipo de Laço"
               : `Você Deseja Deletar: "${tipoData?.nome || ''}"?`}
         </h2>
 
-        {(type === 'create' || type === 'edit') && (
+        {(type === "create" || type === "edit") && (
           <>
             <input
               type="text"
               placeholder="Nome do Tipo:"
               value={form.nome}
-              onChange={e => handleChange('nome', e.target.value)}
+              onChange={e => handleChange("nome", e.target.value)}
             />
 
             <textarea
               placeholder="Descrição:"
               value={form.descricao}
-              onChange={e => handleChange('descricao', e.target.value)}
+              onChange={e => handleChange("descricao", e.target.value)}
             />
 
             <div className="valor-box">
@@ -136,31 +134,43 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
               <input
                 type="number"
                 value={form.preco}
-                onChange={e => handleChange('preco', e.target.value)}
+                onChange={e => handleChange("preco", e.target.value)}
               />
             </div>
 
+            {/* MODELOS DO BANCO */}
             <h3 className="titulo">Modelos Associados:</h3>
 
-            <div className="checkboxList">
-              {modelosDisponiveis
-                .filter(m => m.toLowerCase().includes(searchTerm.toLowerCase()))
-                .map(m => (
-                  <div key={m}>
+            <input
+              type="text"
+              className="searchInput"
+              placeholder="Pesquisar modelo..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+            <div className="modelos-lista-container-a">
+              {modelosFiltrados.map(modelo => {
+                const id = Number(modelo.id ?? modelo.idModelo); // garante número e id correto
+
+                return (
+                  <div key={id} className="modelo-item">
                     <input
                       type="checkbox"
-                      id={`mt-${m}`}
-                      checked={form.modelos.includes(m)}
-                      onChange={() => toggleModelo(m)}
+                      id={`modelo${id}`}
+                      checked={form.modelos.includes(id)}
+                      onChange={() => toggleModelo(id)}
                     />
-                    <label htmlFor={`mt-${m}`}>{m}</label>
+                    <label htmlFor={`modelo${id}`}>{modelo.nome}</label>
                   </div>
-                ))}
+                );
+              })}
             </div>
 
+
+            {/* FOTO */}
             <h3 className="titulo">Foto do Tipo:</h3>
 
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               <input type="file" accept="image/*" onChange={handleImagem} />
               {form.imagem && <small>{form.imagem}</small>}
             </div>
@@ -169,17 +179,23 @@ const ModalTipoLaco = ({ isOpen, onClose, type, tipoData = null, onSubmit }) => 
               <img
                 src={form.previewImagem}
                 alt="Preview"
-                style={{ width: 120, height: 120, marginTop: 10, borderRadius: 10, objectFit: 'cover' }}
+                style={{
+                  width: 120,
+                  height: 120,
+                  marginTop: 10,
+                  borderRadius: 10,
+                  objectFit: "cover"
+                }}
               />
             )}
 
             <button id="fecharModal" onClick={handleSubmit}>
-              {type === 'create' ? 'Cadastrar Tipo' : 'Atualizar Tipo'}
+              {type === "create" ? "Cadastrar Tipo" : "Atualizar Tipo"}
             </button>
           </>
         )}
 
-        {type === 'delete' && (
+        {type === "delete" && (
           <>
             <button id="fecharModalExcluir" onClick={handleSubmit}>Deletar Tipo</button>
             <button id="fecharModalCancelar" onClick={onClose}>Cancelar</button>

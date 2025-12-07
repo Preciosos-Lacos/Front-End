@@ -21,8 +21,8 @@ function decodeJwt(token) {
 
 export default function Perfil() {
   const [modalAlert, setModalAlert] = useState({ isOpen: false, title: '', message: '', confirmText: 'OK', onConfirm: null });
-    const [enderecos, setEnderecos] = useState([]);
-    const [loadingEnderecos, setLoadingEnderecos] = useState(true);
+  const [enderecos, setEnderecos] = useState([]);
+  const [loadingEnderecos, setLoadingEnderecos] = useState(true);
   const [campos, setCampos] = useState({
     nome: "",
     telefone: "",
@@ -42,6 +42,8 @@ export default function Perfil() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [usuario, setUsuario] = useState(null);
+  const [fotoBase64, setFotoBase64] = useState(null);
+
 
   useEffect(() => {
     let active = true;
@@ -105,6 +107,10 @@ export default function Perfil() {
           email: userData?.login || "",
           senha: "********",
         });
+
+        if (userData.foto) {
+          setFotoBase64(userData.foto);
+        }
       } catch (e) {
         console.error(e);
         if (active) setError(e.message || "Erro ao carregar perfil");
@@ -117,6 +123,55 @@ export default function Perfil() {
       active = false;
     };
   }, []);
+
+  async function handleTrocarFoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64 = reader.result.split(",")[1];
+      setFotoBase64(base64);
+
+      try {
+        const token = getAuthToken();
+        if (!token) return;
+
+        const res = await fetch(`${BASE_URL}/usuarios/${usuario.idUsuario}/foto`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ imagemBase64: base64 })
+        });
+
+        if (!res.ok) {
+          throw new Error(await res.text());
+        }
+
+        setModalAlert({
+          isOpen: true,
+          title: "Sucesso",
+          message: "Foto atualizada com sucesso!",
+          confirmText: "OK",
+          onConfirm: () => setModalAlert({ ...modalAlert, isOpen: false })
+        });
+
+      } catch (err) {
+        setModalAlert({
+          isOpen: true,
+          title: "Erro",
+          message: "Não foi possível atualizar sua foto: " + err.message,
+          confirmText: "OK",
+          onConfirm: () => setModalAlert({ ...modalAlert, isOpen: false })
+        });
+      }
+    };
+
+    reader.readAsDataURL(file);
+  }
+
 
   // Função para excluir endereço (deve estar no escopo do componente)
   async function handleDeleteEndereco(idEndereco) {
@@ -266,14 +321,33 @@ export default function Perfil() {
       <main data-scroll-container>
         <Header showOffcanvas={true} />
         <section className="perfil-section">
-          <div style={{flex:'1 1 340px',minWidth:410,maxWidth:420,display:'flex',flexDirection:'column',alignItems:'center'}}>
-            <div className="foto-container">  
-              <img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXMzMz////JycnNzc3n5+f39/fy8vL8/Pzp6enU1NTs7Oz5+fnQ0NDZ2dnf39/09PTgONpwAAAE/ElEQVR4nO2cCZaDIBBEI64o6v1vOzoZJ+ISFZpQSeofII8KvQvcboQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEK2UQ9iL0UcpdJUt11WFyN11rU6TT9Hp1Kmq/oysSn7qjOfIFLd2qxJ9miy9vbeIpXO+l15d/pMv7FGXe1v32wjKx17oW4oXS19b4+yesN9VGl2Vt+vxix9N43dGfu0bLWLveRLmPqivpHaxF72eXTuIDBJ8neJOKq94oFzyvY9nDFz1DeSxV78GSoPgUlSxV7+IamfwEFiGlvCAb4C0XdR+fjgRAYcblQnIDBJOlyJrYjAJGljC9nDuObBJSVqdeNSqm1Tx5ayiUiUmYB0RX21m3hGg1iiytnoSBFbzhqpODoBF0+VW8O0T47miTK5fg5Yz59Kb+GwiVgluLQXjmB5YhFAIVQ41QEEJglQThQtZx4gtVHycWYkjy3rQRgjBYo1gYwUyUyPvqC50scWNpEGEpgkKEk/RLq/g+KI8jXpBEhtqmQ7wzk1SKgJUbLdQSncwuT7EZScLzVEXFPGlvZHMIFJElvaH1RIhVQYHyqkQnyFn5/xJT862aBUbR9feX9B9xRqEIVzCOzzpxjh0kVsYf98/DTxCybCoRwRxg1D5fwmtqwHX/B17eO/kH7BV26hg6U2YGfbApw2iS1pwcefGJJPGECp4o64J4J54YhscQpTks7QkuOaEioXTkgWNiitr00ql/YLlCMKC8TsFNNGb+PFQyGFuNcQhXoMpJ5ihcRgEfM6yYRAtEGNMhPeEiEFKj1flZ+hWiaK8gqBrsv5urzuyVp3ZHVTI6SN9tcsrfDXOd9WtzomM/acReR5m9JTvT1vBVwv5C+u4/95dB/xVRClZ2Fl/l8rp3hTWG6nHj9RxNJoO1xpm5P3yx/Wj8e5wt4uRjONZWPKXAs4lbH3aVEd5RHccV2gLdxItedNtVhWouu/58X9lNp+vWQxeTircaVvM6fmr/TG3aHM6o8+filq/UqUMjsDkReObvZbiNosV2G6qtlLHmVTdeuL6UsHf/IHhuJZXdZvVCGmzYr1qvMia7fu3T+rF17TdqgD59qa5CpldDfIvC++HMR1evPBvaNMWrzAUI9vi+4laKWOn4Y8LPjC3yzdiwJzysxtGVaNtEcf+EWJk+WYS4IeaoRT5WzYBvLIB2fruDhNUumTByQXPx3QFy+d78q7889aKnPlhb5wZ8GujtKaTJ8RqUxbXGu3Qg3jHMahZdHpp26jhmRZXf+6Gmig6vZ4SbmT2EdS3VW5S7cc5umT81FmvaC+7rQ26X9KvKVGt/8VgAMhoo33PHuoZOoq+6WqC99PxgFcMdR9bVfk7TTU+UNXpD8SBzkw44dwtyj2UJkcsk+eKf/nEOWpJDdR9BSCFJJfigPeN/BBsD5FyxQTYpsIuoWCmxju3QtfhJrhYEfx/ZGq3cK9KOCL0BnUcJd+/BH5YAMbZ0ZEYo0Jd4HSn0aidEM2UhEzhTZSGTNFNlKR4+CoFduEd+UG2PraeDfC4G4o4IgK2w0HR/RViFt1T/hW39jZcMQzI8IHGu9QA9w5TXh2UPCh1D+Yoo261/gOv9GThX/dhjgotfF9pSf2+k9AhVSIDxVSIT5USIX4UCEV4kOFVIgPFVIhPlRIhfhQIRXiQ4VUiA8VUiE+VEiF+FAhFeJDhVSIz9cr/AF79V2yoD2oxQAAAABJRU5ErkJggg==' className="foto-perfil" alt="Foto de perfil" />
-            <div className="foto-overlay">
-              <i className="bi bi-pencil-fill"></i>
-              <span>Editar</span>
+          <div style={{ flex: '1 1 340px', minWidth: 410, maxWidth: 420, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <input
+              type="file"
+              accept="image/*"
+              id="inputFoto"
+              style={{ display: "none" }}
+              onChange={handleTrocarFoto}
+            />
+            <div className="foto-container" onClick={() => document.getElementById('inputFoto').click()}>
+              <img
+                src={
+                  fotoBase64
+                    ? `data:image/png;base64,${fotoBase64}`
+                    : usuario?.foto
+                      ? `data:image/png;base64,${usuario.foto}`
+                      : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXMzMz////JycnNzc3n5+f39/fy8vL8/Pzp6enU1NTs7Oz5+fnQ0NDZ2dnf39/09PTgONpwAAAE/ElEQVR4nO2cCZaDIBBEI64o6v1vOzoZJ+ISFZpQSeofII8KvQvcboQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEK2UQ9iL0UcpdJUt11WFyN11rU6TT9Hp1Kmq/oysSn7qjOfIFLd2qxJ9miy9vbeIpXO+l15d/pMv7FGXe1v32wjKx17oW4oXS19b4+yesN9VGl2Vt+vxix9N43dGfu0bLWLveRLmPqivpHaxF72eXTuIDBJ8neJOKq94oFzyvY9nDFz1DeSxV78GSoPgUlSxV7+IamfwEFiGlvCAb4C0XdR+fjgRAYcblQnIDBJOlyJrYjAJGljC9nDuObBJSVqdeNSqm1Tx5ayiUiUmYB0RX21m3hGg1iiytnoSBFbzhqpODoBF0+VW8O0T47miTK5fg5Yz59Kb+GwiVgluLQXjmB5YhFAIVQ41QEEJglQThQtZx4gtVHycWYkjy3rQRgjBYo1gYwUyUyPvqC50scWNpEGEpgkKEk/RLq/g+KI8jXpBEhtqmQ7wzk1SKgJUbLdQSncwuT7EZScLzVEXFPGlvZHMIFJElvaH1RIhVQYHyqkQnyFn5/xJT862aBUbR9feX9B9xRqEIVzCOzzpxjh0kVsYf98/DTxCybCoRwRxg1D5fwmtqwHX/B17eO/kH7BV26hg6U2YGfbApw2iS1pwcefGJJPGECp4o64J4J54YhscQpTks7QkuOaEioXTkgWNiitr00ql/YLlCMKC8TsFNNGb+PFQyGFuNcQhXoMpJ5ihcRgEfM6yYRAtEGNMhPeEiEFKj1flZ+hWiaK8gqBrsv5urzuyVp3ZHVTI6SN9tcsrfDXOd9WtzomM/acReR5m9JTvT1vBVwv5C+u4/95dB/xVRClZ2Fl/l8rp3hTWG6nHj9RxNJoO1xpm5P3yx/Wj8e5wt4uRjONZWPKXAs4lbH3aVEd5RHccV2gLdxItedNtVhWouu/58X9lNp+vWQxeTircaVvM6fmr/TG3aHM6o8+filq/UqUMjsDkReObvZbiNosV2G6qtlLHmVTdeuL6UsHf/IHhuJZXdZvVCGmzYr1qvMia7fu3T+rF17TdqgD59qa5CpldDfIvC++HMR1evPBvaNMWrzAUI9vi+4laKWOn4Y8LPjC3yzdiwJzysxtGVaNtEcf+EWJk+WYS4IeaoRT5WzYBvLIB2fruDhNUumTByQXPx3QFy+d78q7889aKnPlhb5wZ8GujtKaTJ8RqUxbXGu3Qg3jHMahZdHpp26jhmRZXf+6Gmig6vZ4SbmT2EdS3VW5S7cc5umT81FmvaC+7rQ26X9KvKVGt/8VgAMhoo33PHuoZOoq+6WqC99PxgFcMdR9bVfk7TTU+UNXpD8SBzkw44dwtyj2UJkcsk+eKf/nEOWpJDdR9BSCFJJfigPeN/BBsD5FyxQTYpsIuoWCmxju3QtfhJrhYEfx/ZGq3cK9KOCL0BnUcJd+/BH5YAMbZ0ZEYo0Jd4HSn0aidEM2UhEzhTZSGTNFNlKR4+CoFduEd+UG2PraeDfC4G4o4IgK2w0HR/RViFt1T/hW39jZcMQzI8IHGu9QA9w5TXh2UPCh1D+Yoo261/gOv9GThX/dhjgotfF9pSf2+k9AhVSIDxVSIT5USIX4UCEV4kOFVIgPFVIhPlRIhfhQIRXiQ4VUiA8VUiE+VEiF+FAhFeJDhVSIz9cr/AF79V2yoD2oxQAAAABJRU5ErkJggg=='
+
+                }
+                className="foto-perfil"
+                alt="Foto de perfil"
+              />
+              <div className="foto-overlay">
+                <i className="bi bi-pencil-fill"></i>
+                <span>Editar</span>
+              </div>
             </div>
-            </div>
+
             <div className="form-perfil">
               {/* ...dados pessoais... */}
               <div className="campo">
@@ -369,8 +443,8 @@ export default function Perfil() {
                 {enderecos.length > 0 ? (
                   <ul className="lista-enderecos">
                     {enderecos.map((end, idx) => (
-                      <li key={end.idEndereco || idx} className="endereco-item" style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8}}>
-                        <div style={{display:'flex',alignItems:'center',gap:8}}>
+                      <li key={end.idEndereco || idx} className="endereco-item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span>{end.logradouro}, {end.numero} - {end.bairro}, {end.localidade} - {end.uf} | CEP: {end.cep}</span>
                           {end.complemento && <span> Complemento: {end.complemento}</span>}
                           {end.padrao && <span className="endereco-padrao"> Principal</span>}
@@ -399,7 +473,7 @@ export default function Perfil() {
                 ) : (
                   <p>Nenhum endereço cadastrado.</p>
                 )}
-                <a href="/cadastro-endereco" className="btn btn-primary" style={{marginTop:12}}>Adicionar novo endereço</a>
+                <a href="/cadastro-endereco" className="btn btn-primary" style={{ marginTop: 12 }}>Adicionar novo endereço</a>
               </>
             )}
           </div>

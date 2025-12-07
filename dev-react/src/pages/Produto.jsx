@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import '../styles/Produto.css';
 import Header from '../components/Header.jsx';
 import imgFallback from '../assets/laco-neon-verde.webp';
+import { useCart } from '../context/CartContext.jsx';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -20,6 +21,7 @@ export default function Produto() {
   const [precoExtra, setPrecoExtra] = useState(0);
   const [a11yEnabled, setA11yEnabled] = useState(false);
   const [colorModal, setColorModal] = useState(null); // { hex, descricao, top, left }
+  const { recomputeFromItens } = useCart();
 
   // preço final = preço base do modelo + soma dos detalhes escolhidos
   const precoFinal = useMemo(() => {
@@ -150,7 +152,15 @@ export default function Produto() {
             headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
             body: JSON.stringify({ idUsuario: usuario.idUsuario, idProduto: created.idProduto })
           });
-          if (!cartRes.ok) console.warn('Falha ao adicionar ao carrinho');
+          if (!cartRes.ok) {
+            console.warn('Falha ao adicionar ao carrinho');
+          } else {
+            // atualiza contador global do carrinho com base nos itens retornados
+            const pedido = await cartRes.json().catch(() => null);
+            if (pedido && Array.isArray(pedido.itens)) {
+              recomputeFromItens(pedido.itens);
+            }
+          }
         }
       } catch(e){ console.warn('Erro carrinho', e); }
       alert('Produto criado e adicionado ao carrinho!');

@@ -55,6 +55,29 @@
     box-sizing: border-box;
 }
 
+/* Badge do carrinho (desktop) */
+.desktop-nav .cart-link {
+    position: relative;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -4px;            /* sobe a bolinha para não descer o texto */
+    right: -10px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #e53935;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px #fff;
+}
+
 .app-brand {
     flex-shrink: 0;
     display: flex;
