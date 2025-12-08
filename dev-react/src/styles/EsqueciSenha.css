@@ -106,16 +106,17 @@
 .esqueci-senha-bg .login #email,
 .esqueci-senha-bg .login #novaSenha,
 .esqueci-senha-bg .login #confirmarSenha {
-    width: 260px;
-    height: 40px;
-    padding: 10px;
+    width: 310px;
+    height: 44px;
+    padding: 10px 14px;
     border: 1.5px solid var(--rosa);
     border-radius: 12px;
     margin: 12px 0 0 0;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 15px;
     outline: none;
     background: #fff;
+    box-sizing: border-box;
 }
 
 .esqueci-senha-bg .input-group {

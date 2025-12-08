@@ -1,3 +1,461 @@
+@media (max-width: 899px) {
+    .busca-filtros {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+    }
+    .filtros-grid {
+        display: block !important;
+        width: 100%;
+        max-width: 100vw;
+    }
+    .filtros-grid .filtro-col {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 16px 0 !important;
+        padding: 0 !important;
+    }
+    .filtros-grid .filtro-col:last-child {
+        margin-bottom: 0 !important;
+    }
+    .filtros-grid .filtro-label {
+        text-align: center;
+        margin-bottom: 6px;
+    }
+    .filtros-grid .form-select {
+        max-width: 100%;
+        width: 100%;
+    }
+    .busca-compras {
+        max-width: 100%;
+    }
+    .busca-compras .input-group {
+        width: 100%;
+    }
+}
+/* --- NOVO MENU DE BUSCA E FILTROS --- */
+.minhas-compras-barra {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    padding: 18px 18px 18px 18px;
+    margin-bottom: 32px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px #0001;
+}
+
+.busca-filtros {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    align-items: stretch;
+}
+
+.filtros-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    align-items: stretch;
+}
+
+.filtros-grid .filtro-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    align-items: stretch;
+}
+
+.filtros-grid .filtros-row-selects {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 14px;
+    width: 100%;
+    margin: 0;
+}
+
+.filtros-grid .filtro-label {
+    text-align: left;
+    margin-bottom: 4px;
+    font-size: 1rem;
+    color: #222;
+    font-weight: 600;
+}
+
+.filtros-grid .form-select {
+    border: none;
+    background: #f9d2e3;
+    border-radius: 22px;
+    font-size: 1.05rem;
+    color: #222;
+    padding: 6px 22px;
+    height: 44px;
+    min-width: 0;
+    width: 100%;
+    max-width: 200px;
+    box-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.filtros-grid .form-select:focus {
+    box-shadow: none;
+    outline: 2px solid var(--rosa, #F29DC3);
+}
+
+.busca-compras {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 0;
+}
+
+.busca-compras .input-group {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    font-size: 1.05rem;
+    background: #f9d2e3;
+    border-radius: 22px;
+    border: none;
+    box-shadow: none;
+    align-items: center;
+    padding: 0 16px;
+    display: flex;
+}
+
+.busca-compras .input-group-text {
+    background: transparent;
+    border: none;
+    color: #222;
+    font-size: 1.1rem;
+    padding: 0 8px 0 0;
+    display: flex;
+    align-items: center;
+}
+
+.busca-compras .form-control {
+    font-size: 1.05rem;
+    padding: 0 10px;
+    border: none;
+    background: transparent;
+    border-radius: 22px;
+    color: #222;
+    box-shadow: none;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.busca-compras .form-control:focus {
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+@media (min-width: 900px) {
+    .minhas-compras-barra {
+        flex-direction: row;
+        align-items: center;
+        gap: 32px;
+        padding: 24px 36px;
+    }
+    .busca-filtros {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 32px;
+        width: 100%;
+    }
+    .filtros-grid {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 24px;
+    }
+    .filtros-grid .filtro-col {
+        width: 100%;
+        max-width: 320px;
+        align-items: stretch;
+    }
+    .filtros-grid .filtros-row-selects {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 18px;
+        width: auto;
+    }
+    .filtros-grid .form-select {
+        max-width: 180px;
+        height: 44px;
+    }
+    .busca-compras {
+        max-width: 420px;
+        margin-bottom: 0;
+    }
+    .busca-compras .input-group {
+        height: 44px;
+        font-size: 1.05rem;
+        padding: 0 16px;
+    }
+    .filtros-grid .filtro-label {
+        text-align: left;
+    }
+}
+
+@media (max-width: 899px) {
+    .filtros-grid .filtro-label {
+        text-align: center;
+    }
+    .filtros-grid .filtros-row-selects {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .filtros-grid .form-select {
+        max-width: 100%;
+    }
+}
+    /* Menu de busca/filtros: visual uniforme, pill styling, grid no desktop, empilhado no mobile */
+    .filtros-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.9fr 0.9fr;
+        column-gap: 32px;
+        row-gap: 8px;
+        align-items: center;
+        width: 100%;
+        justify-items: start;
+        transition: all 0.3s;
+    }
+
+    .filtros-grid .filtro-col {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .filtros-grid .filtros-row-selects {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+        margin: 0;
+    }
+
+    .filtros-grid .filtro-label {
+        text-align: left;
+        margin-bottom: 4px;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .filtros-grid .form-select {
+        border: none;
+        background: #f9d2e3;
+        border-radius: 20px;
+        font-size: 1.05rem;
+        color: #222;
+        padding: 6px 18px;
+        height: 40px;
+        min-width: 0;
+        width: 100%;
+        max-width: 180px;
+        box-shadow: none;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        transition: background 0.2s, color 0.2s, border 0.2s;
+    }
+
+    .busca-compras {
+        min-width: 220px;
+        max-width: 540px;
+        width: 100%;
+    }
+
+    .busca-compras .input-group {
+        background: #f9d2e3;
+        border-radius: 20px;
+        padding: 0 10px;
+        align-items: center;
+        height: 40px;
+        color: #222;
+        width: 100%;
+        border: none;
+        box-shadow: none;
+    }
+
+    .busca-compras .form-control {
+        border: none;
+        background: transparent;
+        border-radius: 20px;
+        font-size: 1.05rem;
+        padding: 0 10px;
+        color: #222;
+        box-shadow: none;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    @media (max-width: 700px) {
+        .filtros-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            align-items: stretch;
+            justify-content: center;
+        }
+
+        .filtros-grid .filtro-col {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 4px;
+        }
+
+        .filtros-grid .filtros-row-selects {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            gap: 10px;
+            width: 100%;
+            margin: 0;
+        }
+
+        .filtros-grid .filtro-label {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .filtros-grid .form-select {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            font-size: 1.05rem;
+            padding: 6px 18px;
+            height: 40px;
+            border: none;
+            background: #f9d2e3;
+            border-radius: 20px;
+            color: #222;
+            box-shadow: none;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+
+        .busca-compras {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .busca-compras .input-group {
+            width: 100%;
+        }
+
+        .busca-compras .form-control {
+            width: 100%;
+        }
+    }
+
+.minhas-compras-barra {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 24px;
+    margin-bottom: 32px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0001;
+}
+
+.busca-filtros {
+    gap: 24px;
+    flex: 1 1 72%;
+    align-items: flex-start;
+}
+
+.filtros-grid {
+    display: grid;
+    grid-template-columns: 360px 192px 180px;
+    column-gap: 32px;
+    row-gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+.filtro-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.busca-compras {
+    width: 100%;
+    max-width: 100%;
+}
+
+.busca-compras .input-group {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    font-size: 1rem;
+}
+
+.busca-compras .form-control {
+    font-size: 1rem;
+    padding: 0 8px;
+}
+
+.filtro-label {
+    font-size: 0.98rem;
+    margin-bottom: 2px;
+}
+
+.form-select {
+    font-size: 1rem;
+    padding: 6px 12px;
+    height: 36px;
+    min-width: 0;
+    width: 100%;
+}
+
+.info-compras {
+    text-align: center;
+    font-size: 1.01rem;
+    margin-top: 6px;
+    margin-bottom: 0;
+    width: 100%;
+    color: #444;
+    font-weight: 500;
+}
+
+
 :root {
     --page-bg: #FAFBF5;
     --rosa: #F29DC3;
@@ -36,98 +494,18 @@ body {
 }
 
 .busca-filtros {
-    gap: 24px; /* give more vertical breathing room */
-    flex: 1 1 72%; /* allow this block to take more horizontal space */
+    gap: 24px;
+    /* give more vertical breathing room */
+    flex: 1 1 72%;
+    /* allow this block to take more horizontal space */
     /* remove strict min-width so grid can behave predictably */
-    align-items: flex-start; /* ensure children align to left edge */
+    align-items: flex-start;
+    /* ensure children align to left edge */
 }
 
 .busca-compras {
     min-width: 220px;
     max-width: 540px;
-}
-
-
-/* Make the search input visually match the filter selects (rounded pink pill) */
-.busca-compras .input-group {
-    background: #f9d2e3;
-    border-radius: 20px;
-    padding: 0 10px; /* remove vertical padding, we'll control height explicitly */
-    align-items: center;
-    height: 40px; /* match select height */
-    color: #222; /* make inner icons/text inherit the page font color */
-}
-
-.busca-compras .input-group-text {
-    background: transparent;
-    border: none;
-    color: inherit; /* use same color as fonts */
-    font-size: 1.05rem;
-    padding: 0 8px 0 10px;
-    height: 100%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.busca-compras .form-control {
-    border: none;
-    background: transparent;
-    border-radius: 0;
-    font-size: 1.05rem;
-    padding: 0 10px;
-    color: #222;
-    box-shadow: none;
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.busca-compras .form-control:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-.busca-compras .form-control:focus {
-    box-shadow: none;
-    outline: 2px solid var(--rosa, #F29DC3);
-}
-
-.filtro-compras {
-    gap: 8px;
-}
-
-.filtros-labels {
-    /* Use fixed-column grid so labels align exactly with controls below */
-    display: grid;
-    grid-template-columns: 360px 180px 180px; /* fixed first-column width to align labels with controls */
-    gap: 32px; /* wider gap between label columns */
-    align-items: center;
-    width: 100%;
-    justify-items: start; /* left-align each label inside its grid cell */
-}
-
-.filtros-controls {
-    /* mirror the label columns so controls align under each label */
-    display: grid;
-    grid-template-columns: 360px 180px 180px; /* match label columns */
-    gap: 24px; /* increase horizontal spacing between controls */
-    align-items: center;
-    width: 100%;
-    justify-items: start; /* left-align controls inside their grid cells */
-}
-
-/* Ensure the search control sits in the first column */
-.filtros-controls > .busca-compras {
-    grid-column: 1;
-}
-
-.filtros-controls > .busca-compras {
-    justify-self: start; /* make sure search control sticks to left edge of first column */
-}
-
-.filtros-controls > .busca-compras .input-group {
-    width: 100%; /* make search pill fill its grid column */
 }
 
 /* The filter block spans columns 2 and 3 but internally aligns icon and selects into three small columns */
@@ -138,10 +516,21 @@ body {
 }
 
 /* Make the two selects occupy their intended fixed columns inside the filter block */
-.filtro-compras > .filtro-item:first-of-type { grid-column: 2; }
-.filtro-compras > .filtro-item:last-of-type { grid-column: 3; }
-.filtro-compras > .filtro-item:first-of-type .form-select { width: 180px; }
-.filtro-compras > .filtro-item:last-of-type .form-select { width: 180px; }
+.filtro-compras>.filtro-item:first-of-type {
+    grid-column: 2;
+}
+
+.filtro-compras>.filtro-item:last-of-type {
+    grid-column: 3;
+}
+
+.filtro-compras>.filtro-item:first-of-type .form-select {
+    width: 180px;
+}
+
+.filtro-compras>.filtro-item:last-of-type .form-select {
+    width: 180px;
+}
 
 .filtro-compras i {
     font-size: 1.3rem;
@@ -156,7 +545,8 @@ body {
     color: #222;
     padding: 6px 18px;
     min-width: 110px;
-    height: 40px; /* explicit height to match input */
+    height: 40px;
+    /* explicit height to match input */
     display: inline-flex;
     align-items: center;
 }
@@ -169,7 +559,8 @@ body {
 /* New single-grid layout: each column contains its label above and control below */
 .filtros-grid {
     display: grid;
-    grid-template-columns: 360px 192px 180px; /* slightly wider middle column for better alignment */
+    grid-template-columns: 360px 192px 180px;
+    /* slightly wider middle column for better alignment */
     column-gap: 32px;
     row-gap: 8px;
     align-items: start;
@@ -201,9 +592,7 @@ body {
 /* icon removed */
 
 /* Nudge the third column content a bit right so the title visually aligns over the select */
-.filtros-grid > .filtro-col:nth-child(3) {
-    /* keep aligned; no extra padding */
-}
+/* Removed empty ruleset: .filtros-grid>.filtro-col:nth-child(3) */
 
 .filtros-grid .busca-compras .input-group {
     width: 100%;
@@ -301,6 +690,7 @@ body {
     border-radius: 10px;
     display: inline-block;
 }
+
 .pedido-cancelado .pequeno {
     margin-top: 4px;
     color: #7a464c;
@@ -323,7 +713,8 @@ body {
     border-radius: 16px;
     box-shadow: 0 2px 12px #0002;
     display: flex;
-    align-items: center; /* default: center when collapsed */
+    align-items: center;
+    /* default: center when collapsed */
     justify-content: flex-start;
     padding: 28px 36px;
     gap: 48px;
@@ -351,9 +742,12 @@ body {
 
 .compra-left {
     display: flex;
-    align-items: center; /* center vertically when collapsed */
-    justify-content: flex-end; /* move image toward the right side of the left column */
-    width: 220px; /* reserve space for a larger image */
+    align-items: center;
+    /* center vertically when collapsed */
+    justify-content: flex-end;
+    /* move image toward the right side of the left column */
+    width: 220px;
+    /* reserve space for a larger image */
     padding-right: 0;
 }
 
@@ -466,11 +860,59 @@ body {
 
 /* On small screens keep buttons full width but aligned left without extra left padding */
 @media (max-width: 700px) {
+            /* Centralização apenas no mobile */
+            .compra-header-block {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 8px;
+            }
+            .compra-header-row {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+            .compra-header-row .compra-data,
+            .compra-header-row .compra-status,
+            .compra-header-row .compra-total {
+                margin: 0;
+                text-align: center;
+            }
+        .compra-header-block {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .compra-header-row {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .compra-header-row .compra-data,
+        .compra-header-row .compra-status,
+        .compra-header-row .compra-total {
+            margin: 0;
+            text-align: center;
+        }
     .compra-botoes {
         padding-left: 0;
         margin-left: 0;
         align-items: stretch;
     }
+
     .compra-botoes .btn {
         width: 100%;
         margin-left: 0;
@@ -572,14 +1014,17 @@ body {
         max-width: 98vw;
         padding: 24px 8px 32px 8px;
     }
+
     .compra-card {
         padding: 22px 14px;
         gap: 20px;
         min-height: 140px;
     }
+
     .compra-img {
         width: 140px;
     }
+
     .compra-img img {
         width: 120px;
         height: 120px;
@@ -588,29 +1033,37 @@ body {
 
 @media (max-width: 700px) {
     .minhas-compras-section {
-        padding: 12px 2px 24px 2px;
+        padding: 10px 0 18px 0;
     }
+
     .titulo-minhas-compras {
-        font-size: 1.5rem;
-        margin-bottom: 18px;
+        font-size: 1.18rem;
+        margin-bottom: 12px;
         text-align: center;
+        font-weight: 700;
+        letter-spacing: 0.5px;
     }
+
     .minhas-compras-barra {
         flex-direction: column;
-        gap: 10px;
-        padding: 10px 6px;
-        margin-bottom: 18px;
+        gap: 8px;
+        padding: 8px 4px;
+        margin-bottom: 12px;
         align-items: stretch;
+        border-radius: 10px;
     }
+
     .busca-filtros {
         flex-direction: column;
         align-items: stretch;
-        gap: 10px;
+        gap: 8px;
     }
+
     .busca-compras {
         width: 100%;
         max-width: 100%;
     }
+
     .filtro-compras {
         width: 100%;
         justify-content: flex-start;
@@ -621,62 +1074,119 @@ body {
     .filtros-controls {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
         align-items: stretch;
     }
+
     .compras-lista {
-        gap: 14px;
+        gap: 10px;
     }
+
     .compra-card {
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        padding: 16px 10px;
+        align-items: center;
+        justify-content: center;
+        padding: 18px 8px;
         gap: 12px;
         min-height: unset;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px #0001;
+        text-align: center;
     }
+
     .compra-img {
         width: 100%;
         display: flex;
         justify-content: center;
+        margin-bottom: 10px;
     }
+
     .compra-img img {
-        width: 76px;
-        height: 76px;
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
     }
-    .compra-botoes .btn {
+
+    .compra-info {
+        gap: 8px;
         width: 100%;
-        padding: 10px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .compra-entrega {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .compra-produto {
+        font-size: 0.97rem;
+        color: #444;
+        margin-bottom: 6px;
+    }
+
+    .compra-botoes {
+        gap: 8px;
+        margin-top: 8px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .compra-botoes .btn {
+        width: 90%;
+        max-width: 320px;
+        padding: 9px 0;
+        font-size: 1.05rem;
+        border-radius: 22px;
+        margin: 0 auto;
+    }
+    .compra-data, .compra-total, .compra-status {
+        display: block;
+        margin: 0 auto 4px auto;
         font-size: 1rem;
+    }
+    .compra-status {
+        font-weight: 500;
+        margin-bottom: 6px;
+    }
+    .compra-timeline-row {
+        margin: 10px 0 6px 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
 
     /* Centraliza e ajusta a timeline em telas pequenas */
     .compra-timeline-row {
         justify-content: center;
         width: 100%;
-        padding: 6px 0 0 0;
+        padding: 4px 0 0 0;
     }
 
     .timeline {
         justify-content: center;
-        gap: 8px;
+        gap: 6px;
         align-items: center;
         flex-wrap: nowrap;
     }
 
     .timeline-step {
-        gap: 4px;
+        gap: 2px;
     }
 
     .timeline-text {
-        font-size: 0.72rem;
-        max-width: 86px;
+        font-size: 0.68rem;
+        max-width: 70px;
         text-align: center;
         white-space: normal;
     }
 
     .timeline-connector {
-        width: 18px;
+        width: 12px;
         height: 2px;
     }
 }

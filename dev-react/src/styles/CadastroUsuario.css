@@ -95,36 +95,24 @@
   margin: 0px;
 }
 
-.input-group .form-control {
-  width: 100%;
-  height: 40px;
-  padding: 10px 40px 10px 10px;
+.cadastro #nome,
+.cadastro #telefone,
+.cadastro #cpf,
+.cadastro #email,
+.cadastro #senha,
+.cadastro #confirmar_senha {
+  width: 290px;
+  height: 44px;
+  padding: 10px 14px;
   border: 1.5px solid var(--rosa);
   border-radius: 12px;
-  background-color: #ffffff;
-  color: black;
+  margin: 10px 0;
+  background-color: #fff;
+  color: #222;
   font-family: 'Quicksand', sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   outline: none;
-  margin: 0;
-}
-
-.input-group .input-group-text {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  width: auto;
-  height: auto;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: #BB6686;
-  cursor: pointer;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  box-sizing: border-box;
 }
 
 .input-group .input-group-text i {
@@ -194,4 +182,87 @@
 
 .link-container a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .cadastro-main {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh;
+    background: var(--page-bg);
+  }
+
+  .cadastro-section {
+    padding: 0;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-attachment: scroll;
+  }
+
+  .form-cadastro {
+    width: 95vw;
+    min-width: 0;
+    max-width: 420px;
+    box-shadow: 0 2px 12px rgba(242, 157, 195, 0.10);
+    padding: 16px 8px;
+    border-radius: 14px;
+  }
+
+  .logo-cadastro {
+    max-width: 160px;
+    max-height: 80px;
+    margin-top: 8px;
+  }
+
+  .logo-cadastro img {
+    width: 100%;
+    height: auto;
+  }
+
+  #inicio {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  #p-inicio {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .cadastro {
+    width: 100%;
+    padding: 0;
+  }
+
+  .cadastro #nome,
+  .cadastro #telefone,
+  .cadastro #cpf,
+  .cadastro #email,
+  .cadastro #senha,
+  .cadastro #confirmar_senha {
+    width: 290px;
+    max-width: 360px;
+    font-size: 15px;
+    margin: 6px auto;
+  }
+
+  .input-group {
+    width: 290px;
+    max-width: 360px;
+    margin: 0 auto 6px auto;
+  }
+
+  #cadastro {
+    width: 290px;
+    max-width: 360px;
+    font-size: 16px;
+    margin: 12px auto 18px auto;
+  }
+
+  .link-container {
+    font-size: 13px;
+    margin-top: 2px;
+  }
 }

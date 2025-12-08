@@ -210,14 +210,15 @@ export default function Produto() {
             <img src={fotoUrl || imgFallback} alt={modelo?.nomeModelo || 'Modelo'} />
           </div>
           <div className="produto-info">
-            <h1 className="produto-titulo">{loading ? 'Carregando…' : (modelo?.nomeModelo || 'Modelo')}</h1>
-            <div className="produto-top" style={{ justifyContent:'flex-start' }}>
-              <span className="produto-preco" style={{ marginRight:24 }}>{loading ? '—' : precoFinal}</span>
+            <div className="produto-row-nome-preco">
+              <h1 className="produto-titulo">{loading ? 'Carregando…' : (modelo?.nomeModelo || 'Modelo')}</h1>
+              <span className="produto-preco">{loading ? '—' : precoFinal}</span>
+            </div>
+            <div className="produto-row-botoes">
               <button type="button" className="btn-add-cart inline" disabled={loading||!!error||!modelo} onClick={criarProduto}>Adicionar ao carrinho</button>
-              <button type="button" aria-label="Favorito" className={`btn-fav ${favorite ? 'active' : ''}`} disabled={loading||!!error||!modelo} onClick={toggleFavoriteBackend} style={{ marginLeft:12 }}>
+              <button type="button" aria-label="Favorito" className={`btn-fav ${favorite ? 'active' : ''}`} disabled={loading||!!error||!modelo} onClick={toggleFavoriteBackend}>
                 <i className={`bi ${favorite ? 'bi-heart-fill' : 'bi-heart'}`}></i>
               </button>
-            
             </div>
             <div className="produto-bloco" style={{ marginTop:28 }}>
               {error && <p style={{ color:'red' }}>{error}</p>}

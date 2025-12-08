@@ -1,3 +1,87 @@
+:root {
+  --rosa: #F29DC3;
+}
+
+/* Wrapper dos cards centralizados (resumo/produtos) */
+.cards-centralizados {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 32px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 0 auto;
+}
+
+@media (max-width: 900px) {
+  .cards-centralizados {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 100vw;
+    width: 100%;
+  }
+  .pedido-entregue-page .card,
+  .pedido-entregue-page .card.produtos {
+    min-width: 0;
+    width: 100%;
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cards-centralizados {
+    gap: 10px;
+    padding: 0 2px;
+  }
+  .pedido-entregue-page .card,
+  .pedido-entregue-page .card.produtos {
+    max-width: 98vw;
+    padding: 10px 4px;
+  }
+}
+
+/* Ajuste para lista de produtos não estourar largura */
+.pedido-entregue-page .produtos-lista {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Harmoniza botões principais */
+.pedido-entregue-page .btn-primario,
+.pedido-entregue-page .btn-secundario {
+  border-radius: 22px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  padding: 10px 28px;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.pedido-entregue-page .btn-primario {
+  background: var(--rosa, #F29DC3);
+  color: #fff;
+  border: 1.5px solid var(--rosa, #F29DC3);
+}
+.pedido-entregue-page .btn-primario:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.pedido-entregue-page .btn-primario:hover {
+  background: #d16b9b;
+  border-color: #d16b9b;
+  color: #fff;
+}
+.pedido-entregue-page .btn-secundario {
+  background: #fff0fa;
+  color: #a9506d;
+  border: 1.5px solid #f9d2e3;
+}
+.pedido-entregue-page .btn-secundario:hover {
+  background: #f9d2e3;
+  color: #a9506d;
+}
 /* Centraliza a div de resumo/produtos na tela */
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
 

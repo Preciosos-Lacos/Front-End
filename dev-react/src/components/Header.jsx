@@ -99,7 +99,16 @@ const Header = ({ showOffcanvas = true }) => {
             <li><Link to="/perfil"><i className="bi bi-person-fill"></i></Link></li>
             <li><Link to="/minhas-compras"><i className="bi bi-bag"></i></Link></li>
             <li><Link to="/favoritos"><i className="bi bi-heart"></i></Link></li>
-            <li><Link to="/carrinho"><i className="bi bi-cart"></i></Link></li>
+            <li style={{position:'relative'}}>
+              <Link to="/carrinho" style={{position:'relative', display:'inline-block'}}>
+                <i className="bi bi-cart"></i>
+                {count > 0 && (
+                  <span className="cart-badge mobile" aria-label={`${count} item(ns) no carrinho`}>
+                    {count}
+                  </span>
+                )}
+              </Link>
+            </li>
           </ul>
         </nav>
 

@@ -337,13 +337,13 @@
     background: #fff;
     border-bottom: 1px solid #ddd;
     position: sticky;
-    top: 85px;
+    top: 55px;
     z-index: 1020;
 }
 
 .filter-mobile-btn {
     position: sticky;
-    top: 145px;
+    top: 115px;
     z-index: 1020;
     padding: 10px;
     background: #fff;
@@ -472,11 +472,13 @@ select option:checked {
 }
 
 .card-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 40px 0;
+    padding: 135px 18px 60px 18px;
+    margin: 0 auto;
+    max-width: 1200px;
+    justify-items: center;
 }
 
 .product-card {
@@ -531,6 +533,18 @@ select option:checked {
     .catalogo-page .filter-bar {
         top: 75px;
         padding: 10px;
+    }
+}
+
+@media (max-width: 500px) {
+    .card-container {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 16px;
+        margin: 22px 0;
+        box-sizing: border-box;
     }
 }
 

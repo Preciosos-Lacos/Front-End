@@ -6,28 +6,28 @@ import { useCart } from '../context/CartContext.jsx';
 
 const BASE_URL = 'http://localhost:8080';
 
-function getAuthToken(){ try { return localStorage.getItem('token'); } catch { return null; } }
-function decodeJwt(token){ try { const payload = token.split('.')[1]; return JSON.parse(atob(payload.replace(/-/g,'+').replace(/_/g,'/'))); } catch { return {}; } }
-function formatBRL(v){ try { return Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); } catch { return v; } }
+function getAuthToken() { try { return localStorage.getItem('token'); } catch { return null; } }
+function decodeJwt(token) { try { const payload = token.split('.')[1]; return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/'))); } catch { return {}; } }
+function formatBRL(v) { try { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); } catch { return v; } }
 
 export default function Carrinho() {
-  const [loading,setLoading] = useState(true);
-  const [error,setError] = useState(null);
-  const [usuario,setUsuario] = useState(null);
-  const [itens,setItens] = useState([]); // itens simples (ItemPedidoDTO)
-  const [produtos,setProdutos] = useState([]); // detalhes ProdutoDTO
-  const [pedido,setPedido] = useState(null); // PedidoDTO
-  const [removing,setRemoving] = useState(null); // idProduto em remoção
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [usuario, setUsuario] = useState(null);
+  const [itens, setItens] = useState([]); // itens simples (ItemPedidoDTO)
+  const [produtos, setProdutos] = useState([]); // detalhes ProdutoDTO
+  const [pedido, setPedido] = useState(null); // PedidoDTO
+  const [removing, setRemoving] = useState(null); // idProduto em remoção
   const [changingQty, setChangingQty] = useState(null); // idProduto sendo alterado (+/-)
   const { recomputeFromItens } = useCart();
 
-  const subtotal = useMemo(()=>{
+  const subtotal = useMemo(() => {
     // prioriza lista detalhada se disponível
     const fonte = produtos.length ? produtos : itens;
-    return fonte.reduce((acc,i)=> acc + Number(i.preco||0),0);
-  },[itens,produtos]);
+    return fonte.reduce((acc, i) => acc + Number(i.preco || 0), 0);
+  }, [itens, produtos]);
 
-  useEffect(()=>{
+  useEffect(() => {
     let active = true;
     // Verifica se há produtos para recompra no localStorage
     const recomprar = localStorage.getItem('carrinho_recomprar');
@@ -49,27 +49,27 @@ export default function Carrinho() {
           setLoading(false);
           return;
         }
-      } catch {}
+      } catch { }
     }
-    async function load(){
+    async function load() {
       try {
         setLoading(true); setError(null);
         const token = getAuthToken();
-        if(!token){ setError('Faça login para visualizar o carrinho.'); return; }
+        if (!token) { setError('Faça login para visualizar o carrinho.'); return; }
         const payload = decodeJwt(token); const email = payload?.sub;
         // Buscar usuários para achar ID do usuário logado
-        const resUsers = await fetch(`${BASE_URL}/usuarios`,{ headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` } });
-        if(!resUsers.ok) throw new Error('Falha ao carregar usuários');
+        const resUsers = await fetch(`${BASE_URL}/usuarios`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+        if (!resUsers.ok) throw new Error('Falha ao carregar usuários');
         const listaUsuarios = await resUsers.json();
-        const u = listaUsuarios.find(x=> x.login === email);
-        if(!u) throw new Error('Usuário não encontrado');
-        if(!active) return; setUsuario(u);
+        const u = listaUsuarios.find(x => x.login === email);
+        if (!u) throw new Error('Usuário não encontrado');
+        if (!active) return; setUsuario(u);
         // Buscar carrinho básico (PedidoDTO)
-        const resCarrinho = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` } });
-        if(resCarrinho.status === 204){ if(active){ setPedido(null); setItens([]);} return; }
-        if(!resCarrinho.ok) throw new Error('Falha ao buscar carrinho');
+        const resCarrinho = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+        if (resCarrinho.status === 204) { if (active) { setPedido(null); setItens([]); } return; }
+        if (!resCarrinho.ok) throw new Error('Falha ao buscar carrinho');
         const carrinho = await resCarrinho.json();
-        if(active){
+        if (active) {
           setPedido(carrinho);
           const its = carrinho.itens || [];
           setItens(its);
@@ -77,75 +77,75 @@ export default function Carrinho() {
         }
 
         // Buscar detalhes dos produtos do carrinho
-        const resDetalhes = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` } });
-        if(resDetalhes.ok && resDetalhes.status !== 204) {
+        const resDetalhes = await fetch(`${BASE_URL}/pedidos/carrinho/${u.idUsuario}/produtos`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+        if (resDetalhes.ok && resDetalhes.status !== 204) {
           const lista = await resDetalhes.json();
-          if(active) setProdutos(lista);
+          if (active) setProdutos(lista);
         }
-      } catch(e){ console.error(e); if(active) setError(e.message || 'Erro ao carregar carrinho'); }
-      finally { if(active) setLoading(false); }
+      } catch (e) { console.error(e); if (active) setError(e.message || 'Erro ao carregar carrinho'); }
+      finally { if (active) setLoading(false); }
     }
     load();
-    return ()=>{ active=false; };
-  },[]);
+    return () => { active = false; };
+  }, []);
 
-  async function removerItem(idProduto){
-    if(!usuario?.idUsuario) return;
-    const token = getAuthToken(); if(!token) return;
+  async function removerItem(idProduto) {
+    if (!usuario?.idUsuario) return;
+    const token = getAuthToken(); if (!token) return;
     setRemoving(idProduto);
     try {
-      const res = await fetch(`${BASE_URL}/pedidos/carrinho/${idProduto}/usuario/${usuario.idUsuario}`,{ method:'DELETE', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
-      if(res.status === 204){ // carrinho vazio
+      const res = await fetch(`${BASE_URL}/pedidos/carrinho/${idProduto}/usuario/${usuario.idUsuario}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+      if (res.status === 204) { // carrinho vazio
         setItens([]); setPedido(null); recomputeFromItens([]); return;
       }
-      if(!res.ok) throw new Error('Falha ao remover item');
+      if (!res.ok) throw new Error('Falha ao remover item');
       const novo = await res.json();
       const its = novo.itens || [];
       setPedido(novo); setItens(its); recomputeFromItens(its);
       // atualizar lista detalhada
       try {
         const token2 = getAuthToken();
-        if(token2 && usuario?.idUsuario){
-          const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token2}` }});
-          if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
+        if (token2 && usuario?.idUsuario) {
+          const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token2}` } });
+          if (r.ok && r.status !== 204) { setProdutos(await r.json()); } else { setProdutos([]); }
         }
-      } catch {}
-    } catch(e){ console.error(e); alert(e.message || 'Erro ao remover item'); }
+      } catch { }
+    } catch (e) { console.error(e); alert(e.message || 'Erro ao remover item'); }
     finally { setRemoving(null); }
   }
 
   // Remove um grupo de produtos (todos os ids passados)
-  async function removerGrupo(ids = []){
-    if(!usuario?.idUsuario) return;
-    const token = getAuthToken(); if(!token) return;
+  async function removerGrupo(ids = []) {
+    if (!usuario?.idUsuario) return;
+    const token = getAuthToken(); if (!token) return;
     // marcar o primeiro id como removing to disable UI
     const firstId = Number(ids[0]);
     setRemoving(firstId);
     try {
       for (const id of ids) {
         // chamar DELETE para cada id
-        await fetch(`${BASE_URL}/pedidos/carrinho/${id}/usuario/${usuario.idUsuario}`,{ method:'DELETE', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+        await fetch(`${BASE_URL}/pedidos/carrinho/${id}/usuario/${usuario.idUsuario}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
       }
       // Recarregar carrinho
-      const resCarrinho = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
-      if(resCarrinho.status === 204){ setItens([]); setPedido(null); setProdutos([]); recomputeFromItens([]); return; }
+      const resCarrinho = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+      if (resCarrinho.status === 204) { setItens([]); setPedido(null); setProdutos([]); recomputeFromItens([]); return; }
       const carrinho = await resCarrinho.json();
       const its = carrinho.itens || [];
       setPedido(carrinho); setItens(its); recomputeFromItens(its);
-      const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
-      if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
-    } catch(e){ console.error(e); alert('Erro ao remover item(s)'); }
+      const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+      if (r.ok && r.status !== 204) { setProdutos(await r.json()); } else { setProdutos([]); }
+    } catch (e) { console.error(e); alert('Erro ao remover item(s)'); }
     finally { setRemoving(null); }
   }
 
   async function incrementarQuantidade(idProduto) {
-    if(!usuario?.idUsuario) return;
-    const token = getAuthToken(); if(!token) return;
+    if (!usuario?.idUsuario) return;
+    const token = getAuthToken(); if (!token) return;
     setChangingQty(idProduto);
     try {
       const res = await fetch(`${BASE_URL}/pedidos/carrinho`, {
         method: 'POST',
-        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ idUsuario: usuario.idUsuario, idProduto })
       });
       if (!res.ok) throw new Error('Falha ao adicionar item');
@@ -153,21 +153,21 @@ export default function Carrinho() {
       setPedido(novo); setItens(novo.itens || []);
       // atualizar lista detalhada
       try {
-        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
-        if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
-      } catch {}
-    } catch(e){ console.error(e); alert(e.message || 'Erro ao adicionar item'); }
+        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+        if (r.ok && r.status !== 204) { setProdutos(await r.json()); } else { setProdutos([]); }
+      } catch { }
+    } catch (e) { console.error(e); alert(e.message || 'Erro ao adicionar item'); }
     finally { setChangingQty(null); }
   }
 
   async function decrementarQuantidade(idProduto) {
-    if(!usuario?.idUsuario) return;
-    const token = getAuthToken(); if(!token) return;
+    if (!usuario?.idUsuario) return;
+    const token = getAuthToken(); if (!token) return;
     setChangingQty(idProduto);
     try {
       const res = await fetch(`${BASE_URL}/pedidos/carrinho/decrement`, {
         method: 'POST',
-        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ idUsuario: usuario.idUsuario, idProduto })
       });
       if (res.status === 204) { // carrinho vazio ou não encontrado
@@ -176,9 +176,9 @@ export default function Carrinho() {
       if (!res.ok) {
         // Fallback: se der 404/erro, tenta remover uma ocorrência via DELETE
         try {
-          const del = await fetch(`${BASE_URL}/pedidos/carrinho/${idProduto}/usuario/${usuario.idUsuario}` ,{
+          const del = await fetch(`${BASE_URL}/pedidos/carrinho/${idProduto}/usuario/${usuario.idUsuario}`, {
             method: 'DELETE',
-            headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
           });
           if (del.status === 204) { setItens([]); setPedido(null); setProdutos([]); recomputeFromItens([]); return; }
           if (!del.ok) throw new Error('Falha ao remover item');
@@ -186,9 +186,9 @@ export default function Carrinho() {
           const itsDel = novoDel.itens || [];
           setPedido(novoDel); setItens(itsDel); recomputeFromItens(itsDel);
           try {
-            const r2 = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
-            if(r2.ok && r2.status !== 204){ setProdutos(await r2.json()); } else { setProdutos([]); }
-          } catch {}
+            const r2 = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+            if (r2.ok && r2.status !== 204) { setProdutos(await r2.json()); } else { setProdutos([]); }
+          } catch { }
           return;
         } catch (fallbackErr) {
           throw new Error('Falha ao remover item');
@@ -199,22 +199,22 @@ export default function Carrinho() {
       setPedido(novo); setItens(its); recomputeFromItens(its);
       // atualizar lista detalhada
       try {
-        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
-        if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
-      } catch {}
-    } catch(e){ console.error(e); alert(e.message || 'Erro ao remover item'); }
+        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+        if (r.ok && r.status !== 204) { setProdutos(await r.json()); } else { setProdutos([]); }
+      } catch { }
+    } catch (e) { console.error(e); alert(e.message || 'Erro ao remover item'); }
     finally { setChangingQty(null); }
   }
 
   // Workaround: decrementar usando DELETE por id específico (remove uma ocorrência)
   async function decrementarQuantidadeComDelete(idProduto) {
-    if(!usuario?.idUsuario) return;
-    const token = getAuthToken(); if(!token) return;
+    if (!usuario?.idUsuario) return;
+    const token = getAuthToken(); if (!token) return;
     setChangingQty(idProduto);
     try {
       const res = await fetch(`${BASE_URL}/pedidos/carrinho/${idProduto}/usuario/${usuario.idUsuario}`, {
         method: 'DELETE',
-        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
       });
       if (res.status === 204) { // carrinho vazio ou não encontrado
         setItens([]); setPedido(null); setProdutos([]); recomputeFromItens([]); return;
@@ -225,10 +225,10 @@ export default function Carrinho() {
       setPedido(novo); setItens(its); recomputeFromItens(its);
       // atualizar lista detalhada
       try {
-        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
-        if(r.ok && r.status !== 204){ setProdutos(await r.json()); } else { setProdutos([]); }
-      } catch {}
-    } catch(e){ console.error(e); alert(e.message || 'Erro ao remover item'); }
+        const r = await fetch(`${BASE_URL}/pedidos/carrinho/${usuario.idUsuario}/produtos`, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+        if (r.ok && r.status !== 204) { setProdutos(await r.json()); } else { setProdutos([]); }
+      } catch { }
+    } catch (e) { console.error(e); alert(e.message || 'Erro ao remover item'); }
     finally { setChangingQty(null); }
   }
 
@@ -238,9 +238,11 @@ export default function Carrinho() {
       <main data-scroll-container className="cart-page">
         <section className="container-carrinho">
           <div className="cart-left">
-            <h1 className="title">Carrinho de compras</h1>
+            <h1 className="title" style={{
+              fontSize: '1.18rem', marginBottom: '12px', textAlign: 'center', fontWeight: 700,
+              letterSpacing: '0.5px', color: 'var(--rosa, #F29DC3)'}}>Carrinho de compras</h1>
             {loading && <p>Carregando…</p>}
-            {error && !loading && <p className="erro" style={{color:'red'}}>{error}</p>}
+            {error && !loading && <p className="erro" style={{ color: 'red' }}>{error}</p>}
             {!loading && !error && itens.length === 0 && <p>Seu carrinho está vazio.</p>}
             <div className="cart-items">
               {(() => {
@@ -306,13 +308,13 @@ export default function Carrinho() {
                         <div className="item-bottom">
                           <div className="item-price">{formatBRL(group.total / quantidade)}</div>
                           <div className="item-controls">
-                            
+
                             <button
                               className="remove-btn"
                               type="button"
                               title="Remover"
                               disabled={removing === firstId}
-                              onClick={()=>removerGrupo(groupIds)}
+                              onClick={() => removerGrupo(groupIds)}
                             >
                               <i className="bi bi-trash"></i>
                             </button>
@@ -352,7 +354,7 @@ export default function Carrinho() {
                   }
                 }
                 return Array.from(map.values()).map((group, idx) => (
-                  <div key={(group.representante.nome||'item') + idx} className="cart-summary-list-item">
+                  <div key={(group.representante.nome || 'item') + idx} className="cart-summary-list-item">
                     <span>{group.representante.nome} {group.produtos.length > 1 ? `×${group.produtos.length}` : ''}</span>
                     <span>{formatBRL(group.total)}</span>
                   </div>
@@ -367,11 +369,11 @@ export default function Carrinho() {
             </div>
             <div className="action-buttons">
               <Link to="/catalogo" className="btn-continue">Continuar comprando</Link>
-              <Link to="/finalizar-compra" className="btn-finalize" aria-disabled={itens.length===0} onClick={(e)=>{ if(itens.length===0){ e.preventDefault(); } }}>Finalizar pedido</Link>
+              <Link to="/finalizar-compra" className="btn-finalize" aria-disabled={itens.length === 0} onClick={(e) => { if (itens.length === 0) { e.preventDefault(); } }}>Finalizar pedido</Link>
             </div>
           </aside>
         </section>
-      </main>
+      </main >
     </>
   );
 }

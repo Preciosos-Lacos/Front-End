@@ -8,7 +8,7 @@
     padding: 12px 48px;
     background: #fff;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    height: 84px;
+    height: 60px;
     position: sticky;
     top: 0;
     z-index: 1100;
@@ -68,7 +68,7 @@
 
 @media (max-width:992px) {
     .header-home {
-        padding: 15px 20px;
+        padding: 0px 0px;
     }
 
     .header-home nav ul {
@@ -80,7 +80,6 @@
     .header-home {
         flex-direction: column;
         height: auto;
-        padding: 10px 18px;
     }
 
     .header-home nav ul {

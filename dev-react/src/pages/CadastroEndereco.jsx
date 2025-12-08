@@ -121,9 +121,9 @@ export default function CadastroEndereco() {
 
   return (
     <div className="cadastro-container">
-  <button type="button" className="btn-voltar" onClick={() => navigate(-1)} title="Voltar">
-            <i className="bi bi-arrow-left-circle"></i>
-          </button>
+      <button type="button" className="btn-voltar" onClick={() => navigate(-1)} title="Voltar">
+        <i className="bi bi-arrow-left-circle"></i>
+      </button>
 
       <section className="cadastro-section">
         <div className="logo-cadastro">
@@ -142,13 +142,13 @@ export default function CadastroEndereco() {
           <div className="inputs">
             <input type="text" id="CEP" name="CEP" maxLength={8} placeholder="Digite o CEP (Apenas números)" value={cep} onChange={handleCepChange} onBlur={buscarCep} />
 
-            <input type="text" id="uf" placeholder="UF" readOnly value={uf} onChange={() => {}} />
+            <input type="text" id="uf" placeholder="UF" readOnly value={uf} onChange={() => { }} />
 
-            <input type="text" id="cidade" placeholder="Cidade" readOnly value={cidade} onChange={() => {}} />
+            <input type="text" id="cidade" placeholder="Cidade" readOnly value={cidade} onChange={() => { }} />
 
-            <input type="text" id="bairro" placeholder="Bairro" readOnly value={bairro} onChange={() => {}} />
+            <input type="text" id="bairro" placeholder="Bairro" readOnly value={bairro} onChange={() => { }} />
 
-            <input type="text" id="rua" placeholder="Rua" readOnly value={rua} onChange={() => {}} />
+            <input type="text" id="rua" placeholder="Rua" readOnly value={rua} onChange={() => { }} />
 
             <input type="text" id="numero" placeholder="Número" value={numero} onChange={(e) => setNumero(e.target.value)} />
 

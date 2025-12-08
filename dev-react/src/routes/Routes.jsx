@@ -49,6 +49,7 @@ export default function AppRoutes() {
         <Route path="/pedido-confirmado" element={<PedidoConfirmado />} />
         <Route path="/pedido-entregue" element={<PedidoEntregue />} />
         <Route path="/atualizar-endereco" element={<AtualizarEndereco />} />
+        <Route path="/atualizar-endereco/:id" element={<AtualizarEndereco />} />
         <Route path="/cadastro-endereco" element={<CadastroEndereco />} />
 
         {/* Admin / Management flows */}

@@ -134,7 +134,7 @@ export default function MinhasCompras() {
   const [expanded, setExpanded] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
 
   useEffect(() => {
     let ativo = true;
@@ -317,7 +317,7 @@ export default function MinhasCompras() {
     return <div className="timeline">{nodes}</div>;
   };
 
-  
+
 
   return (
     <div>
@@ -325,8 +325,8 @@ export default function MinhasCompras() {
       <section className="minhas-compras-section container">
         <h2 className="titulo-minhas-compras">Minhas compras</h2>
         {error && !loading && <div className="alert alert-warning pequeno" role="alert">{error}</div>}
-        <div className="minhas-compras-barra d-flex align-items-center justify-content-between mb-4">
-          <div className="busca-filtros d-flex flex-column gap-2">
+        <div className="minhas-compras-barra">
+          <div className="busca-filtros">
             <div className="filtros-grid">
               <div className="filtro-col">
                 <span className="filtro-label pequeno">Buscar por ID ou produto</span>
@@ -343,8 +343,7 @@ export default function MinhasCompras() {
                   </div>
                 </div>
               </div>
-
-              <div className="filtro-col">
+              <div className="filtro-col status-pedido">
                 <span className="filtro-label pequeno">Status do pedido</span>
                 <div className="filtro-item">
                   <select className="form-select" value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
@@ -355,8 +354,7 @@ export default function MinhasCompras() {
                   </select>
                 </div>
               </div>
-
-              <div className="filtro-col">
+              <div className="filtro-col status-pagamento">
                 <span className="filtro-label pequeno">Status do pagamento</span>
                 <div className="filtro-item">
                   <select className="form-select" value={filtroPagamento} onChange={e => setFiltroPagamento(e.target.value)}>
@@ -379,75 +377,75 @@ export default function MinhasCompras() {
             <div className="text-center text-muted">Nenhuma compra encontrada.</div>
           ) : (
             pedidosFiltrados.map((p) => {
-            const primeiraImagem = p?.itens?.[0]?.imagens?.[0] || '/src/assets/laco-kit-6.webp';
-            const itens = p?.itens || [];
-            const mais = Math.max(itens.length - 1, 0);
-            const tituloPrimeiro = itens[0]
-              ? `${itens[0].nome}${itens[0].modelo ? ' • ' + itens[0].modelo : ''}`
-              : 'Itens do pedido';
-            const caracPrimeiro = (itens[0]?.caracteristicas || [])
-              .map(c => `${c.nome}: ${c.detalhe}`)
-              .join(' · ');
+              const primeiraImagem = p?.itens?.[0]?.imagens?.[0] || '/src/assets/laco-kit-6.webp';
+              const itens = p?.itens || [];
+              const mais = Math.max(itens.length - 1, 0);
+              const tituloPrimeiro = itens[0]
+                ? `${itens[0].nome}${itens[0].modelo ? ' • ' + itens[0].modelo : ''}`
+                : 'Itens do pedido';
+              const caracPrimeiro = (itens[0]?.caracteristicas || [])
+                .map(c => `${c.nome}: ${c.detalhe}`)
+                .join(' · ');
 
-            return (
-              <div key={p.idPedido} className={`compra-card d-flex mb-4 p-3 ${expanded[p.idPedido] ? 'expanded' : ''}`}>
-                <div className="compra-left">
-                  <div className="compra-img">
-                    <img src={getImageSrc(primeiraImagem)} alt={tituloPrimeiro} className="img-fluid rounded" />
+              return (
+                <div key={p.idPedido} className={`compra-card d-flex mb-4 p-3 ${expanded[p.idPedido] ? 'expanded' : ''}`}>
+                  <div className="compra-left">
+                    <div className="compra-img">
+                      <img src={getImageSrc(primeiraImagem)} alt={tituloPrimeiro} className="img-fluid rounded" />
+                    </div>
                   </div>
-                </div>
-                <div className="compra-right compra-info flex-grow-1 w-100">
-                  <div className="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
-                    <div className="d-flex align-items-center gap-2">
-                      <span className="compra-data">Pedido #{p.idPedido} • {formatDateBR(p.data)}</span>
-                      <button className="btn btn-link p-0 copiar-id" title="Copiar ID" onClick={() => copiarId(p.idPedido)}>
-                        <i className="bi bi-clipboard" />
+                  <div className="compra-right compra-info flex-grow-1 w-100">
+                    <div className="compra-header-block">
+                      <div className="compra-header-row">
+                        <span className="compra-data">Pedido #{p.idPedido} • {formatDateBR(p.data)}</span>
+                        <button className="btn btn-link p-0 copiar-id" title="Copiar ID" onClick={() => copiarId(p.idPedido)}>
+                          <i className="bi bi-clipboard" />
+                        </button>
+                      </div>
+                      <div className="compra-header-row">
+                        <span className={`compra-status pagamento-chip ${statusPagamentoClass(p.statusPagamento)}`}>{p.statusPagamento}</span>
+                        <span className="compra-total fw-semibold">{formatMoeda(p.total)}</span>
+                      </div>
+                    </div>
+
+                    <div className="compra-entrega fw-semibold mb-1">{tituloPrimeiro}{mais > 0 ? ` e +${mais} item(ns)` : ''}</div>
+                    {caracPrimeiro && (
+                      <div className="compra-produto mb-1 text-muted">{caracPrimeiro}</div>
+                    )}
+
+                    {/* Timeline — posicionada antes dos botões para seguir ordem desejada */}
+                    <div className="compra-timeline-row mb-2">
+                      {renderTimeline(p.statusPedido)}
+                    </div>
+
+                    <div className="compra-botoes d-flex gap-2 mt-2 flex-wrap">
+                      <button className="btn btn-outline-secondary compra-btn" onClick={() => toggleExpand(p.idPedido)}>
+                        {expanded[p.idPedido] ? 'Ocultar detalhes' : 'Ver detalhes'}
                       </button>
+                      <Link to={`/pedido-entregue?Id=${p.idPedido}`} className="btn btn-outline-secondary compra-btn">Ver compra</Link>
+                      <Link to="/carrinho" className="btn btn-outline-primary compra-btn">Comprar novamente</Link>
                     </div>
-                    <div className="d-flex align-items-center gap-2 flex-wrap">
-                      <span className={`compra-status pagamento-chip ${statusPagamentoClass(p.statusPagamento)}`}>{p.statusPagamento}</span>
-                      <span className="compra-total fw-semibold">{formatMoeda(p.total)}</span>
-                    </div>
-                  </div>
 
-                  <div className="compra-entrega fw-semibold mb-1">{tituloPrimeiro}{mais > 0 ? ` e +${mais} item(ns)` : ''}</div>
-                  {caracPrimeiro && (
-                    <div className="compra-produto mb-1 text-muted">{caracPrimeiro}</div>
-                  )}
-
-                  {/* Timeline — posicionada antes dos botões para seguir ordem desejada */}
-                  <div className="compra-timeline-row mb-2">
-                    {renderTimeline(p.statusPedido)}
-                  </div>
-
-                  <div className="compra-botoes d-flex gap-2 mt-2 flex-wrap">
-                    <button className="btn btn-outline-secondary compra-btn" onClick={() => toggleExpand(p.idPedido)}>
-                      {expanded[p.idPedido] ? 'Ocultar detalhes' : 'Ver detalhes'}
-                    </button>
-                    <Link to={`/pedido-entregue?Id=${p.idPedido}`} className="btn btn-outline-secondary compra-btn">Ver compra</Link>
-                    <Link to="/carrinho" className="btn btn-outline-primary compra-btn">Comprar novamente</Link>
-                  </div>
-
-                  {expanded[p.idPedido] && (
-                    <div className="itens-detalhes mt-3">
-                      {itens.map((it) => (
-                        <div key={it.idProduto} className="item-linha d-flex align-items-start justify-content-between py-2">
-                          <div className="d-flex flex-column">
-                            <span className="fw-semibold">{it.quantidade}x {it.nome}{it.modelo ? ` • ${it.modelo}` : ''}</span>
-                            {(it.caracteristicas || []).length > 0 && (
-                              <span className="text-muted pequeno">
-                                {(it.caracteristicas || []).map((c) => `${c.nome}: ${c.detalhe}`).join(' · ')}
-                              </span>
-                            )}
+                    {expanded[p.idPedido] && (
+                      <div className="itens-detalhes mt-3">
+                        {itens.map((it) => (
+                          <div key={it.idProduto} className="item-linha d-flex align-items-start justify-content-between py-2">
+                            <div className="d-flex flex-column">
+                              <span className="fw-semibold">{it.quantidade}x {it.nome}{it.modelo ? ` • ${it.modelo}` : ''}</span>
+                              {(it.caracteristicas || []).length > 0 && (
+                                <span className="text-muted pequeno">
+                                  {(it.caracteristicas || []).map((c) => `${c.nome}: ${c.detalhe}`).join(' · ')}
+                                </span>
+                              )}
+                            </div>
+                            <div className="ms-3 text-nowrap">{formatMoeda(it.preco)}</div>
                           </div>
-                          <div className="ms-3 text-nowrap">{formatMoeda(it.preco)}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
+              );
             })
           )}
         </div>

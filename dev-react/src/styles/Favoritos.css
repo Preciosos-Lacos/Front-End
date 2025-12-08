@@ -1,96 +1,540 @@
-:root{
-  --rosa:#e78fb3;
-  --rosa-hover:#e91e63;
-  --texto:#222;
-  --bg:#FAFBF5;
+.fav-card.novo-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  min-height: 170px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px #0002;
+  padding: 18px 24px;
+  margin-bottom: 32px;
+  position: relative;
 }
 
-.fav-main{ background: var(--bg); min-height: 100vh; }
+/* Imagem quadrada, sempre à esquerda, sem deformar */
+.fav-image.quadrada {
+  width: 140px;
+  height: 140px;
+  aspect-ratio: 1/1;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px #0001;
+  flex-shrink: 0;
+  background: #fafbfa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0;
+}
 
-@media (min-width:1024px){
-  .fav-container{
+.fav-image.quadrada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+}
+
+@media (max-width: 699px) {
+  .fav-image.quadrada {
     width: 100%;
-    max-width: 1200px;
-    margin: 35px auto 40px auto; 
-    padding: 0 20px;
+    max-width: 140px;
+    height: 140px;
+    aspect-ratio: 1/1;
+    margin: 0 auto 6px auto;
+  }
+}
+
+.fav-info.novo-layout-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex: 1;
+  padding: 0 0 0 24px;
+  min-width: 0;
+  height: 100%;
+}
+
+.fav-desc-top {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.fav-desc-top .fav-name {
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  color: var(--texto);
+}
+
+.fav-desc-top .fav-collection {
+  font-size: 0.98rem;
+  color: #777;
+  margin: 0;
+}
+
+.fav-desc-top .fav-detail {
+  font-size: 0.95rem;
+  color: #888;
+  margin: 2px 0 0 0;
+}
+
+.fav-bottom.novo-layout-bottom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-top: auto;
+  gap: 8px;
+}
+
+.fav-price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--texto);
+  margin-bottom: 2px;
+}
+
+.fav-actions.novo-layout-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  width: auto;
+}
+
+.btn-add,
+.btn-remove {
+  border-radius: 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 8px 22px;
+  transition: background .2s, color .2s, border-color .2s;
+  border: none;
+  cursor: pointer;
+  width: 180px;
+  margin-bottom: 2px;
+}
+
+.btn-add {
+  background: var(--rosa-hover);
+  color: #fff;
+}
+
+.btn-add:hover {
+  background: var(--rosa);
+  color: #fff;
+}
+
+.btn-remove {
+  background: #fff;
+  color: var(--rosa);
+  border: 1.5px solid var(--rosa);
+}
+
+.btn-remove:hover {
+  background: var(--rosa);
+  color: #fff;
+  border-color: var(--rosa-hover);
+}
+
+.badge-desconto {
+  display: inline-block;
+  background: var(--rosa);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  border-radius: 16px;
+  padding: 4px 14px;
+  margin-bottom: 6px;
+  margin-right: 2px;
+  box-shadow: 0 2px 8px #0001;
+}
+
+@media (max-width: 699px) {
+  .fav-card.novo-layout {
+    flex-direction: row !important;
+    align-items: center !important;
+    min-height: unset;
+    gap: 0;
+    padding: 10px 6px;
   }
 
-  .fav-title{
-    font-size: 36px;
-    font-weight: 400;
-    color: var(--rosa);
-    margin: 0 0 24px 6px;
-    font-family: 'Quicksand', system-ui, sans-serif;
+  .fav-image.quadrada {
+    width: 100%;
+    height: 120px;
+    margin-bottom: 6px;
   }
 
+  .fav-info.novo-layout-info {
+    padding: 9px !important;
+    height: auto;
+  }
 
-  .fav-grid{
-    display: grid;
-    grid-template-columns: 1fr; 
-    gap: 22px;
+  .fav-bottom.novo-layout-bottom {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .fav-actions.novo-layout-actions {
+    width: 100%;
+    align-items: flex-end;
+  }
+
+  .btn-add,
+  .btn-remove {
+    width: 100% !important;
+    padding: 3px 0 !important;
+    font-size: 0.88rem !important;
+  }
+}
+
+/* Novo layout do card de favorito */
+.fav-card.novo-layout {
+  flex-direction: column;
+  align-items: stretch;
+  min-height: unset;
+  gap: 0;
+  padding: 10px 6px;
+}
+
+.fav-image.quadrada {
+  width: 120px;
+  height: 120px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  flex-shrink: 0;
+  background: #f9d2e3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fav-image.quadrada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fav-info.novo-layout-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex: 1;
+  padding: 0 0 0 18px;
+  min-width: 0;
+}
+
+.fav-desc-top {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.fav-desc-top .fav-name {
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  color: var(--texto);
+}
+
+.fav-desc-top .fav-collection {
+  font-size: 0.98rem;
+  color: #777;
+  margin: 0;
+}
+
+.fav-bottom.novo-layout-bottom {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  gap: 10px;
+}
+
+.fav-price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.fav-actions.novo-layout-actions {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: auto;
+}
+
+.btn-remove {
+  border-radius: 22px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  padding: 8px 18px;
+  background: #da3434;
+  color: #fff;
+  border: 1.5px solid #f9d2e3;
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+
+.btn-remove:hover {
+  background: #eb8888;
+  color: #fff;
+  border-color: var(--rosa-hover);
+}
+
+@media (max-width: 699px) {
+  .fav-card.novo-layout {
+    flex-direction: column;
     align-items: stretch;
+    min-height: unset;
+    gap: 0;
+    padding: 10px 6px;
   }
 
-  .fav-card{
-    width: 100%;             
-    display: flex;
-    gap: 18px;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-    padding: 14px 16px;
-    box-sizing: border-box;  
-  }
-
-  .fav-image{
-    width: 300px;         
-    height: 190px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    flex-shrink: 0;
-  }
-  .fav-image img{ width:100%; height:100%; object-fit:cover; }
-
-  .fav-info{ display:flex; flex-direction:column; gap:6px; flex:1; }
-
-  .fav-name{ font-size:26px; color:var(--texto); margin:4px 0 0 0; font-weight:600; }
-  .fav-collection{ font-size:16px; color:#777; letter-spacing:.3px; margin:0; }
-  .fav-detail{ font-size:14px; color:#9b9b9b; margin:0 0 6px 0; }
-
-  .fav-bottom{
-    display:flex; align-items:center; justify-content:space-between; margin-top:auto;
-  }
-  .fav-price{ font-size:24px; font-weight:700; color:var(--texto); }
-
-  .fav-actions{ display:flex; align-items:center; gap:10px; }
-  .btn-add{
-    background: var(--rosa);
+  .fav-image.quadrada {
     width: 100%;
-    color:#222;
-    font-weight:700;
-    border:none;
-    padding:10px 16px;
-    border-radius:22px;
-    cursor:pointer;
-    transition: background .2s, color .2s;
+    height: 120px;
+    margin-bottom: 6px;
   }
-  .btn-add:hover{ background: var(--rosa-hover); color:#fff; }
 
-  .btn-remove{
-    background:#eb8888;
-    color:#222;
-    width: 100%;
-    font-weight: 700;
-    border:1px solid #ddd;
-    padding:10px 14px;
-    border-radius:12px;
-    cursor:pointer;
-    transition: color .2s, border-color .2s, background .2s;
+  .fav-info.novo-layout-info {
+    padding: 0;
   }
-  .btn-remove:hover{
-    color: #fff;
-    border-color: var(--rosa-hover);
-    background:#da3434;
+
+  .fav-bottom.novo-layout-bottom {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .fav-actions.novo-layout-actions {
+    width: auto;
+    justify-content: flex-end;
+  }
+}
+
+:root {
+  --rosa: #e78fb3;
+  --rosa-hover: #e91e63;
+  --texto: #222;
+  --bg: #FAFBF5;
+}
+
+.fav-main {
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+
+.fav-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 35px auto 40px auto;
+  padding: 0 20px;
+}
+
+.fav-title {
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: var(--rosa);
+  margin: 0 0 24px 6px;
+  font-family: 'Quicksand', system-ui, sans-serif;
+}
+
+.fav-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  align-items: stretch;
+}
+
+@media (min-width: 700px) {
+  .fav-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1100px) {
+  .fav-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.fav-card {
+  width: 100%;
+  display: flex;
+  gap: 18px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  padding: 14px 16px;
+  box-sizing: border-box;
+  align-items: stretch;
+  min-height: 180px;
+}
+
+.fav-image {
+  width: 180px;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+  background: #f9d2e3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fav-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fav-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.fav-name {
+  font-size: 1.2rem;
+  color: var(--texto);
+  margin: 4px 0 0 0;
+  font-weight: 600;
+}
+
+.fav-collection {
+  font-size: 1rem;
+  color: #777;
+  letter-spacing: .3px;
+  margin: 0;
+}
+
+.fav-detail {
+  font-size: 0.92rem;
+  color: #9b9b9b;
+  margin: 0 0 6px 0;
+}
+
+.fav-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  gap: 10px;
+}
+
+.fav-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.fav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-add,
+.btn-remove {
+  border-radius: 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 8px 18px;
+  transition: background .2s, color .2s, border-color .2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-add {
+  background: var(--rosa);
+  color: #fff;
+}
+
+.btn-add:hover {
+  background: var(--rosa-hover);
+  color: #fff;
+}
+
+.btn-remove {
+  background: #eb8888;
+  color: #fff;
+  border: 1.5px solid #f9d2e3;
+}
+
+.btn-remove:hover {
+  background: #da3434;
+  color: #fff;
+  border-color: var(--rosa-hover);
+}
+
+@media (max-width: 699px) {
+  .fav-container {
+    padding: 0 4px;
+  }
+
+  .fav-title {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .fav-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .fav-card {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 6px;
+    min-height: unset;
+  }
+
+  .fav-image {
+    width: 100%;
+    height: 120px;
+    margin-bottom: 6px;
+  }
+
+  .fav-info {
+    gap: 4px;
+  }
+
+  .fav-name {
+    font-size: 1.05rem;
+  }
+
+  .fav-collection {
+    font-size: 0.95rem;
+  }
+
+  .fav-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .fav-price {
+    font-size: 1rem;
+  }
+
+  .btn-add,
+  .btn-remove {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 0.98rem;
   }
 }

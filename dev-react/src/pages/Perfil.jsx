@@ -322,7 +322,7 @@ export default function Perfil() {
       <main data-scroll-container>
         <Header showOffcanvas={true} />
         <section className="perfil-section">
-          <div style={{ flex: '1 1 340px', minWidth: 410, maxWidth: 420, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ flex: '1 1 340px', minWidth: '350px', maxWidth: '415px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <input
               type="file"
               accept="image/*"
@@ -444,7 +444,7 @@ export default function Perfil() {
                 {enderecos.length > 0 ? (
                   <ul className="lista-enderecos">
                     {enderecos.map((end, idx) => (
-                      <li key={end.idEndereco || idx} className="endereco-item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                      <li key={end.idEndereco || idx} className="endereco-item" style={{display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px'}}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8,fontSize: '1rem' }}>
                           <span>{end.logradouro}, {end.numero} - {end.bairro}, {end.localidade} - {end.uf} | CEP: {end.cep}</span>
                           {end.complemento && <span> Complemento: {end.complemento}</span>}
@@ -452,7 +452,7 @@ export default function Perfil() {
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                           <Link
-                            to={`/atualizar-endereco?id=${end.idEndereco}`}
+                            to={`/atualizar-endereco/${end.idEndereco}`}
                             className="btn-editar-endereco"
                             title="Editar endereço"
                             aria-label="Editar endereço"

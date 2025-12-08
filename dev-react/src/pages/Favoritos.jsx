@@ -165,10 +165,9 @@ export default function Favoritos() {
                     ) : (
                         <div className="fav-grid">
                             {favoritos.map((m) => (
-                                <article className="fav-card" key={m.idModelo}>
-                                    <div className="fav-image">
+                                <article className="fav-card novo-layout" key={m.idModelo}>
+                                    <div className="fav-image quadrada">
                                         {(() => {
-                                            // preferential mapping: if model name matches specific known names, use local asset
                                             const name = String(m.nomeModelo || '').toLowerCase();
                                             let mapped = null;
                                             if (name.includes('bolinha') || name.includes('laço bolinha') || name.includes('laco bolinha')) mapped = bolinhaImg;
@@ -177,14 +176,18 @@ export default function Favoritos() {
                                             return <img src={src} alt={m.nomeModelo || 'Modelo'} />;
                                         })()}
                                     </div>
-                                    <div className="fav-info">
-                                        <h3 className="fav-name">{m.nomeModelo}</h3>
-                                        <p className="fav-collection">{m.descricao || '—'}</p>
-                                        <div className="fav-bottom">
+                                    <div className="fav-info novo-layout-info">
+                                        <div className="fav-desc-top">
+                                            <h3 className="fav-name">{m.nomeModelo}</h3>
+                                            <p className="fav-collection">{m.descricao || '—'}</p>
+                                            {m.detalhes && <div className="fav-detail">{m.detalhes}</div>}
+                                        </div>
+                                        <div className="fav-bottom novo-layout-bottom">
                                             <div className="fav-price">{precoBRL(m.preco)}</div>
-                                                                    <div className="fav-actions">
-                                                                        <button className="btn-remove" onClick={() => removerFavorito(m.idModelo)}>Remover</button>
-                                                                    </div>
+                                            <div className="fav-actions novo-layout-actions">
+                                                {m.desconto && <span className="badge-desconto">{m.desconto}%</span>}
+                                                <button className="btn-remove" onClick={() => removerFavorito(m.idModelo)}>Remover</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </article>

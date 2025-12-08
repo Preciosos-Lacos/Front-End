@@ -1,9 +1,80 @@
+@media (max-width: 428px) {
+  .foto-container {
+    width: 150px !important;
+    height: 150px !important;
+    max-width: 150px !important;
+    margin: 10px auto 16px auto !important;
+  }
+  .foto-perfil {
+    width: 150px !important;
+    height: 150px !important;
+    font-size: 100px !important;
+  }
+}
+.perfil-section {
+  max-width: 428px;
+  width: 100%;
+}
+
+/* --- Centralização e adaptação para iPhone 14 Plus --- */
+.perfil-section {
+  margin: 0 auto;
+}
+
+.form-perfil {
+  max-width: 428px;
+  width: 100%;
+}
+
+.form-perfil {
+  width: 100%;
+}
+
+.foto-container {
+  max-width: 140px;
+  width: 100%;
+}
+
+.foto-container {
+  max-width: 140px;
+  width: 100%;
+}
+
+.campo {
+  max-width: 428px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid var(--rosa);
+  border-radius: 14px;
+  height: 46.38px;
+  padding: 10px 14px;
+  transition: box-shadow 0.2s ease;
+}
+
+.endereco-item {
+  max-width: 428px;
+  width: 100%;
+}
+
+
 /* ---------------- ENDEREÇOS PERFIL ---------------- */
 .enderecos-section {
   background: #fff;
+  max-width: 428px;
+  padding: 15px;
+  border-radius: 25px;
+}
+
+.campo input {
   border-radius: 18px;
   box-shadow: 0 2px 12px rgba(242, 157, 195, 0.10);
-  padding: 24px 28px;
+  padding: 24px 0px;
+}
+
+.endereco-item {
   margin-top: 8px;
   min-width: 340px;
   max-width: 480px;
@@ -55,6 +126,7 @@
   padding: 2px 8px;
   margin-left: 8px;
 }
+
 :root {
   --page-bg: #FAFBF5;
   --header-bg: #FAFBF5;
@@ -70,7 +142,8 @@
 }
 
 /* Zerar margens/paddings padrão e evitar barra de rolagem horizontal */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -92,7 +165,8 @@ header {
   width: 100%;
   z-index: 1050;
   box-shadow: #000000ac 0px 0px 4px 0px;
-  margin: 0; /* garantir que não há margem */
+  margin: 0;
+  /* garantir que não há margem */
 }
 
 .navbar {
@@ -164,13 +238,14 @@ header {
   }
 
   .brand img {
-    height: 40px;
+    height: 100%;
   }
 }
 
 /* ---------------- PERFIL ---------------- */
 main {
-  margin-top: 0; /* remove o margin para colar o header no topo */
+  margin-top: 0;
+  /* remove o margin para colar o header no topo */
 }
 
 /* Seção principal do perfil: cards lado a lado, alinhados pelo topo */
@@ -181,7 +256,8 @@ main {
   gap: 32px;
   justify-content: space-around;
   flex-wrap: wrap;
-  padding: 60px 20px 20px 20px; /* espaço para o header fixo */
+  padding: 60px 20px 20px 20px;
+  /* espaço para o header fixo */
   background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
   background-size: cover;
   background-position: center;
@@ -203,9 +279,9 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0 20px; /* reduzido para economizar espaço */
-  width: 140px; /* reduzido */
-  height: 140px; /* reduzido */
+  margin: 10px auto 16px auto;
+  width: 100px;
+  height: 100px;
 }
 
 .foto-overlay {
@@ -237,9 +313,9 @@ main {
 }
 
 .foto-perfil {
-  font-size: 100px; /* reduzido */
-  width: 140px; /* reduzido */
-  height: 140px; /* reduzido */
+  font-size: 70px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: 3px solid var(--rosa);
   display: flex;
@@ -255,9 +331,12 @@ main {
   max-width: 420px;
   display: flex;
   flex-direction: column;
-  gap: 12px; /* reduzido para economizar espaço */
-  flex: 1; /* permite que o formulário use o espaço disponível */
-  overflow-y: auto; /* permite scroll apenas no formulário se necessário */
+  gap: 12px;
+  /* reduzido para economizar espaço */
+  flex: 1;
+  /* permite que o formulário use o espaço disponível */
+  overflow-y: auto;
+  /* permite scroll apenas no formulário se necessário */
 }
 
 .campo {
@@ -267,7 +346,8 @@ main {
   background: #fff;
   border: 1.5px solid var(--rosa);
   border-radius: 14px;
-  padding: 10px 14px; /* reduzido para economizar espaço */
+  height: 46.38px;
+  padding: 10px 14px;
   transition: box-shadow 0.2s ease;
 }
 

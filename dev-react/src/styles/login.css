@@ -101,22 +101,23 @@
 
 .login #email,
 .login #senha {
-    width: 260px;
-    height: 40px;
-    padding: 10px;
+    width: 290px;
+    height: 44px;
+    padding: 10px 14px;
     border: 1.5px solid var(--rosa);
     border-radius: 12px;
-    margin: 9px;
-    background-color: #ffffff;
-    color: black;
+    margin: 10px 0;
+    background-color: #fff;
+    color: #222;
     font-family: 'Quicksand', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     outline: none;
+    box-sizing: border-box;
 }
 
 .input-group {
     position: relative;
-    width: 278px;
+    width: 290px;
     margin: 0px;
 }
 

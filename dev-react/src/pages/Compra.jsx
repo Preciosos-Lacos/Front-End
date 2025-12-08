@@ -9,7 +9,7 @@ function getAuthToken() { return localStorage.getItem('token'); }
 function decodeJwt(token) {
   try {
     const payload = token.split('.')[1];
-    return JSON.parse(atob(payload.replace(/-/g,'+').replace(/_/g,'/')))||{};
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/'))) || {};
   } catch { return {}; }
 }
 
@@ -38,6 +38,26 @@ function getImageSrc(img) {
   return `data:image/png;base64,${s}`;
 }
 
+// Função utilitária para buscar o primeiro endereço do usuário
+async function fetchEnderecoUsuario(idUsuario) {
+  const token = getAuthToken();
+  try {
+    const res = await fetch(`${BASE_URL}/enderecos/usuario/${idUsuario}`, {
+      headers: { 'Content-Type':'application/json', Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const lista = await res.json();
+      console.log("Recebendo endereços: "+ JSON.stringify(lista))
+      if (Array.isArray(lista) && lista.length > 0) {
+        return lista[0]; // Retorna o primeiro endereço
+      }
+    }
+  } catch (e) {
+    // erro silencioso
+  }
+  return null;
+}
+
 const Compra = () => {
   const [checkout, setCheckout] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -45,6 +65,7 @@ const Compra = () => {
   const [payment, setPayment] = useState('Pix');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [finalizing, setFinalizing] = useState(false);
+  const [enderecoUsuario, setEnderecoUsuario] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,7 +86,7 @@ const Compra = () => {
         if (!email) throw new Error('Token inválido');
 
         const resUser = await fetch(`${BASE_URL}/usuarios/login/${encodeURIComponent(email)}`, {
-          headers: { 'Content-Type':'application/json', Authorization: `Bearer ${token}` }
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
         });
         if (!resUser.ok) {
           const txt = await resUser.text();
@@ -74,8 +95,21 @@ const Compra = () => {
         const u = await resUser.json();
         if (!u?.idUsuario) throw new Error('Usuário não encontrado');
 
+        // Busca endereço do usuário
+        try {
+          const resEnd = await fetch(`${BASE_URL}/enderecos/usuario/${u.idUsuario}`, {
+            headers: { 'Content-Type':'application/json', Authorization: `Bearer ${token}` }
+          });
+          if (resEnd.ok) {
+            const listaEnd = await resEnd.json();
+            if (Array.isArray(listaEnd) && listaEnd.length > 0) {
+              setEnderecoUsuario(listaEnd[0]);
+            }
+          }
+        } catch (e) {}
+
         const res = await fetch(`${BASE_URL}/checkout/${u.idUsuario}`, {
-          headers: { 'Content-Type':'application/json', ...(token?{ Authorization:`Bearer ${token}` }: {}) }
+          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }
         });
         if (!res.ok) {
           const txt = await res.text();
@@ -124,7 +158,7 @@ const Compra = () => {
         cep: checkout.endereco?.cep
       };
       const token = getAuthToken();
-      const headers = { 'Content-Type':'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+      const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
       const res = await fetch(`${BASE_URL}/checkout/finalizar`, {
         method: 'POST',
         headers,
@@ -173,10 +207,10 @@ const Compra = () => {
       </div>
     );
   }
-  if (error) return <div><Header /><main style={{padding:20,color:'red'}}>Erro: {error}</main></div>;
+  if (error) return <div><Header /><main style={{ padding: 20, color: 'red' }}>Erro: {error}</main></div>;
 
   const produtos = checkout?.produtos || [];
-  const endereco = checkout?.endereco;
+  const endereco = enderecoUsuario || checkout?.endereco;
   // Deduplicar produtos defensivamente: agrupa por idProduto e soma quantidades/precoTotal
   const produtosUnicos = (() => {
     const map = new Map();
@@ -193,7 +227,7 @@ const Compra = () => {
     return Array.from(map.values());
   })();
 
-  const subtotal = checkout?.subtotal ?? produtosUnicos.reduce((s,p)=>s+(Number(p.precoUnitario||0)*Number(p.quantidade||0)),0);
+  const subtotal = checkout?.subtotal ?? produtosUnicos.reduce((s, p) => s + (Number(p.precoUnitario || 0) * Number(p.quantidade || 0)), 0);
   const shipping = checkout?.frete ?? 15.0;
   const total = checkout?.total ?? (subtotal + shipping);
 
@@ -216,17 +250,17 @@ const Compra = () => {
             </div>
 
             {produtosUnicos.length === 0 ? (
-              <div style={{padding:20}}>Seu carrinho está vazio.</div>
+              <div style={{ padding: 20 }}>Seu carrinho está vazio.</div>
             ) : produtosUnicos.map((item) => (
               <div key={item.idProduto} className="item-produto">
-                <div className="produto" style={{display:'flex',gap:12,alignItems:'center'}}>
-                  <img src={getImageSrc(item.imagemPrincipal)} alt={item.nome} style={{width:64,height:64,objectFit:'cover',borderRadius:6}} />
+                <div className="produto" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <img src={getImageSrc(item.imagemPrincipal)} alt={item.nome} style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 6 }} />
                   <div>
-                    <div style={{fontWeight:600}}>{item.nome}</div>
-                    <div style={{fontSize:12,color:'#666'}}>{item.modelo}</div>
-                    {Array.isArray(item.caracteristicas) && item.caracteristicas.length>0 && (
-                      <div style={{fontSize:12,color:'#444',marginTop:6}}>
-                        {item.caracteristicas.map((c,idx)=> (<span key={idx} style={{marginRight:8}}>{c.nome}: {c.detalhe}</span>))}
+                    <div style={{ fontWeight: 600 }}>{item.nome}</div>
+                    <div style={{ fontSize: 12, color: '#666' }}>{item.modelo}</div>
+                    {Array.isArray(item.caracteristicas) && item.caracteristicas.length > 0 && (
+                      <div style={{ fontSize: 12, color: '#444', marginTop: 6 }}>
+                        {item.caracteristicas.map((c, idx) => (<span key={idx} style={{ marginRight: 8 }}>{c.nome}: {c.detalhe}</span>))}
                       </div>
                     )}
                   </div>
@@ -238,23 +272,24 @@ const Compra = () => {
           </div>
 
           <div className="coluna-lateral">
+
             <div className="endereco">
+              {console.log('endereco:', endereco)}
               <div className="cabecalho-endereco">
                 <span>Endereço</span>
-                <Link to="/cadastro-endereco" className="editar-endereco">Editar</Link>
+                <Link to={`/atualizar-endereco/${endereco?.idEndereco}`} className="editar-endereco">Editar</Link>
               </div>
               <div className="info-endereco">
-                {endereco ? (
-                  <>
+                {endereco
+                  ? <>
                     {endereco.logradouro}, {endereco.numero} <br />
                     {endereco.complemento ? `Complemento: ${endereco.complemento} ` : ''} <br />
                     {endereco.bairro} <br />
                     {endereco.localidade}/{endereco.uf} <br />
                     CEP: {endereco.cep}
                   </>
-                ) : (
-                  <div>Nenhum endereço cadastrado.</div>
-                )}
+                  : <div>Nenhum endereço cadastrado.</div>
+                }
               </div>
             </div>
 
@@ -288,14 +323,14 @@ const Compra = () => {
               </div>
             </div>
 
-            <button className="btn-finalizar" onClick={() => setConfirmOpen(true)} disabled={produtosUnicos.length===0 || finalizing}>
+            <button className="btn-finalizar" onClick={() => setConfirmOpen(true)} disabled={produtosUnicos.length === 0 || finalizing}>
               {finalizing ? 'Finalizando...' : 'Finalizar Pedido'}
             </button>
 
             {confirmOpen && (
-              <div className="compra-modal-overlay" onClick={() => setConfirmOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1600}}>
-                <div className="compra-modal" onClick={(e)=>e.stopPropagation()} style={{background:'#fff',borderRadius:8,padding:20,minWidth:320,maxWidth:'90%',boxShadow:'0 10px 30px rgba(0,0,0,0.3)'}}>
-                  <h2 style={{marginTop:0}}>Confirmar Pedido</h2>
+              <div className="compra-modal-overlay" onClick={() => setConfirmOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1600 }}>
+                <div className="compra-modal" onClick={(e) => e.stopPropagation()} style={{ background: '#fff', borderRadius: 8, padding: 20, minWidth: 320, maxWidth: '90%', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
+                  <h2 style={{ marginTop: 0 }}>Confirmar Pedido</h2>
                   <p>Forma de pagamento selecionada: <strong>{payment}</strong></p>
                   <div style={{ marginTop: 12 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -313,7 +348,7 @@ const Compra = () => {
                     </div>
                   </div>
 
-                  {error && <div style={{color:'red',marginTop:12}}>{error}</div>}
+                  {error && <div style={{ color: 'red', marginTop: 12 }}>{error}</div>}
 
                   <div style={{ display: 'flex', gap: 12, marginTop: 18, justifyContent: 'flex-end' }}>
                     <button onClick={() => { setConfirmOpen(false); }} style={{ padding: '8px 14px', borderRadius: 8 }}>Não</button>

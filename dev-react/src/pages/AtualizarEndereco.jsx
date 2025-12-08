@@ -1,6 +1,5 @@
-
 import Logo from '../assets/logo_preciosos_lacos.png';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -22,9 +21,8 @@ import { useEffect, useState } from 'react';
 
 export default function AtualizarEndereco() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const id = params.get('id');
+  const { id } = useParams();
+  console.log('ID recebido pela URL:', id);
 
   const [form, setForm] = useState({
     logradouro: '',
@@ -55,6 +53,7 @@ export default function AtualizarEndereco() {
         });
         if (!res.ok) throw new Error('Endereço não encontrado');
         const data = await res.json();
+        console.log('Dados recebidos do backend:', data);
         setForm({
           logradouro: data.logradouro || '',
           numero: data.numero || '',
@@ -70,6 +69,7 @@ export default function AtualizarEndereco() {
         setMessage({ type: 'error', text: e.message });
       } finally {
         setLoading(false);
+        console.log('Estado loading:', loading);
       }
     }
     if (id) fetchEndereco();
@@ -174,10 +174,10 @@ export default function AtualizarEndereco() {
         throw new Error(errMsg || 'Erro ao atualizar endereço');
       }
       setMessage({ type: 'success', text: 'Endereço atualizado com sucesso!' });
-      setTimeout(() => navigate('/perfil'), 1200);
+      setTimeout(() => navigate(-1), 1000);
     } catch (e) {
-      setMessage({ type: 'error', text: e.message });
-    } finally {
+      setMessage({ type: 'error', text: e.message })
+    } finally {;
       setLoading(false);
     }
   }

@@ -62,7 +62,7 @@
 
 .cart-badge {
     position: absolute;
-    top: -4px;            /* sobe a bolinha para não descer o texto */
+    top: -4px;
     right: -10px;
     min-width: 18px;
     height: 18px;
@@ -76,6 +76,18 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 0 2px #fff;
+    z-index: 2;
+}
+
+.cart-badge.mobile {
+    top: 2px;
+    right: 2px;
+    font-size: 0.78rem;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    box-shadow: 0 0 0 2px #FAFBF5;
+    pointer-events: none;
 }
 
 .app-brand {
@@ -318,7 +330,6 @@
     margin: 0;
     padding: 0;
     display: flex;
-    gap: 18px;
     align-items: center;
 }
 
@@ -449,6 +460,77 @@
     .header-mobile {
         display: flex;
     }
+}
+
+@media (max-width: 500px) {
+  .app-header {
+    height: 56px;
+    padding: 8px 0 0 0;
+    font-size: 22px;
+    background: var(--header-bg);
+    box-shadow: 0 2px 8px rgba(242, 157, 195, 0.08);
+    justify-content: center;
+  }
+  .app-navbar {
+    padding: 0 2vw;
+    min-height: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    box-sizing: border-box;
+  }
+  .app-brand {
+    width: 60px;
+    min-width: 40px;
+    margin-right: 0;
+  }
+  .app-brand img {
+    height: 36px;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .header-mobile {
+    display: flex !important;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  .mobile-iconbar {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .mobile-iconbar li {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mobile-iconbar i {
+    font-size: 24px;
+    color: #333;
+  }
+  .app-hamburguer-container {
+    width: 56px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .app-hamburguer {
+    font-size: 24px;
+    padding: 4px;
+    color: #333;
+  }
+  .header-desktop {
+    display: none !important;
+  }
 }
 
 @media (max-width: 480px) {
