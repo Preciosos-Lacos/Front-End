@@ -49,7 +49,8 @@ export default function CadastroTipoLacos() {
         nome: item.descricao,
         preco: item.preco,
         imagem: item.imagem ? `data:image/png;base64,${item.imagem}` : null,
-        modelos: item.modelos ?? []
+        modelos: item.modelos ?? [],
+        ativo: item.ativo
       }));
 
       setTipos(tiposFormatados);
@@ -210,12 +211,38 @@ export default function CadastroTipoLacos() {
     }
   }
 
+  async function handleAtivarTipoLaco(id) {
+    try {
+      const token = getAuthToken();
+
+      const response = await fetch(`${BASE_URL}/cor/${id}/ativar`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const msg = await response.text();
+        showAlert("erro", msg || "Erro ao ativar o tipo de laço.");
+        return;
+      }
+
+      showAlert("sucesso", "Tipo de laço ativado com sucesso!");
+      carregarTiposDeLaco(); // Recarrega a lista para atualizar a tela
+
+    } catch (err) {
+      console.error("Erro inesperado ao ativar:", err);
+      showAlert("erro", "Erro inesperado ao ativar.");
+    }
+  }
+
   // -------- MODAL ----------
   const openModal = (type, tipo = null) => {
     setModalState({ isOpen: true, type, tipoData: tipo });
 
     if (type === "create") {
-      carregarModelos(); 
+      carregarModelos();
     }
 
     if (type === "edit") {
@@ -247,7 +274,8 @@ export default function CadastroTipoLacos() {
 
         <div className="card-container-tipo-laco">
           {tiposFiltrados.map((tipo) => (
-            <div key={tipo.id} className="card-custom">
+            <div key={tipo.id} className="card-custom"
+              style={{ opacity: tipo.ativo ? 1 : 0.5 }}>
               <h5>{tipo.nome}</h5>
 
               <div className="tipo-laco-box">
@@ -272,17 +300,32 @@ export default function CadastroTipoLacos() {
                 <p>Valor: R$ {tipo.preco?.toFixed(2)}</p>
 
                 <div className="icons">
-                  <i
-                    className="bi bi-pencil"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => openModal("edit", tipo)}
-                  ></i>
+                  {!tipo.ativo && (
+                    <div className="status-indisponivel-a">
+                      <button
+                        className="btn btn-sm me-2 btn-disponibilizar-a"
+                        onClick={() => handleAtivarTipoLaco(tipo.id)}
+                      >
+                        Disponibilizar
+                      </button>
+                      <span className="text-indisponivel-a">Indisponível</span>
+                    </div>
+                  )}
+                  {tipo.ativo && (
+                    <>
+                      <i
+                        className="bi bi-pencil"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => openModal("edit", tipo)}
+                      ></i>
 
-                  <i
-                    className="bi bi-trash"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => openModal("delete", tipo)}
-                  ></i>
+                      <i
+                        className="bi bi-trash"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => openModal("delete", tipo)}
+                      ></i>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -295,7 +338,7 @@ export default function CadastroTipoLacos() {
             onClose={closeModal}
             type={modalState.type}
             tipoData={modalState.tipoData}
-            modelosDisponiveis={modelos} 
+            modelosDisponiveis={modelos}
             onSubmit={
               modalState.type === "delete"
                 ? () => deletarTipoLaco(modalState.tipoData.id)
