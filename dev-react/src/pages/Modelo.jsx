@@ -22,6 +22,7 @@ const Modelo = () => {
 				? raw.valor
 				: parseFloat(String(raw.preco ?? raw.valor ?? 0).toString().replace('R$', '').replace('.', '').replace(',', '.')) || 0);
 		const favorito = Boolean(raw.favorito ?? false);
+    const ativo = raw.ativo !== undefined ? Boolean(raw.ativo) : (raw.ativoModelo !== undefined ? Boolean(raw.ativoModelo) : true);
 
 		let imagem = null;
 		if (raw.fotoBase64) {
@@ -30,7 +31,7 @@ const Modelo = () => {
 			imagem = `data:image/jpeg;base64,${raw.foto}`;
 		}
 
-		return { id, nome, descricao, valor, imagem, favorito };
+		return { id, nome, descricao, valor, imagem, favorito, ativo };
 	};
 
 
@@ -153,25 +154,33 @@ const Modelo = () => {
 		}
 	};
 
-	const deleteModelo = async () => {
+
+	// Alterna o estado ativo/inativo do modelo via PATCH /modelos/{id}/ativo
+	const toggleAtivoModelo = async (ativo) => {
 		try {
 			const id = modalState.modeloData?.id ?? modalState.modeloData?.idModelo ?? modalState.modeloData?.id_modelo;
 			if (!id || isNaN(Number(id))) {
-				showAlert('aviso', 'Este modelo não pode ser excluído (id inválido).');
+				showAlert('aviso', 'Este modelo não pode ser alterado (id inválido).');
 				fecharModal();
 				return;
 			}
-			const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-			if (res.status === 204 || res.ok) {
-				showAlert('sucesso', 'Modelo excluído com sucesso!');
+			const res = await fetch(`${API_URL}/${id}/ativo`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+				body: JSON.stringify({ ativo: Boolean(ativo) })
+			});
+			const text = await res.text().catch(() => '');
+			if (res.ok) {
+				showAlert('sucesso', ativo ? 'Modelo ativado com sucesso!' : 'Modelo inativado com sucesso!');
 				fecharModal();
 				loadModelos();
 			} else {
-				showAlert('erro', 'Erro ao excluir modelo!');
+				console.error('toggleAtivoModelo failed', res.status, text);
+				showAlert('erro', `Erro ao ${ativo ? 'ativar' : 'inativar'} modelo: ${res.status}`);
 			}
 		} catch (e) {
 			console.error(e);
-			showAlert('erro', 'Erro ao excluir modelo!');
+			showAlert('erro', `Erro ao ${ativo ? 'ativar' : 'inativar'} modelo!`);
 		}
 	};
 
@@ -212,11 +221,19 @@ const Modelo = () => {
 								<p className="modelo-valor">Valor: R$ {Number(mod.valor || 0).toFixed(2)}</p>
 								<div className="modelo-acoes">
 									<i className="bi bi-pencil" title="Editar" onClick={() => abrirModal('edit', mod)}></i>
-									<i
-										className="bi bi-trash"
-										title="Excluir"
-										onClick={() => abrirModal('delete', mod)}
-									></i>
+									{mod.ativo ? (
+										<i
+											className="bi bi-trash"
+											title="Inativar"
+											onClick={() => abrirModal('delete', mod)}
+										></i>
+									) : (
+										<i
+											className="bi bi-check-circle"
+											title="Disponibilizar"
+											onClick={() => abrirModal('activate', mod)}
+										></i>
+									)}
 								</div>
 							</div>
 						</div>
@@ -238,7 +255,9 @@ const Modelo = () => {
 					} else if (modalState.type === 'edit') {
 						updateModelo(form);
 					} else if (modalState.type === 'delete') {
-						deleteModelo();
+						toggleAtivoModelo(false);
+					} else if (modalState.type === 'activate') {
+						toggleAtivoModelo(true);
 					}
 				}}
 			/>

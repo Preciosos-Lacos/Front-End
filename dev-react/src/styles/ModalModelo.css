@@ -1,0 +1,45 @@
+/* Styles specific to the Modelo modal buttons (keeps styles scoped to this component) */
+.modal-modelo-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-modelo-buttons .btn-inactivate {
+  display: block;
+  margin: 8px auto;
+  width: 260px;
+  padding: 12px 18px;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(90deg, #F29DC3 0%, #a04c6e 100%);
+  border: none;
+  box-shadow: 0 6px 18px rgba(160,76,110,0.18);
+  cursor: pointer;
+}
+
+.modal-modelo-buttons .btn-inactivate:active { filter: brightness(0.96); }
+
+.modal-modelo-buttons .btn-cancel-pink {
+  display: block;
+  margin: 8px auto;
+  width: 260px;
+  padding: 12px 18px;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #a04c6e;
+  background: linear-gradient(90deg, #ffd7e8 0%, #F29DC3 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(242,157,195,0.12);
+  cursor: pointer;
+}
+
+.modal-modelo-buttons .btn-cancel-pink:active { filter: brightness(0.98); }
+
+@media (max-width: 480px) {
+  .modal-modelo-buttons .btn-inactivate, .modal-modelo-buttons .btn-cancel-pink { width: 90%; }
+}

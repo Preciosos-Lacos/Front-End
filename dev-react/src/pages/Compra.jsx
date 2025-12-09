@@ -154,7 +154,7 @@ const Compra = () => {
         idUsuario: checkout.idUsuario,
         formaPagamento: code,
         frete: checkout.frete ?? 15.0,
-        idEndereco: checkout.endereco?.id,
+        idEndereco: enderecoIdValue,
         cep: checkout.endereco?.cep
       };
       const token = getAuthToken();
@@ -208,9 +208,14 @@ const Compra = () => {
     );
   }
   if (error) return <div><Header /><main style={{ padding: 20, color: 'red' }}>Erro: {error}</main></div>;
-
   const produtos = checkout?.produtos || [];
-  const endereco = enderecoUsuario || checkout?.endereco;
+  const endereco = checkout?.endereco;
+  const enderecoIdValue = endereco && (endereco.id ?? endereco.idEndereco ?? endereco.id_endereco ?? endereco.idEndereco);
+  // debug: show endereco shape and resolved id to help diagnose routing issue
+  // eslint-disable-next-line no-console
+  console.debug('DEBUG checkout.endereco ->', endereco);
+  // eslint-disable-next-line no-console
+  console.debug('DEBUG enderecoIdValue ->', enderecoIdValue);
   // Deduplicar produtos defensivamente: agrupa por idProduto e soma quantidades/precoTotal
   const produtosUnicos = (() => {
     const map = new Map();
@@ -277,7 +282,11 @@ const Compra = () => {
               {console.log('endereco:', endereco)}
               <div className="cabecalho-endereco">
                 <span>Endereço</span>
-                <Link to={`/atualizar-endereco/${endereco?.idEndereco}`} className="editar-endereco">Editar</Link>
+                {endereco ? (
+                  <Link to={enderecoIdValue ? `/atualizar-endereco/${enderecoIdValue}` : '/atualizar-endereco'} state={{ endereco }} className="editar-endereco">Editar</Link>
+                ) : (
+                  <Link to="/cadastro-endereco" className="editar-endereco">Adicionar</Link>
+                )}
               </div>
               <div className="info-endereco">
                 {endereco

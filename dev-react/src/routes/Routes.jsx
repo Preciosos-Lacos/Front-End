@@ -24,6 +24,7 @@ import AtualizarEndereco from '../pages/AtualizarEndereco.jsx';
 import ScrollToTop from '../components/ScrollToTop.jsx';
 import Colecoes from '../pages/Colecoes.jsx';
 import CadastroBanner from '../pages/CadastroBanner.jsx';
+
 // Admin routes are no longer wrapped with ProtectedRoute
 
 export default function AppRoutes() {
@@ -50,6 +51,7 @@ export default function AppRoutes() {
         <Route path="/pedido-entregue" element={<PedidoEntregue />} />
         <Route path="/atualizar-endereco" element={<AtualizarEndereco />} />
         <Route path="/atualizar-endereco/:id" element={<AtualizarEndereco />} />
+        <Route path="/atualizar-endereco/:idEndereco" element={<AtualizarEndereco />} />
         <Route path="/cadastro-endereco" element={<CadastroEndereco />} />
 
         {/* Admin / Management flows */}

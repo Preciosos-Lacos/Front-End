@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Modal.css';
+import '../styles/ModalModelo.css';
 
 const ModalModelo = ({ isOpen, onClose, type, modeloData = null, onSubmit }) => {
   // Mantém suporte a upload base64 (campo imagemBase64) e inclui campos principais do modelo
@@ -14,7 +15,7 @@ const ModalModelo = ({ isOpen, onClose, type, modeloData = null, onSubmit }) => 
   }, [isOpen, type, modeloData]);
 
   const handleSubmit = () => {
-    if (type === 'delete') { onSubmit(); return; }
+    if (type === 'delete' || type === 'activate') { onSubmit(); return; }
     if (!form.nome) return alert('Preencha o nome do modelo');
     if (!form.valor) return alert('Preencha o valor do modelo');
     onSubmit(form);
@@ -43,7 +44,7 @@ const ModalModelo = ({ isOpen, onClose, type, modeloData = null, onSubmit }) => 
     <div className="modal">
       <div className="modal-content">
         <span className="close" onClick={onClose}>&times;</span>
-        <h2 className="tituloPopUp">{type === 'create' ? 'Cadastro De Modelo' : type === 'edit' ? 'Editar Modelo' : `Você Deseja Deletar: "${modeloData?.nome || ''}"?`}</h2>
+        <h2 className="tituloPopUp">{type === 'create' ? 'Cadastro De Modelo' : type === 'edit' ? 'Editar Modelo' : (type === 'delete' ? `Você Deseja inativar: "${modeloData?.nome || ''}"?` : `Deseja disponibilizar: "${modeloData?.nome || ''}"?`)}</h2>
 
         {(type === 'create' || type === 'edit') && (
           <>
@@ -63,8 +64,15 @@ const ModalModelo = ({ isOpen, onClose, type, modeloData = null, onSubmit }) => 
 
         {type === 'delete' && (
           <>
-            <button id="fecharModalExcluir" onClick={handleSubmit}>Deletar Modelo</button>
-            <button id="fecharModalCancelar" onClick={onClose}>Cancelar</button>
+            <button className="btn-inactivate" onClick={handleSubmit}>Inativar Modelo</button>
+            <button className="btn-cancel-pink" onClick={onClose}>Cancelar</button>
+          </>
+        )}
+
+        {type === 'activate' && (
+          <>
+            <button className="btn-inactivate" onClick={handleSubmit}>Disponibilizar Modelo</button>
+            <button className="btn-cancel-pink" onClick={onClose}>Cancelar</button>
           </>
         )}
       </div>
