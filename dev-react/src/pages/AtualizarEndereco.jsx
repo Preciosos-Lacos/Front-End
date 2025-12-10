@@ -34,45 +34,7 @@ export default function AtualizarEndereco() {
 
   // Try to prefill from stateEndereco and resolve id if missing
   useEffect(() => {
-
-    async function fetchEndereco() {
-      setLoading(true);
-      setMessage(null);
-      try {
-        const token = getAuthToken();
-        if (!token) throw new Error('Você precisa estar logado para atualizar o endereço.');
-        const res = await fetch(`${BASE_URL}/enderecos/${id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          }
-        });
-        if (!res.ok) throw new Error('Endereço não encontrado');
-        const data = await res.json();
-        console.log('Dados recebidos do backend:', data);
-        setForm({
-          logradouro: data.logradouro || '',
-          numero: data.numero || '',
-          bairro: data.bairro || '',
-          localidade: data.localidade || '',
-          uf: data.uf || '',
-          cep: data.cep || '',
-          complemento: data.complemento || '',
-          padrao: data.padrao || false,
-          usuarioId: data.usuarioId || ''
-        });
-      } catch (e) {
-        setMessage({ type: 'error', text: e.message });
-      } finally {
-        setLoading(false);
-        console.log('Estado loading:', loading);
-      }
-    }
-    if (id) fetchEndereco();
-  }, [id]);
-
     let active = true;
-
 
     const tryResolve = async () => {
       if (stateEndereco && !enderecoIdState) {
@@ -167,7 +129,7 @@ export default function AtualizarEndereco() {
         console.error('Erro ao carregar endereço:', err);
         setMessage({ type: 'error', text: 'Erro ao carregar o endereço. Tente novamente.' });
       } finally {
-        if (active) setLoading(false);
+        setLoading(false);
       }
     };
 
