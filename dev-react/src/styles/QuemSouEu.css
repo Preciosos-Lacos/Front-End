@@ -56,4 +56,42 @@
         width: 180px;
         height: 180px
     }
+
+        /* Breakpoints profissionais para Quem Sou Eu */
+        @media (max-width: 428px) {
+            .sessao-quem-sou-eu {
+                padding: 32px 4px;
+            }
+            .quem-sou-eu h2 {
+                font-size: 1.3rem;
+                margin-bottom: 16px;
+            }
+            .sobre p {
+                font-size: 0.98rem;
+                max-width: 98vw;
+            }
+            .sobre img {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .sessao-quem-sou-eu {
+                padding: 80px 0;
+            }
+            .quem-sou-eu {
+                max-width: 1200px;
+            }
+            .quem-sou-eu h2 {
+                font-size: 2.2rem;
+            }
+            .sobre p {
+                font-size: 1.12rem;
+            }
+            .sobre img {
+                width: 260px;
+                height: 260px;
+            }
+        }
 }

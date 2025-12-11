@@ -1,3 +1,6 @@
+/* =========================
+   MOBILE FIRST (max-width: 428px)
+========================= */
 @media (max-width: 428px) {
   .foto-container {
     width: 150px !important;
@@ -5,67 +8,266 @@
     max-width: 150px !important;
     margin: 10px auto 16px auto !important;
   }
+
   .foto-perfil {
     width: 150px !important;
     height: 150px !important;
     font-size: 100px !important;
   }
+
+  .enderecos-section {
+    background: #fff;
+    border-radius: 1.2rem;
+    box-shadow: 0 2px 12px rgba(242, 157, 195, 0.08);
+    padding: 28px 32px;
+    width: 94%;
+    max-width: 440px;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .endereco-item {
+    background: #f8c4d6;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 1.05rem;
+    color: var(--texto-escuro);
+    box-shadow: 0 1px 6px rgba(242, 157, 195, 0.08);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
 }
+
+/* Fim do arquivo CSS de perfil */
+
+/* =========================
+   CONTAINERS E LAYOUT
+========================= */
 .perfil-section {
-  max-width: 428px;
-  width: 100%;
-}
-
-/* --- Centralização e adaptação para iPhone 14 Plus --- */
-.perfil-section {
-  margin: 0 auto;
-}
-
-.form-perfil {
-  max-width: 428px;
-  width: 100%;
-}
-
-.form-perfil {
-  width: 100%;
-}
-
-.foto-container {
-  max-width: 140px;
-  width: 100%;
-}
-
-.foto-container {
-  max-width: 140px;
-  width: 100%;
-}
-
-.campo {
-  max-width: 428px;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  background: #fff;
-  border: 1.5px solid var(--rosa);
-  border-radius: 14px;
-  height: 46.38px;
-  padding: 10px 14px;
-  transition: box-shadow 0.2s ease;
+  padding: 25px 0px 0px 0px;
+  /* espaço para o header fixo */
+  background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.endereco-item {
-  max-width: 428px;
-  width: 100%;
+/* =========================
+     MOBILE FIRST (max-width: 428px)
+  ========================= */
+@media (max-width: 428px) {
+  .perfil-section {
+    max-width: 428px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-perfil {
+    max-width: 428px;
+    width: 100%;
+  }
+
+  .foto-container {
+    width: 150px !important;
+    height: 150px !important;
+    max-width: 150px !important;
+    margin: 10px auto 16px auto !important;
+  }
+
+  .foto-perfil {
+    width: 150px !important;
+    height: 150px !important;
+    font-size: 100px !important;
+  }
+
+  .campo {
+    max-width: 428px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 1.5px solid var(--rosa);
+    border-radius: 14px;
+    height: 46.38px;
+    padding: 10px 14px;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .endereco-item {
+    max-width: 428px;
+    width: 100%;
+  }
 }
 
+/* =========================
+     DESKTOP (min-width: 1024px)
+  ========================= */
+@media (min-width: 1024px) {
+  .perfil-section {
+    max-width: auto;
+    height: 80vh;
+    min-height: 520px;
+    padding: 32px 24px;
+    display: flex;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    background: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    align-items: center;
+  }
 
-/* ---------------- ENDEREÇOS PERFIL ---------------- */
-.enderecos-section {
-  background: #fff;
-  max-width: 428px;
-  padding: 15px;
-  border-radius: 25px;
+  .form-perfil {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    align-items: flex-end;
+    background: none;
+    box-shadow: none;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .foto-container {
+    width: 160px;
+    height: 160px;
+    margin: 0 0 24px 0;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .foto-perfil {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    font-size: 6rem;
+  }
+
+  .campo {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 1.5px solid var(--rosa);
+    border-radius: 1rem;
+    height: 3.2rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.1rem;
+    font-size: 1.1rem;
+    box-sizing: border-box;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .enderecos-section {
+    background: #fff;
+    border-radius: 1.2rem;
+    box-shadow: 0 2px 12px rgba(242, 157, 195, 0.08);
+    padding: 28px 32px;
+    width: 100%;
+    max-width: 440px;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .enderecos-section h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--rosa-escuro);
+    margin-bottom: 18px;
+  }
+
+  .endereco-item {
+    width: 100%;
+    margin-bottom: 1rem;
+    font-size: 1.08rem;
+    background: #f8c4d6;
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--texto-escuro);
+    box-shadow: 0 1px 6px rgba(242, 157, 195, 0.08);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .endereco-item span {
+    margin-right: 6px;
+  }
+
+  .endereco-padrao {
+    background: var(--rosa-escuro);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 2px 8px;
+    margin-left: 8px;
+  }
+
+  .lista-enderecos {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0 0 8px 0;
+    list-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rosa) #ffeaf4;
+  }
+
+  /* Scrollbar estilizado para Webkit (Chrome, Edge, Safari) */
+  .lista-enderecos::-webkit-scrollbar {
+    width: 8px;
+    background: #ffeaf4;
+    border-radius: 8px;
+  }
+
+  .lista-enderecos::-webkit-scrollbar-thumb {
+    background: var(--rosa);
+    border-radius: 8px;
+  }
+
+  .lista-enderecos::-webkit-scrollbar-thumb:hover {
+    background: var(--rosa-escuro);
+  }
+
+  .campo input {
+    font-size: 1.05rem;
+  }
 }
 
 .campo input {
@@ -73,6 +275,9 @@
   box-shadow: 0 2px 12px rgba(242, 157, 195, 0.10);
   padding: 24px 0px;
 }
+
+/* Fim do arquivo CSS de perfil */
+/* Fim do arquivo CSS de perfil */
 
 .endereco-item {
   margin-top: 8px;
@@ -256,7 +461,7 @@ main {
   gap: 32px;
   justify-content: space-around;
   flex-wrap: wrap;
-  padding: 60px 20px 20px 20px;
+  padding: 25px 0px 0px 0px;
   /* espaço para o header fixo */
   background-image: linear-gradient(rgba(250, 251, 245, 0.507), rgba(250, 251, 245, 0.507)), url('../assets/background-image-borboletas.png');
   background-size: cover;
@@ -408,3 +613,5 @@ main {
 .offcanvas .list-unstyled i {
   font-size: 1.3rem;
 }
+
+/* Fim do arquivo CSS de perfil */

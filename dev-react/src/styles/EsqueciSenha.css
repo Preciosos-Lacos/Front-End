@@ -106,7 +106,9 @@
 .esqueci-senha-bg .login #email,
 .esqueci-senha-bg .login #novaSenha,
 .esqueci-senha-bg .login #confirmarSenha {
-    width: 310px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: 44px;
     padding: 10px 14px;
     border: 1.5px solid var(--rosa);
@@ -121,7 +123,9 @@
 
 .esqueci-senha-bg .input-group {
     position: relative;
-    width: 260px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .esqueci-senha-bg .input-group .form-control {
@@ -148,7 +152,9 @@
 }
 
 .esqueci-senha-bg .login #redefinirSenha {
-    width: 260px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: 40px;
     margin-top: 18px;
     background-color: #BB6686;

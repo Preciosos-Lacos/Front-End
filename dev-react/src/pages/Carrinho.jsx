@@ -235,17 +235,14 @@ export default function Carrinho() {
   return (
     <>
       <Header />
-      <main data-scroll-container className="cart-page">
-        <section className="container-carrinho">
-          <div className="cart-left">
-            <h1 className="title" style={{
-              fontSize: '1.18rem', marginBottom: '12px', textAlign: 'center', fontWeight: 700,
-              letterSpacing: '0.5px', color: 'var(--rosa, #F29DC3)'}}>Carrinho de compras</h1>
-            {loading && <p>Carregando…</p>}
-            {error && !loading && <p className="erro" style={{ color: 'red' }}>{error}</p>}
-            {!loading && !error && itens.length === 0 && <p>Seu carrinho está vazio.</p>}
-            <div className="cart-items">
-              {(() => {
+        <main data-scroll-container className="cart-page">
+          <h1 className="cart-title">Carrinho de compras</h1>
+          <div className="container-carrinho">
+          <div className="cart-items">
+          {loading && <p>Carregando…</p>}
+          {error && !loading && <p className="erro" style={{ color: 'red' }}>{error}</p>}
+          {!loading && !error && itens.length === 0 && <p>Seu carrinho está vazio.</p>}
+          {(() => {
                 // Agrupa produtos por igualdade de atributos relevantes
                 const fonte = produtos.length ? produtos : itens;
                 const map = new Map();
@@ -325,9 +322,8 @@ export default function Carrinho() {
                   );
                 });
               })()}
-            </div>
           </div>
-          <aside className="cart-summary">
+        <aside className="cart-summary">
             <div className="cart-summary-list">
               {(() => {
                 const fonte = produtos.length ? produtos : itens;
@@ -372,7 +368,7 @@ export default function Carrinho() {
               <Link to="/finalizar-compra" className="btn-finalize" aria-disabled={itens.length === 0} onClick={(e) => { if (itens.length === 0) { e.preventDefault(); } }}>Finalizar pedido</Link>
             </div>
           </aside>
-        </section>
+        </div>
       </main >
     </>
   );

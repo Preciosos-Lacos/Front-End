@@ -76,7 +76,8 @@
 .cadastro #email,
 .cadastro #senha,
 .cadastro #confirmar_senha {
-  width: 260px;
+  width: 100%;
+  min-width: 0;
   height: 40px;
   padding: 10px;
   border: 1.5px solid var(--rosa);
@@ -101,7 +102,8 @@
 .cadastro #email,
 .cadastro #senha,
 .cadastro #confirmar_senha {
-  width: 290px;
+  width: 100%;
+  min-width: 0;
   height: 44px;
   padding: 10px 14px;
   border: 1.5px solid var(--rosa);
@@ -242,23 +244,23 @@
   .cadastro #email,
   .cadastro #senha,
   .cadastro #confirmar_senha {
-    width: 290px;
-    max-width: 360px;
+    width: 100%;
+    min-width: 0;
     font-size: 15px;
-    margin: 6px auto;
+    margin: 6px 0;
   }
 
   .input-group {
-    width: 290px;
-    max-width: 360px;
-    margin: 0 auto 6px auto;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 6px 0;
   }
 
   #cadastro {
-    width: 290px;
-    max-width: 360px;
+    width: 100%;
+    min-width: 0;
     font-size: 16px;
-    margin: 12px auto 18px auto;
+    margin: 12px 0 18px 0;
   }
 
   .link-container {
@@ -266,3 +268,151 @@
     margin-top: 2px;
   }
 }
+  /* Breakpoints profissionais para CadastroUsuario */
+  @media (max-width: 428px) {
+    .cadastro-main {
+      padding: 0;
+      width: 100vw;
+      min-height: 100vh;
+      background: var(--page-bg);
+    }
+    .cadastro-section {
+      padding: 0;
+      min-height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-attachment: scroll;
+    }
+    .form-cadastro {
+      width: 98vw;
+      min-width: 0;
+      max-width: 420px;
+      box-shadow: 0 2px 12px rgba(242, 157, 195, 0.10);
+      padding: 12px 4px;
+      border-radius: 12px;
+    }
+    .logo-cadastro {
+      max-width: 120px;
+      max-height: 60px;
+      margin-top: 6px;
+    }
+    .logo-cadastro img {
+      width: 100%;
+      height: auto;
+    }
+    #inicio {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+    #p-inicio {
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .cadastro {
+      width: 100%;
+      padding: 0;
+    }
+    .cadastro #nome,
+    .cadastro #telefone,
+    .cadastro #cpf,
+    .cadastro #email,
+    .cadastro #senha,
+    .cadastro #confirmar_senha {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      font-size: 15px;
+      margin: 6px 0;
+    }
+    .input-group {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      margin: 0 0 6px 0;
+    }
+    #cadastro {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      font-size: 16px;
+      margin: 12px 0 18px 0;
+    }
+    .link-container {
+      font-size: 12px;
+      margin-top: 2px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cadastro-main {
+      padding: 0;
+      width: 100vw;
+      min-height: 100vh;
+      background: var(--page-bg);
+    }
+    .cadastro-section {
+      padding: 0;
+      min-height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    .form-cadastro {
+      width: 600px;
+      min-width: 400px;
+      max-width: 700px;
+      box-shadow: 0 4px 24px rgba(242, 157, 195, 0.10);
+      padding: 32px 24px;
+      border-radius: 24px;
+    }
+    .logo-cadastro {
+      max-width: 220px;
+      max-height: 120px;
+      margin-top: 10px;
+    }
+    .logo-cadastro img {
+      width: 100%;
+      height: auto;
+    }
+    #inicio {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    #p-inicio {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .cadastro {
+      width: 100%;
+      padding: 0;
+    }
+    .cadastro #nome,
+    .cadastro #telefone,
+    .cadastro #cpf,
+    .cadastro #email,
+    .cadastro #senha,
+    .cadastro #confirmar_senha {
+       width: 100%;
+       max-width: 100%;
+       min-width: 0;
+       font-size: 17px;
+       margin: 10px 0;
+    }
+    .input-group {
+       width: 100%;
+       max-width: 100%;
+       min-width: 0;
+       margin: 0 0 10px 0;
+    }
+    #cadastro {
+       width: 100%;
+       max-width: 100%;
+       min-width: 0;
+       font-size: 18px;
+       margin: 18px 0 24px 0;
+    }
+    .link-container {
+      font-size: 15px;
+      margin-top: 4px;
+    }
+  }

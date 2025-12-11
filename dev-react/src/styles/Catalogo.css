@@ -661,17 +661,21 @@ select option:checked {
 }
 
 .card-title {
+    text-align: center;
+    width: 100%;
+    display: block;
+    font-family: 'Quicksand', Arial, Helvetica, sans-serif;
+    color: var(--rosa, #e78fb3);
     font-size: 14px;
-    color: #333;
-    margin-bottom: 6px;
-    font-weight: 500;
-    line-height: 1.3;
-    height: 36px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+    background: none;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    max-width: 600px;
+    justify-self: center;
 }
 
 .card-collection {

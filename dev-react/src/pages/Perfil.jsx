@@ -322,7 +322,7 @@ export default function Perfil() {
       <main data-scroll-container>
         <Header showOffcanvas={true} />
         <section className="perfil-section">
-          <div style={{ flex: '1 1 340px', minWidth: '350px', maxWidth: '415px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{flex: "1 1 340px", minWidth: "341px", maxWidth: "400px", display: "flex", flexDirection: "column", alignItems: "center"}}>
             <input
               type="file"
               accept="image/*"

@@ -101,7 +101,9 @@
 
 .login #email,
 .login #senha {
-    width: 290px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: 44px;
     padding: 10px 14px;
     border: 1.5px solid var(--rosa);
@@ -117,8 +119,10 @@
 
 .input-group {
     position: relative;
-    width: 290px;
-    margin: 0px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
 }
 
 .input-group .form-control {
@@ -187,7 +191,9 @@
 }
 
 .login #login {
-    width: 260px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: 40px;
     margin: 15px 0 12px 0;
     background-color: #BB6686;

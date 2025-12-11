@@ -58,6 +58,39 @@
     border: none;
 }
 
+/* Breakpoints profissionais para HeaderHome */
+@media (max-width: 428px) {
+    .header-home {
+        padding: 8px 10px;
+        height: 52px;
+    }
+    .header-home .logo img {
+        height: 36px;
+    }
+    .header-home nav ul {
+        gap: 10px;
+    }
+    .header-home .nav-link {
+        font-size: 0.98rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .header-home {
+        padding: 18px 80px;
+        height: 72px;
+    }
+    .header-home .logo img {
+        height: 60px;
+    }
+    .header-home nav ul {
+        gap: 32px;
+    }
+    .header-home .nav-link {
+        font-size: 1.18rem;
+    }
+}
+
 .header-home .navbar-toggler:focus {
     box-shadow: none;
 }

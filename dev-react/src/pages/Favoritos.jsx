@@ -181,9 +181,9 @@ export default function Favoritos() {
                                             <h3 className="fav-name">{m.nomeModelo}</h3>
                                             <p className="fav-collection">{m.descricao || '—'}</p>
                                             {m.detalhes && <div className="fav-detail">{m.detalhes}</div>}
+                                            <div className="fav-price">{precoBRL(m.preco)}</div>
                                         </div>
                                         <div className="fav-bottom novo-layout-bottom">
-                                            <div className="fav-price">{precoBRL(m.preco)}</div>
                                             <div className="fav-actions novo-layout-actions">
                                                 {m.desconto && <span className="badge-desconto">{m.desconto}%</span>}
                                                 <button className="btn-remove" onClick={() => removerFavorito(m.idModelo)}>Remover</button>
