@@ -409,9 +409,9 @@ export default function MinhasCompras() {
                     </div>
 
                     <div className="compra-entrega fw-semibold mb-1">{tituloPrimeiro}{mais > 0 ? ` e +${mais} item(ns)` : ''}</div>
-                    {caracPrimeiro && (
+                    {/* {caracPrimeiro && (
                       <div className="compra-produto mb-1 text-muted">{caracPrimeiro}</div>
-                    )}
+                    )} */}
 
                     {/* Timeline — posicionada antes dos botões para seguir ordem desejada */}
                     <div className="compra-timeline-row mb-2">
@@ -432,11 +432,11 @@ export default function MinhasCompras() {
                           <div key={it.idProduto} className="item-linha d-flex align-items-start justify-content-between py-2">
                             <div className="d-flex flex-column">
                               <span className="fw-semibold">{it.quantidade}x {it.nome}{it.modelo ? ` • ${it.modelo}` : ''}</span>
-                              {(it.caracteristicas || []).length > 0 && (
+                              {/* {(it.caracteristicas || []).length > 0 && (
                                 <span className="text-muted pequeno">
                                   {(it.caracteristicas || []).map((c) => `${c.nome}: ${c.detalhe}`).join(' · ')}
                                 </span>
-                              )}
+                              )} */}
                             </div>
                             <div className="ms-3 text-nowrap">{formatMoeda(it.preco)}</div>
                           </div>
